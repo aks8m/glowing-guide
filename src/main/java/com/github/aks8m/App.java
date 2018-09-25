@@ -3,26 +3,52 @@ package com.github.aks8m;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
+import org.hl7.v3.EN;
+import org.hl7.v3.ObjectFactory;
+import org.hl7.v3.POCDMT000040ClinicalDocument;
+import org.openhealthtools.mdht.uml.cda.ClinicalDocument;
+import org.openhealthtools.mdht.uml.cda.util.CDAUtil;
+import org.openhealthtools.mdht.uml.cda.util.ValidationResult;
 import org.xmlunit.builder.DiffBuilder;
 import org.xmlunit.builder.Input;
 import org.xmlunit.diff.Diff;
 import org.xmlunit.diff.Difference;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
+import javax.xml.bind.*;
+import java.io.*;
 import java.util.Iterator;
+import java.util.List;
 
 /**
- * Hello world!
+ * Main App class for running the glowing guide C-CDA comparison engine
  *
  */
 public class App 
 {
     public static void main( String[] args )
     {
-        Diff diff = DiffBuilder.compare(Input.fromFile(new File(args[0])))
-                .withTest(Input.fromFile(new File(args[1])))
+        mdhtParsing(args[0]);
+    }
+
+
+    private static void mdhtParsing(String ccdaFile){
+
+        try {
+            ClinicalDocument clinicalDocument = CDAUtil.load(
+                    new FileInputStream(ccdaFile), (ValidationResult) null);
+
+            System.out.println("break");
+
+        } catch (Exception e){
+            e.printStackTrace();
+        }
+
+    }
+
+    private static void directComparison(String ccdaPathSource, String ccdaPathTarget, String comparisonOutput){
+
+        Diff diff = DiffBuilder.compare(Input.fromFile(new File(ccdaPathSource)))
+                .withTest(Input.fromFile(new File(ccdaPathTarget)))
                 .build();
 
         Iterator<Difference> differenceIterator = diff.getDifferences().iterator();
@@ -54,18 +80,13 @@ public class App
             newRow.createCell(1).setCellValue(difference.getComparison().toString());
 
             try {
-                FileOutputStream fileOutputStream = new FileOutputStream(args[2]);
+                FileOutputStream fileOutputStream = new FileOutputStream(comparisonOutput);
                 workbook.write(fileOutputStream);
                 fileOutputStream.flush();
                 fileOutputStream.close();
             } catch (IOException ioE){
                 ioE.printStackTrace();
             }
-
-
-
-
-
         }
     }
 }

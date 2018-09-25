@@ -35,6 +35,12 @@
           <artifactId>poi</artifactId>
           <version>4.0.0</version>
       </dependency>
+    <!-- https://mvnrepository.com/artifact/org.openehealth.ipf.modules/ipf-modules-cda-mdht -->
+    <dependency>
+      <groupId>org.openehealth.ipf.modules</groupId>
+      <artifactId>ipf-modules-cda-mdht</artifactId>
+      <version>3.5.2</version>
+    </dependency>
   </dependencies>
 
   <build>
