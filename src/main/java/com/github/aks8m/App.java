@@ -3,9 +3,6 @@ package com.github.aks8m;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
-import org.hl7.v3.EN;
-import org.hl7.v3.ObjectFactory;
-import org.hl7.v3.POCDMT000040ClinicalDocument;
 import org.openhealthtools.mdht.uml.cda.ClinicalDocument;
 import org.openhealthtools.mdht.uml.cda.util.CDAUtil;
 import org.openhealthtools.mdht.uml.cda.util.ValidationResult;
@@ -14,10 +11,11 @@ import org.xmlunit.builder.Input;
 import org.xmlunit.diff.Diff;
 import org.xmlunit.diff.Difference;
 
-import javax.xml.bind.*;
-import java.io.*;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.Iterator;
-import java.util.List;
 
 /**
  * Main App class for running the glowing guide C-CDA comparison engine
@@ -27,11 +25,16 @@ public class App
 {
     public static void main( String[] args )
     {
-        mdhtParsing(args[0]);
+        ClinicalDocument sourceDoc = mdhtParsing(args[0]);
+        ClinicalDocument targetDoc = mdhtParsing(args[1]);
+
+        ComparerUtility comparison = new ComparerUtility(sourceDoc, targetDoc);
+
+        comparison.compare();
     }
 
 
-    private static void mdhtParsing(String ccdaFile){
+    private static ClinicalDocument mdhtParsing(String ccdaFile){
 
         try {
             ClinicalDocument clinicalDocument = CDAUtil.load(
@@ -39,9 +42,13 @@ public class App
 
             System.out.println("break");
 
+            return clinicalDocument;
+
         } catch (Exception e){
             e.printStackTrace();
         }
+
+        return null;
 
     }
 
