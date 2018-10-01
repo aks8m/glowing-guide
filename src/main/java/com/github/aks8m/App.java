@@ -1,5 +1,15 @@
 package com.github.aks8m;
 
+import javafx.application.Application;
+import javafx.application.Platform;
+import javafx.event.EventHandler;
+import javafx.event.WeakEventHandler;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Scene;
+import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.BorderPane;
+import javafx.stage.Stage;
+import javafx.stage.WindowEvent;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
@@ -21,18 +31,31 @@ import java.util.Iterator;
  * Main App class for running the glowing guide C-CDA comparison engine
  *
  */
-public class App 
+public class App extends Application
 {
     public static void main( String[] args )
     {
-        ClinicalDocument sourceDoc = mdhtParsing(args[0]);
-        ClinicalDocument targetDoc = mdhtParsing(args[1]);
+        launch(args);
 
-        ComparerUtility comparison = new ComparerUtility(sourceDoc, targetDoc);
 
-        comparison.compare();
     }
 
+
+    @Override
+    public void start(Stage primaryStage) throws Exception {
+
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/GlowingGuide.fxml"));
+        AnchorPane root = loader.load();
+        primaryStage.setScene(new Scene(root));
+        primaryStage.setTitle("Glowing Guide");
+        primaryStage.show();
+
+//
+//        ClinicalDocument sourceDoc = mdhtParsing(args[0]);
+//        ClinicalDocument targetDoc = mdhtParsing(args[1]);
+//        ComparerUtility comparison = new ComparerUtility(sourceDoc, targetDoc);
+//        comparison.compare();
+    }
 
     private static ClinicalDocument mdhtParsing(String ccdaFile){
 
