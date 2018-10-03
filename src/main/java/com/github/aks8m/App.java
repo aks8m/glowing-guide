@@ -35,7 +35,11 @@ public class App extends Application
 {
     public static void main( String[] args )
     {
-        launch(args);
+        ClinicalDocument sourceDoc = mdhtParsing(args[0]);
+        ClinicalDocument targetDoc = mdhtParsing(args[1]);
+        ComparerUtility comparison = new ComparerUtility(sourceDoc, targetDoc);
+        comparison.compare();
+        //launch(args);
 
 
     }
@@ -43,12 +47,12 @@ public class App extends Application
 
     @Override
     public void start(Stage primaryStage) throws Exception {
-
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/GlowingGuide.fxml"));
-        AnchorPane root = loader.load();
-        primaryStage.setScene(new Scene(root));
-        primaryStage.setTitle("Glowing Guide");
-        primaryStage.show();
+//
+//        FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/GlowingGuide.fxml"));
+//        AnchorPane root = loader.load();
+//        primaryStage.setScene(new Scene(root));
+//        primaryStage.setTitle("Glowing Guide");
+//        primaryStage.show();
 
 //
 //        ClinicalDocument sourceDoc = mdhtParsing(args[0]);

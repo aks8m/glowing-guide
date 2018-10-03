@@ -23,40 +23,40 @@ public class AppController {
     void initialize() {
 
 
-        sourceTextArea.setOnDragDetected(event -> {
+//        sourceTextArea.setOnDragDetected(event -> {
+////
+////            Dragboard db = ((MouseEvent) event).ge get .getDragboard();
+////            boolean success = false;
+////            if (db.hasString()) {
+////                target.setText(db.getString());
+////                success = true;
+////            }
+////            /* let the source know whether the string was successfully
+////             * transferred and used */
+////            event.setDropCompleted(success);
+////
+////            event.consume();
 //
-//            Dragboard db = ((MouseEvent) event).ge get .getDragboard();
-//            boolean success = false;
-//            if (db.hasString()) {
-//                target.setText(db.getString());
-//                success = true;
-//            }
-//            /* let the source know whether the string was successfully
-//             * transferred and used */
-//            event.setDropCompleted(success);
 //
-//            event.consume();
-
-
-        });
-
-        sourceTextArea.setOnDragDropped(event -> {
-
+//        });
 //
-//            /* allow any transfer mode */
-//            Dragboard db = source.startDragAndDrop(TransferMode.ANY);
+//        sourceTextArea.setOnDragDropped(event -> {
 //
-//            /* put a string on dragboard */
-//            ClipboardContent content = new ClipboardContent();
-//            content.putString(source.getText());
-//            db.setContent(content);
+////
+////            /* allow any transfer mode */
+////            Dragboard db = source.startDragAndDrop(TransferMode.ANY);
+////
+////            /* put a string on dragboard */
+////            ClipboardContent content = new ClipboardContent();
+////            content.putString(source.getText());
+////            db.setContent(content);
+////
+////            event.consume();
 //
-//            event.consume();
-
-
-        });
-
-    }
+//
+//        });
+//
+   }
 
 
 }

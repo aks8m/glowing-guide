@@ -3,12 +3,8 @@ package com.github.aks8m;
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.util.EObjectContainmentEList;
 import org.openhealthtools.mdht.uml.cda.*;
-import org.openhealthtools.mdht.uml.hl7.datatypes.AD;
-import org.openhealthtools.mdht.uml.hl7.datatypes.CS;
-import org.openhealthtools.mdht.uml.hl7.datatypes.II;
-import org.openhealthtools.mdht.uml.hl7.datatypes.TEL;
-import org.openhealthtools.mdht.uml.hl7.vocab.NullFlavor;
-import org.openhealthtools.mdht.uml.hl7.vocab.RoleClass;
+import org.openhealthtools.mdht.uml.hl7.datatypes.*;
+import org.openhealthtools.mdht.uml.hl7.vocab.*;
 
 import java.util.Objects;
 
@@ -33,7 +29,7 @@ public class ComparerUtility {
 
     private void clinicalDocumentComparison(String errorMessage){
 
-        //compare RealmCodemake
+        //compare RealmCode
         compareRealmCodes(sourceClinicalDocument.getRealmCodes(),targetClinicalDocument.getRealmCodes(),errorMessage + " -> Realm Codes");
 
         //compare typeID
@@ -42,130 +38,85 @@ public class ComparerUtility {
         //compare templateID
         compareTemplateID(sourceClinicalDocument.getTemplateIds(), targetClinicalDocument.getTemplateIds(),errorMessage + " -> Template IDS");
 
-
-        //compareIDs
-        if ( ! (Objects.equals(sourceClinicalDocument.getId().getAssigningAuthorityName(),targetClinicalDocument.getId().getAssigningAuthorityName())
-                && Objects.equals(sourceClinicalDocument.getId().getExtension(),targetClinicalDocument.getId().getExtension())
-                && Objects.equals(sourceClinicalDocument.getId().getRoot(),targetClinicalDocument.getId().getRoot())
-                && Objects.equals(sourceClinicalDocument.getId().getNullFlavor(),targetClinicalDocument.getId().getNullFlavor())))
-        {
-            comparisonResult.addMessage("IDs Comparison error in " + errorMessage);
-        }
+        //compareID
+        compareID(sourceClinicalDocument.getId(),targetClinicalDocument.getId(),errorMessage + " -> ID");
 
         //compare code
-        if (!(Objects.equals(sourceClinicalDocument.getCode().getCode(),targetClinicalDocument.getCode().getCode())
-                && Objects.equals(sourceClinicalDocument.getCode().getNullFlavor().getLiteral(),targetClinicalDocument.getCode().getNullFlavor().getLiteral())
-                && Objects.equals(sourceClinicalDocument.getCode().getCodeSystem(),targetClinicalDocument.getCode().getCodeSystem())
-                && Objects.equals(sourceClinicalDocument.getCode().getCodeSystemName(),targetClinicalDocument.getCode().getCodeSystemName())
-                && Objects.equals(sourceClinicalDocument.getCode().getCodeSystemVersion(),targetClinicalDocument.getCode().getCodeSystemVersion())
-                && Objects.equals(sourceClinicalDocument.getCode().getDisplayName(),targetClinicalDocument.getCode().getDisplayName())) )
-        {
-            comparisonResult.addMessage("Code Comparison error in " + errorMessage);
-        }
+        compareCode(sourceClinicalDocument.getCode(),targetClinicalDocument.getCode(),errorMessage + " -> Code");
 
         //compare title
-        if (! (Objects.equals(sourceClinicalDocument.getTitle().getText(),targetClinicalDocument.getTitle().getText()))) {
-            comparisonResult.addMessage("Title Comparison error in " + errorMessage);
-        }
+        compareTitle(sourceClinicalDocument.getTitle(),targetClinicalDocument.getTitle(), errorMessage + " -> Title");
 
         //compare Effective Time
-        if (! (Objects.equals(sourceClinicalDocument.getEffectiveTime().getValue(),targetClinicalDocument.getEffectiveTime().getValue())
-                && Objects.equals(sourceClinicalDocument.getEffectiveTime().getNullFlavor(),targetClinicalDocument.getEffectiveTime().getNullFlavor())))
-        {
-            comparisonResult.addMessage("Effective Time error in " + errorMessage);
-        }
+        compareEffectiveTime(sourceClinicalDocument.getEffectiveTime(),targetClinicalDocument.getEffectiveTime(),errorMessage + " -> Effective Time");
 
         //compare confidentiality code
-        if (! (Objects.equals(sourceClinicalDocument.getConfidentialityCode().getCode(),targetClinicalDocument.getConfidentialityCode().getCode())
-                && Objects.equals(sourceClinicalDocument.getConfidentialityCode().getNullFlavor().getLiteral(),targetClinicalDocument.getConfidentialityCode().getNullFlavor().getLiteral())
-                && Objects.equals(sourceClinicalDocument.getConfidentialityCode().getCodeSystem(),targetClinicalDocument.getConfidentialityCode().getCodeSystem())
-                && Objects.equals(sourceClinicalDocument.getConfidentialityCode().getCodeSystemName(),targetClinicalDocument.getConfidentialityCode().getCodeSystemName())
-                && Objects.equals(sourceClinicalDocument.getConfidentialityCode().getCodeSystemVersion(),targetClinicalDocument.getConfidentialityCode().getCodeSystemVersion())
-                && Objects.equals(sourceClinicalDocument.getConfidentialityCode().getDisplayName(),targetClinicalDocument.getConfidentialityCode().getDisplayName())))
-        {
-            comparisonResult.addMessage("Confidentiality Code error in " + errorMessage);
-        }
+        compareConfidentialityCode(sourceClinicalDocument.getConfidentialityCode(),targetClinicalDocument.getConfidentialityCode(), errorMessage + " -> Confidentiality Code");
 
         //compare language code
-        if (! (Objects.equals(sourceClinicalDocument.getLanguageCode().getNullFlavor(),targetClinicalDocument.getLanguageCode().getNullFlavor())
-                && Objects.equals(sourceClinicalDocument.getLanguageCode().getDisplayName(),targetClinicalDocument.getLanguageCode().getDisplayName()))
-                && Objects.equals(sourceClinicalDocument.getLanguageCode().getCodeSystemVersion(),targetClinicalDocument.getLanguageCode().getCodeSystemVersion())
-                && Objects.equals(sourceClinicalDocument.getLanguageCode().getCodeSystem(),targetClinicalDocument.getLanguageCode().getCodeSystem())
-                && Objects.equals(sourceClinicalDocument.getLanguageCode().getCode(),targetClinicalDocument.getLanguageCode().getCode()))
-        {
-            comparisonResult.addMessage("Language Code error in " + errorMessage);
-        }
+        compareLanguageCode(sourceClinicalDocument.getLanguageCode(),targetClinicalDocument.getLanguageCode(),errorMessage + " -> Language Code");
 
-        //compare setID -> came as null ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        //compare setID
+        compareSetID(sourceClinicalDocument.getSetId(),targetClinicalDocument.getSetId(),errorMessage + " -> Set ID");
 
+        //compare versionNumber
+        compareVersionNumber(sourceClinicalDocument.getVersionNumber(),targetClinicalDocument.getVersionNumber(),errorMessage + " -> Version Number");
 
-        //compare versionNumber -> came as null ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-        //compare copyTime -> came as null ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        //compare copyTime
+        compareCopyTime(sourceClinicalDocument.getCopyTime(),targetClinicalDocument.getCopyTime(),errorMessage + " -> Copy Time");
 
         //compare Record Targets
-        for (int i=0; i<sourceClinicalDocument.getRecordTargets().size(); i++) {
-            for (int j=0; j<targetClinicalDocument.getRecordTargets().size();j++) {
-                recordTargetComparison(sourceClinicalDocument.getRecordTargets().get(i), targetClinicalDocument.getRecordTargets().get(j), errorMessage + " -> Record Targets");
-            }
-        }
+        recordTargetsComparison(sourceClinicalDocument.getRecordTargets(), targetClinicalDocument.getRecordTargets(), errorMessage + " -> Record Targets");
 
-        //compare Author
-        for (int i=0; i<sourceClinicalDocument.getAuthors().size(); i++) {
-            for (int j = 0; j < targetClinicalDocument.getAuthors().size(); j++) {
-                authorComparison(sourceClinicalDocument.getAuthors().get(i), targetClinicalDocument.getAuthors().get(j), errorMessage + " -> Authors");
-            }
-        }
+        //compare Authors
+        authorsComparison(sourceClinicalDocument.getAuthors(), targetClinicalDocument.getAuthors(), errorMessage + " -> Authors");
 
         //compare Data Enterer
         dataEntererComparison(sourceClinicalDocument.getDataEnterer(), targetClinicalDocument.getDataEnterer(),errorMessage + " -> Data Enterer");
 
-        //compare informant
-        for (int i=0; i<sourceClinicalDocument.getInformants().size(); i++) {
-            for (int j = 0; j < targetClinicalDocument.getInformants().size(); j++) {
-                informantComparison(sourceClinicalDocument.getInformants().get(i), targetClinicalDocument.getInformants().get(j), errorMessage + " -> Informant");
-            }
-        }
+        //compare informants
+        informantsComparison(sourceClinicalDocument.getInformants(), targetClinicalDocument.getInformants(), errorMessage + " -> Informant");
 
         //compare custodian
         custodianComparison(sourceClinicalDocument.getCustodian(), targetClinicalDocument.getCustodian(),errorMessage + " -> Custodian");
 
-        //compare information recipient -> came as null ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        //compare information recipient
+        informationRecipientComparison(sourceClinicalDocument.getInformationRecipients(),targetClinicalDocument.getInformationRecipients(),errorMessage + " -> Information Recipients");
 
         //compare Legal Authenticator
         legalAuthenticatorComparison(sourceClinicalDocument.getLegalAuthenticator(), targetClinicalDocument.getLegalAuthenticator(),errorMessage + " -> Legal Authenticator");
 
         //compare Authenticators -> came as null ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        authenticatorComparison(sourceClinicalDocument.getAuthenticators(),targetClinicalDocument.getAuthenticators(),errorMessage + " -> Authenticators");
 
         //compare participants
-        for (int i=0; i<2; i++) {
-            for (int j=0; j<2; j++) {
-                participant1Comparison(sourceClinicalDocument.getParticipants().get(i),targetClinicalDocument.getParticipants().get(j),errorMessage + " -> Participants");
-            }
-        }
+        participants1Comparison(sourceClinicalDocument.getParticipants(),targetClinicalDocument.getParticipants(),errorMessage + " -> Participants");
 
-        //compare getFulfullmentOf -> came as null ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        //compare getInFulfullmentOf
+        inFulfillmentOfComparison(sourceClinicalDocument.getInFulfillmentOfs(),targetClinicalDocument.getInFulfillmentOfs(),errorMessage + " -> In Fullfillments Of");
 
         //compare documentationOf
-        documentationOfComparison(sourceClinicalDocument.getDocumentationOfs().get(0),targetClinicalDocument.getDocumentationOfs().get(0),errorMessage + " -> Documentation");
+        documentationOfsComparison(sourceClinicalDocument.getDocumentationOfs(), targetClinicalDocument.getDocumentationOfs(), errorMessage + " -> Documentation");
 
-        //compare getRelatedDocuments -> came as null ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        //compare getRelatedDocuments
+        relatedDocumentsComparison(sourceClinicalDocument.getRelatedDocuments(),targetClinicalDocument.getRelatedDocuments(), errorMessage + " -> Related Documents");
 
-        //compare Authorizations -> came as null ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        //compare Authorizations
+        authorizationsComparison(sourceClinicalDocument.getAuthorizations(),targetClinicalDocument.getAuthorizations(),errorMessage + " -> Authorizations");
 
-        //compare componentOf -> came as null ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        //compare componentOf
+        componentOfComparison(sourceClinicalDocument.getComponentOf(),targetClinicalDocument.getComponentOf(),errorMessage + " -> componentOf");
 
         //compare component
-        component2Comparison(sourceClinicalDocument.getComponent(), targetClinicalDocument.getComponent(),errorMessage = " -> Component");
+        component2Comparison(sourceClinicalDocument.getComponent(), targetClinicalDocument.getComponent(),errorMessage + " -> Component");
 
         //compare nullFlavor
         compareNullFlavor(sourceClinicalDocument.getNullFlavor(),targetClinicalDocument.getNullFlavor(),errorMessage + " -> NullFlavor");
 
         //compare classCode
-        if (sourceClinicalDocument.getClassCode() != targetClinicalDocument.getClassCode()) {
-            comparisonResult.addMessage("classCode error in " + errorMessage);
-        }
+        compareClassCode(sourceClinicalDocument.getClassCode(),targetClinicalDocument.getClassCode(),errorMessage + " -> Class Code");
     }
+
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     //complex type comparison Methods
@@ -175,74 +126,65 @@ public class ComparerUtility {
             if (!(Objects.equals(sourceTypeID.getRoot(), targetTypeID.getRoot())
                     && Objects.equals(sourceTypeID.getAssigningAuthorityName(), targetTypeID.getAssigningAuthorityName())
                     && Objects.equals(sourceTypeID.getExtension(), targetTypeID.getExtension()))) {
-                comparisonResult.addMessage("TypeID error in" + errorMessage);
+                comparisonResult.addMessage("TypeID error in" + errorMessage + "/n");
             }
         }
     }
 
-    private void recordTargetComparison(RecordTarget sourceRecordTarget, RecordTarget targetRecordTarget, String errorMessage) {
-        if (sourceRecordTarget != null && targetRecordTarget != null) {
-            //compare realmCode
-            compareRealmCodes(sourceRecordTarget.getRealmCodes(),sourceRecordTarget.getRealmCodes(),errorMessage + " -> Realm Codes");
+    private void recordTargetsComparison(EList<RecordTarget> sourceRecordTargets, EList<RecordTarget> targetRecordTargets, String errorMessage) {
+        for (int i = 0; i < sourceRecordTargets.size(); i++) {
+            for (int j = 0; j < targetRecordTargets.size(); j++) {
+                //compare realmCode
+                compareRealmCodes(sourceRecordTargets.get(i).getRealmCodes(), targetRecordTargets.get(j).getRealmCodes(), errorMessage + " -> Realm Codes");
 
-            //compare TypeID -> null //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+                //compare TypeID
+                typeIDComparison(sourceRecordTargets.get(i).getTypeId(), targetRecordTargets.get(j).getTypeId(), errorMessage + " -> Type ID");
 
-            //compareTemplateID
-            compareTemplateID(sourceRecordTarget.getTemplateIds(), targetRecordTarget.getTemplateIds(),errorMessage + " -> Template IDS");
+                //compareTemplateID
+                compareTemplateID(sourceRecordTargets.get(i).getTemplateIds(), targetRecordTargets.get(j).getTemplateIds(), errorMessage + " -> Template IDS");
 
+                //comparePatientRole
+                patientRoleComparison(sourceRecordTargets.get(i).getPatientRole(), targetRecordTargets.get(j).getPatientRole(), errorMessage + " -> Patient Role");
 
-            //comparePatientRole
-            patientRoleComparison(sourceRecordTarget.getPatientRole(), targetRecordTarget.getPatientRole(), errorMessage + " -> Patient Role");
+                //compare nullFlavor
+                compareNullFlavor(sourceRecordTargets.get(i).getNullFlavor(), targetRecordTargets.get(j).getNullFlavor(), errorMessage + " -> Null Flavor");
 
-            //compare nullFlavor
-            compareNullFlavor(sourceRecordTarget.getNullFlavor(),targetRecordTarget.getNullFlavor(),errorMessage + " -> Null Flavor");
-
-            //compare typeCode
-            if (!(Objects.equals(sourceRecordTarget.getTypeCode(), targetRecordTarget.getTypeCode()))) {
-                comparisonResult.addMessage("Type Code error in " + errorMessage);
+                //compare typeCode
+                compareTypeCode(sourceRecordTargets.get(i).getTypeCode(), targetRecordTargets.get(j).getTypeCode(), errorMessage + " -> Type Code");
             }
         }
+
     }
 
-    private void authorComparison(Author sourceAuthor, Author targetAuthor, String errorMessage) {
-        if (sourceAuthor != null && targetAuthor != null) {
-            //compare realm codes
-            compareRealmCodes(sourceAuthor.getRealmCodes(),sourceAuthor.getRealmCodes(),errorMessage + " -> Realm Codes");
+    private void authorsComparison(EList<Author> sourceAuthors, EList<Author> targetAuthors, String errorMessage) {
+        for (int i=0; i<sourceAuthors.size(); i++) {
+            for (int j = 0; j < targetAuthors.size(); j++) {
+                //compare realm codes
+                compareRealmCodes(sourceAuthors.get(i).getRealmCodes(), targetAuthors.get(j).getRealmCodes(), errorMessage + " -> Realm Codes");
 
+                //compare typeID
+                typeIDComparison(sourceAuthors.get(i).getTypeId(), targetAuthors.get(j).getTypeId(), errorMessage + " -> typeID");
 
-            //compare typeID
-            //typeIDComparison(sourceAuthor.getTypeId(),targetAuthor.getTypeId(),errorMessage + " -> typeID");
+                //compare template ID
+                compareTemplateID(sourceAuthors.get(i).getTemplateIds(), targetAuthors.get(j).getTemplateIds(), errorMessage + " -> Template IDS");
 
-            //compare template ID
-            compareTemplateID(sourceAuthor.getTemplateIds(), targetAuthor.getTemplateIds(),errorMessage + " -> Template IDS");
+                //compare functionCode
+                compareFunctionCode(sourceAuthors.get(i).getFunctionCode(),targetAuthors.get(j).getFunctionCode(),errorMessage + " -> Function Code");
 
+                //compare time
+                compareTime(sourceAuthors.get(i).getTime(), targetAuthors.get(j).getTime(), errorMessage + " -> Time");
 
-            //compare functionCode
-//        if (!(Objects.equals(sourceAuthor.getFunctionCode().getCode(),targetAuthor.getFunctionCode().getCode())))
-//        {
-//            comparisonResult.addMessage("Function Code error in " + errorMessage);
-//        }
+                //compare AssignedAuthor
+                assignedAuthorComparison(sourceAuthors.get(i).getAssignedAuthor(), targetAuthors.get(j).getAssignedAuthor(), errorMessage + " -> Assigned Author");
 
-            //compare time
-            if (!(Objects.equals(sourceAuthor.getTime().getValue(), targetAuthor.getTime().getValue()))) {
-                comparisonResult.addMessage("Time error in " + errorMessage);
-            }
+                //compare nullFlavor
+                compareNullFlavor(sourceAuthors.get(i).getNullFlavor(), targetAuthors.get(j).getNullFlavor(), errorMessage + " -> Null Flavor");
 
-            //compare AssignedAuthor
-            assignedAuthorComparison(sourceAuthor.getAssignedAuthor(), targetAuthor.getAssignedAuthor(), errorMessage + " -> Assigned Author");
+                //compare typeCode
+                compareTypeCode(sourceAuthors.get(i).getTypeCode(), targetAuthors.get(j).getTypeCode(), errorMessage + " -> Type Code");
 
-            //compare nullFlavor
-            compareNullFlavor(sourceAuthor.getNullFlavor(),targetAuthor.getNullFlavor(),errorMessage + " -> Null Flavor");
-
-
-            //compare typeCode
-            if (!(Objects.equals(sourceAuthor.getTypeCode().getLiteral(), targetAuthor.getTypeCode().getLiteral()))) {
-                comparisonResult.addMessage("Type Code error in " + errorMessage);
-            }
-
-            //compare contextControlCode
-            if (!(Objects.equals(sourceAuthor.getContextControlCode().getLiteral(), targetAuthor.getContextControlCode().getLiteral()))) {
-                comparisonResult.addMessage("Context Control Code error in " + errorMessage);
+                //compare contextControlCode
+                compareContextControlCode(sourceAuthors.get(i).getContextControlCode(), targetAuthors.get(j).getContextControlCode(), errorMessage + " -> Context Control Code");
             }
         }
 
@@ -253,7 +195,6 @@ public class ComparerUtility {
             //compare realm code
             compareRealmCodes(sourceDataEnterer.getRealmCodes(),targetDataEnterer.getRealmCodes(),errorMessage + " -> Realm Codes");
 
-
             //compare typeID
             typeIDComparison(sourceDataEnterer.getTypeId(),targetDataEnterer.getTypeId(), errorMessage + " -> type ID");
 
@@ -261,11 +202,7 @@ public class ComparerUtility {
             compareTemplateID(sourceDataEnterer.getTemplateIds(), targetDataEnterer.getTemplateIds(),errorMessage + " -> Template IDS");
 
             //compare time
-            if (!(Objects.equals(sourceDataEnterer.getTime().getValue(),targetDataEnterer.getTime().getValue())
-                && Objects.equals(sourceDataEnterer.getNullFlavor().getLiteral(),targetDataEnterer.getNullFlavor().getLiteral())))
-            {
-                comparisonResult.addMessage("Data Enterer error in " + errorMessage);
-            }
+            compareTime(sourceDataEnterer.getTime(),targetDataEnterer.getTime(),errorMessage + " -> Time");
 
             //compare assigned entity
             assignedEntityComparison(sourceDataEnterer.getAssignedEntity(),targetDataEnterer.getAssignedEntity(),errorMessage + " -> Assigned Entity");
@@ -273,35 +210,43 @@ public class ComparerUtility {
             //compare nullFlavor
             compareNullFlavor(sourceDataEnterer.getNullFlavor(),targetDataEnterer.getNullFlavor(),errorMessage + " -> Null Flavor");
 
-
             //compare typeCode
-            if (!(Objects.equals(sourceDataEnterer.getTypeCode().getLiteral(),targetDataEnterer.getTypeCode().getLiteral())))
-            {
-                comparisonResult.addMessage("Type Code error in " + errorMessage);
-            }
+            compareTypeCode(sourceDataEnterer.getTypeCode(),targetDataEnterer.getTypeCode(),errorMessage + " -> Type Code");
 
         }
     }
 
-    private void informantComparison(Informant12 sourceInformant12, Informant12 targetInformant12, String errorMessage) {
-        if (sourceInformant12 != null && targetInformant12 != null) {
-            //realm code
-            compareRealmCodes(sourceInformant12.getRealmCodes(),targetInformant12.getRealmCodes(),errorMessage + " -> Realm Codes");
+    private void informantsComparison(EList<Informant12> sourceInformant12, EList<Informant12> targetInformant12, String errorMessage) {
+        for (int i=0; i<sourceInformant12.size(); i++) {
+            for (int j = 0; j < sourceInformant12.size(); j++) {
+                    //realm code
+                    compareRealmCodes(sourceInformant12.get(i).getRealmCodes(), targetInformant12.get(j).getRealmCodes(), errorMessage + " -> Realm Codes");
 
-            //typeID
+                    //typeID
+                    typeIDComparison(sourceInformant12.get(i).getTypeId(), targetInformant12.get(j).getTypeId(), errorMessage + " -> Type ID");
 
-            //template ID
-            compareTemplateID(sourceInformant12.getTemplateIds(), targetInformant12.getTemplateIds(),errorMessage + " -> Template IDS");
+                    //template ID
+                    compareTemplateID(sourceInformant12.get(i).getTemplateIds(), targetInformant12.get(j).getTemplateIds(), errorMessage + " -> Template IDS");
 
-            //choice - assignedEntity, related entity
+                    //choice - assignedEntity, related entity
+                    if (sourceInformant12.get(i).getAssignedEntity() != null && targetInformant12.get(j).getAssignedEntity() != null) {
+                        assignedEntityComparison(sourceInformant12.get(i).getAssignedEntity(), targetInformant12.get(j).getAssignedEntity(), errorMessage + " -> Assigned Entity");
+                    }
 
-            //nullflavor
-            compareNullFlavor(sourceInformant12.getNullFlavor(),targetInformant12.getNullFlavor(),errorMessage + " -> Null Flavor");
+                    if (sourceInformant12.get(i).getRelatedEntity() != null && sourceInformant12.get(j).getRelatedEntity() != null) {
+                        relatedEntityComparison(sourceInformant12.get(i).getRelatedEntity(), targetInformant12.get(j).getRelatedEntity(), errorMessage + " -> Related Entity");
+                    }
 
-            //type code
+                    //nullflavor
+                    compareNullFlavor(sourceInformant12.get(i).getNullFlavor(), targetInformant12.get(j).getNullFlavor(), errorMessage + " -> Null Flavor");
 
-            //contextControlCode
+                    //type code
+                    compareTypeCode(sourceInformant12.get(i).getTypeCode(), targetInformant12.get(j).getTypeCode(), errorMessage + " -> Type Code");
 
+                    //contextControlCode
+                    compareContextControlCode(sourceInformant12.get(i).getContextControlCode(), targetInformant12.get(j).getContextControlCode(), errorMessage + " -> Context Control Code");
+
+            }
         }
     }
 
@@ -322,12 +267,8 @@ public class ComparerUtility {
             //nullFlavor
             compareNullFlavor(sourceCustodian.getNullFlavor(),targetCustodian.getNullFlavor(),errorMessage + " -> Null Flavor");
 
-
             //typeCode
-            if (!(Objects.equals(sourceCustodian.getTypeCode().getLiteral(),targetCustodian.getTypeCode().getLiteral())))
-            {
-                comparisonResult.addMessage("Type Code error in " + errorMessage);
-            }
+            compareTypeCode(sourceCustodian.getTypeCode(),targetCustodian.getTypeCode(),errorMessage + " -> Type Code");
 
         }
     }
@@ -337,32 +278,17 @@ public class ComparerUtility {
             //compare realm code
             compareRealmCodes(sourceLegalAuthenticator.getRealmCodes(),targetLegalAuthenticator.getRealmCodes(),errorMessage + " -> Realm Codes");
 
-
             //compare typeID
             typeIDComparison(sourceLegalAuthenticator.getTypeId(),targetLegalAuthenticator.getTypeId(),errorMessage + " -> type ID");
 
             //compare templateID
             compareTemplateID(sourceLegalAuthenticator.getTemplateIds(), targetLegalAuthenticator.getTemplateIds(),errorMessage + " -> Template IDS");
 
-
             //compare time
-            if (!(Objects.equals(sourceLegalAuthenticator.getTime().getValue(), targetLegalAuthenticator.getTime().getValue())
-                && Objects.equals(sourceLegalAuthenticator.getTime().getNullFlavor(), targetLegalAuthenticator.getTime().getNullFlavor())))
-            {
-                comparisonResult.addMessage("Time error in " + errorMessage);
-            }
+            compareTime(sourceLegalAuthenticator.getTime(),targetLegalAuthenticator.getTime(),errorMessage + " -> Time");
 
             //compare signatureCode
-            if (!(Objects.equals(sourceLegalAuthenticator.getSignatureCode().getCode(),targetLegalAuthenticator.getSignatureCode().getCode())
-                        && Objects.equals(sourceLegalAuthenticator.getSignatureCode().getNullFlavor().getLiteral(),targetLegalAuthenticator.getSignatureCode().getNullFlavor().getLiteral())
-                        && Objects.equals(sourceLegalAuthenticator.getSignatureCode().getCodeSystem(),targetLegalAuthenticator.getSignatureCode().getCodeSystem())
-                        && Objects.equals(sourceLegalAuthenticator.getSignatureCode().getCodeSystemName(),targetLegalAuthenticator.getSignatureCode().getCodeSystemName())
-                        && Objects.equals(sourceLegalAuthenticator.getSignatureCode().getCodeSystemVersion(),targetLegalAuthenticator.getSignatureCode().getCodeSystemVersion())
-                        && Objects.equals(sourceLegalAuthenticator.getSignatureCode().getDisplayName(),targetLegalAuthenticator.getSignatureCode().getDisplayName())
-                ) )
-                {
-                    comparisonResult.addMessage("Signature Code Comparison Error in" + errorMessage);
-                }
+            compareSignatureCode(sourceLegalAuthenticator.getSignatureCode(),targetLegalAuthenticator.getSignatureCode(),errorMessage + " -> Signature Code");
 
             //compare assignedEntity
             assignedEntityComparison(sourceLegalAuthenticator.getAssignedEntity(),targetLegalAuthenticator.getAssignedEntity(),errorMessage + " Assigned Entity");
@@ -371,85 +297,64 @@ public class ComparerUtility {
             compareNullFlavor(sourceLegalAuthenticator.getNullFlavor(),targetLegalAuthenticator.getNullFlavor(),errorMessage + " -> Null Flavor");
 
             //compare typeCode
-            if (!(Objects.equals(sourceLegalAuthenticator.getTypeCode().getLiteral(),targetLegalAuthenticator.getTypeCode().getLiteral())))
-            {
-                comparisonResult.addMessage("Type Code error in " + errorMessage);
-            }
+            compareTypeCode(sourceLegalAuthenticator.getTypeCode(),targetLegalAuthenticator.getTypeCode(),errorMessage + " -> Type Code");
 
             //compare contextControlCode
-            if (!(Objects.equals(sourceLegalAuthenticator.getContextControlCode().getLiteral(),targetLegalAuthenticator.getContextControlCode().getLiteral())
-                && Objects.equals(sourceLegalAuthenticator.getContextControlCode().getName(),targetLegalAuthenticator.getContextControlCode().getName())))
-            {
-                comparisonResult.addMessage("Null Flavor error in " + errorMessage);
+            compareContextControlCode(sourceLegalAuthenticator.getContextControlCode(),targetLegalAuthenticator.getContextControlCode(), errorMessage + " -> Context Control Code");
+        }
+    }
+
+    private void participants1Comparison(EList<Participant1> sourceParticipant, EList<Participant1> targetParticipant, String errorMessage) {
+        for (int i=0;i<sourceParticipant.size();i++) {
+            for (int j = 0; j < targetParticipant.size(); j++) {
+                    //realmCode
+                    compareRealmCodes(sourceParticipant.get(i).getRealmCodes(), targetParticipant.get(j).getRealmCodes(), errorMessage + " -> Realm Codes");
+
+                    //typeID
+                    typeIDComparison(sourceParticipant.get(i).getTypeId(), targetParticipant.get(j).getTypeId(), errorMessage + " - Type ID");
+
+                    //templateID
+                    compareTemplateID(sourceParticipant.get(i).getTemplateIds(), targetParticipant.get(j).getTemplateIds(), errorMessage + " -> Template IDS");
+
+                    //functionCode
+                    compareFunctionCode(sourceParticipant.get(i).getFunctionCode(),targetParticipant.get(j).getFunctionCode(),errorMessage + " -> Function Code");
+
+                    //time
+                    compareTime(sourceParticipant.get(i).getTime(), targetParticipant.get(j).getTime(), errorMessage + " -> Time");
+
+                    //associated Entity
+                    associatedEntityComparison(sourceParticipant.get(i).getAssociatedEntity(), targetParticipant.get(j).getAssociatedEntity(), errorMessage + " -> Associated Entity");
+
+                    //nullFlavor
+                    compareNullFlavor(sourceParticipant.get(i).getNullFlavor(), targetParticipant.get(j).getNullFlavor(), errorMessage + " -> Null Flavor");
+
+                    //typeCode
+                    compareTypeCode(sourceParticipant.get(i).getTypeCode(), targetParticipant.get(j).getTypeCode(), errorMessage + " -> Type Code");
             }
         }
     }
 
-    private void participant1Comparison(Participant1 sourceParticipant, Participant1 targetParticipant, String errorMessage) {
-        if (sourceParticipant != null && targetParticipant != null) {
-            //realmCode
-            compareRealmCodes(sourceParticipant.getRealmCodes(),targetParticipant.getRealmCodes(),errorMessage + " -> Realm Codes");
+    private void documentationOfsComparison(EList<DocumentationOf> sourceDocumentationOf, EList<DocumentationOf> targetDocumentationOf, String errorMessage) {
+        for (int i=0;i<sourceDocumentationOf.size();i++) {
+            for (int j = 0; j < targetDocumentationOf.size(); j++) {
+                    //compare realmCodes
+                    compareRealmCodes(sourceDocumentationOf.get(i).getRealmCodes(), targetDocumentationOf.get(j).getRealmCodes(), errorMessage + " -> Realm Codes");
 
-            //typeID
+                    //compare TypeID
+                    typeIDComparison(sourceDocumentationOf.get(i).getTypeId(), targetDocumentationOf.get(j).getTypeId(), errorMessage + " -> typeID");
 
-            //templateID
-            compareTemplateID(sourceParticipant.getTemplateIds(), targetParticipant.getTemplateIds(),errorMessage + " -> Template IDS");
+                    //compare templateID
+                    compareTemplateID(sourceDocumentationOf.get(i).getTemplateIds(), targetDocumentationOf.get(j).getTemplateIds(), errorMessage + " -> Template IDS");
 
+                    //compare serviceEvent
+                    serviceEventComparison(sourceDocumentationOf.get(i).getServiceEvent(), targetDocumentationOf.get(j).getServiceEvent(), errorMessage + " -> Service Event");
 
-            //functionCode
-            if (sourceParticipant.getFunctionCode() != null && targetParticipant.getFunctionCode() != null) {
-                if (! (Objects.equals(sourceParticipant.getFunctionCode().getCode(), targetParticipant.getFunctionCode().getCode()))
-                        && Objects.equals(sourceParticipant.getFunctionCode().getNullFlavor(), targetParticipant.getFunctionCode().getNullFlavor()))
-                {
-                    comparisonResult.addMessage("Function Code error in " + errorMessage);
-                }
-            }
+                    //compare NullFlavor
+                    compareNullFlavor(sourceDocumentationOf.get(i).getNullFlavor(), targetDocumentationOf.get(j).getNullFlavor(), errorMessage + " -> Null Flavor");
 
-            //time
-            if (! (Objects.equals(sourceParticipant.getTime().getValue(),targetParticipant.getTime().getValue())
-                && Objects.equals(sourceParticipant.getTime().toString(),targetParticipant.getTime().toString())))
-            {
-                comparisonResult.addMessage("Time error in " + errorMessage);
-            }
+                    //compare typeCode
+                    compareTypeCode(sourceDocumentationOf.get(i).getTypeCode(), targetDocumentationOf.get(j).getTypeCode(), errorMessage + " -> Type Code");
 
-            //associated Entity
-            associatedEntityComparison(sourceParticipant.getAssociatedEntity(), targetParticipant.getAssociatedEntity(), errorMessage + " -> Associated Entity");
-
-            //nullflavor
-            compareNullFlavor(sourceParticipant.getNullFlavor(),targetParticipant.getNullFlavor(),errorMessage + " -> Null Flavor");
-
-
-            //typeCode
-            if (!(Objects.equals(sourceParticipant.getTypeCode().getLiteral(),targetParticipant.getTypeCode().getLiteral())))
-            {
-                comparisonResult.addMessage("Type Code error in " + errorMessage);
-            }
-        }
-    }
-
-    private void documentationOfComparison(DocumentationOf sourceDocumentationOf, DocumentationOf targetDocumentationOf, String errorMessage) {
-        if (sourceDocumentationOf != null && targetDocumentationOf != null) {
-            //compare realmCodes
-            compareRealmCodes(sourceDocumentationOf.getRealmCodes(),targetDocumentationOf.getRealmCodes(),errorMessage + " -> Realm Codes");
-
-            //compare TypeID
-            typeIDComparison(sourceDocumentationOf.getTypeId(),targetDocumentationOf.getTypeId(),errorMessage + " -> typeID");
-
-            //compare templateID
-            compareTemplateID(sourceDocumentationOf.getTemplateIds(), targetDocumentationOf.getTemplateIds(),errorMessage + " -> Template IDS");
-
-
-            //compare serviceEvent
-            serviceEventComparison(sourceDocumentationOf.getServiceEvent(),targetDocumentationOf.getServiceEvent(),errorMessage + " -> Service Event");
-
-            //compare NullFlavor
-            compareNullFlavor(sourceDocumentationOf.getNullFlavor(),targetDocumentationOf.getNullFlavor(),errorMessage + " -> Null Flavor");
-
-
-            //compare typeCode
-            if (!(Objects.equals(sourceDocumentationOf.getTypeCode().getLiteral(),targetDocumentationOf.getTypeCode().getLiteral())))
-            {
-                comparisonResult.addMessage("Type Code error in " + errorMessage);
             }
         }
     }
@@ -465,7 +370,6 @@ public class ComparerUtility {
             //templateID
             compareTemplateID(sourceComponent.getTemplateIds(), targetComponent.getTemplateIds(),errorMessage + " -> Template IDS");
 
-
             //Choice - Non XML Body, StructuredBody
             if (sourceComponent.getNonXMLBody() != null && targetComponent.getNonXMLBody() != null) {
                 nonXMLBodyComparison(sourceComponent.getNonXMLBody(),targetComponent.getNonXMLBody(),errorMessage + " -> NonXMLBody");
@@ -478,18 +382,11 @@ public class ComparerUtility {
             //nullFlavor
             compareNullFlavor(sourceComponent.getNullFlavor(),targetComponent.getNullFlavor(),errorMessage + " -> Null Flavor");
 
-
             //typeCode
-            if (!(Objects.equals(sourceComponent.getTypeCode().getLiteral(),targetComponent.getTypeCode().getLiteral())))
-            {
-                comparisonResult.addMessage("Type Code error in " + errorMessage);
-            }
+            compareTypeCode(sourceComponent.getTypeCode(),targetComponent.getTypeCode(),errorMessage + " -> Type Code");
 
             //contextConductionInd
-            if (!(Objects.equals(sourceComponent.getContextConductionInd().toString(),targetComponent.getContextConductionInd().toString())))
-            {
-                comparisonResult.addMessage("Context Conduction Ind error in " + errorMessage);
-            }
+            compareContextConductionInd(sourceComponent.getContextConductionInd(),targetComponent.getContextConductionInd(),errorMessage + " -> Context Conduction Ind");
         }
     }
 
@@ -499,11 +396,10 @@ public class ComparerUtility {
             compareRealmCodes(sourcePatientRole.getRealmCodes(),targetPatientRole.getRealmCodes(),errorMessage + " -> Realm Codes");
 
             //compare typeID
-            //typeIDComparison(sourcePatientRole.getTypeId(),targetPatientRole.getTypeId(),errorMessage = " -> typeID");
+            typeIDComparison(sourcePatientRole.getTypeId(),targetPatientRole.getTypeId(),errorMessage = " -> Type ID");
 
             //compare templateID
             compareTemplateID(sourcePatientRole.getTemplateIds(), targetPatientRole.getTemplateIds(),errorMessage + " -> Template IDS");
-
 
             //compare id
             compareIDs(sourcePatientRole.getIds(),targetPatientRole.getIds(),errorMessage + " -> IDs");
@@ -541,15 +437,7 @@ public class ComparerUtility {
             compareIDs(sourceAssignedAuthor.getIds(),targetAssignedAuthor.getIds(),errorMessage + " -> IDs");
 
             //code
-//            if (!(Objects.equals(sourceAssignedAuthor.getCode().getCode(),targetAssignedAuthor.getCode().getCode())
-//                    && Objects.equals(sourceAssignedAuthor.getCode().getNullFlavor().getLiteral(),targetAssignedAuthor.getCode().getNullFlavor().getLiteral())
-//                    && Objects.equals(sourceAssignedAuthor.getCode().getCodeSystem(),targetAssignedAuthor.getCode().getCodeSystem())
-//                    && Objects.equals(sourceAssignedAuthor.getCode().getCodeSystemName(),targetAssignedAuthor.getCode().getCodeSystemName())
-//                    && Objects.equals(sourceAssignedAuthor.getCode().getCodeSystemVersion(),targetAssignedAuthor.getCode().getCodeSystemVersion())
-//                    && Objects.equals(sourceAssignedAuthor.getCode().getDisplayName(),targetAssignedAuthor.getCode().getDisplayName())) )
-//            {
-//                comparisonResult.addMessage("Code Comparison error in " + errorMessage);
-//            }
+            compareCode(sourceAssignedAuthor.getCode(),targetAssignedAuthor.getCode(),errorMessage + " -> Compare Code");
 
             //addr
             compareAddr(sourceAssignedAuthor.getAddrs(),targetAssignedAuthor.getAddrs(),errorMessage + " -> Addrs");
@@ -558,120 +446,844 @@ public class ComparerUtility {
             compareTelcom(sourceAssignedAuthor.getTelecoms(),targetAssignedAuthor.getTelecoms(), errorMessage + " -> telecom");
 
             //choice - assignedPerson (Person), assignedAuthorizing Device(AUthorizing Device)
+            if (sourceAssignedAuthor.getAssignedPerson() != null && targetAssignedAuthor.getAssignedPerson() != null) {
+                personComparison(sourceAssignedAuthor.getAssignedPerson(),targetAssignedAuthor.getAssignedPerson(),errorMessage + " -> Assigned Person");
+            }
+
+            if (sourceAssignedAuthor.getAssignedAuthoringDevice() != null && targetAssignedAuthor.getAssignedAuthoringDevice() != null) {
+                authorizingDeviceComparison(sourceAssignedAuthor.getAssignedAuthoringDevice(),targetAssignedAuthor.getAssignedAuthoringDevice(),errorMessage + " -> Assigned Authorizing Device");
+            }
 
             //represented Organization
+            organizationComparison(sourceAssignedAuthor.getRepresentedOrganization(),targetAssignedAuthor.getRepresentedOrganization(),errorMessage + " -> Represented Organization");
 
             //null flavor
             compareNullFlavor(sourceAssignedAuthor.getNullFlavor(),targetAssignedAuthor.getNullFlavor(),errorMessage + " -> Null Flavor");
 
             //class code
+            compareClassCode(sourceAssignedAuthor.getClassCode(),targetAssignedAuthor.getClassCode(),errorMessage + " -> Class Code");
 
         }
     }
 
     private void patientComparison(Patient sourcePatient, Patient targetPatient, String errorMessage) {
+        if (sourcePatient != null && targetPatient != null) {
+            //realm code
+            compareRealmCodes(sourcePatient.getRealmCodes(),targetPatient.getRealmCodes(),errorMessage + " -> Realm Codes");
+
+            //typeID
+            typeIDComparison(sourcePatient.getTypeId(),targetPatient.getTypeId(),errorMessage + " -> type ID");
+
+            //templateID
+            compareTemplateID(sourcePatient.getTemplateIds(),targetPatient.getTemplateIds(),errorMessage + " -> Template IDs");
+
+            //ids
+            compareIDs(sourcePatient.getIds(),targetPatient.getIds(),errorMessage + " -> IDs");
+
+            //names
+            compareNames(sourcePatient.getNames(),targetPatient.getNames(),errorMessage + " -> Names");
+
+            //administrativeGenderCode
+            compareAdministrativeGenderCode(sourcePatient.getAdministrativeGenderCode(),targetPatient.getAdministrativeGenderCode(),errorMessage + " -> Administrative Gender Code");
+
+            //birthTime
+            compareBirthTime(sourcePatient.getBirthTime(),targetPatient.getBirthTime(),errorMessage + " -> Birth Time");
+
+            //marital status code
+            compareMaritalStatusCode(sourcePatient.getMaritalStatusCode(),targetPatient.getMaritalStatusCode(),errorMessage + " -> Marital Status Code");
+
+            //religious affiliation code
+            compareReligiosAffiliationCode(sourcePatient.getReligiousAffiliationCode(),targetPatient.getReligiousAffiliationCode(),errorMessage + " -> Religious Affiliation Code");
+
+            //race Code
+            compareRaceCode(sourcePatient.getRaceCode(),targetPatient.getRaceCode(),errorMessage + " -> Race Code");
+
+            //ethnic group code
+            compareEthnicGroupCode(sourcePatient.getEthnicGroupCode(),targetPatient.getEthnicGroupCode(),errorMessage + " -> Ethnic Group Code");
+
+            //guardian - Guardian
+            guardiansComparison(sourcePatient.getGuardians(),targetPatient.getGuardians(),errorMessage + " -> Guardians");
+
+            //birthPlace - Birthplace
+            birthplaceComparison(sourcePatient.getBirthplace(),targetPatient.getBirthplace(),errorMessage + " -> Birthplace");
+
+            //Language Communication - Language Communication
+            languageCommunicationsComparison(sourcePatient.getLanguageCommunications(),targetPatient.getLanguageCommunications(),errorMessage + " -> Language Communication");
+
+            //nullFlavor
+            compareNullFlavor(sourcePatient.getNullFlavor(),targetPatient.getNullFlavor(),errorMessage + " -> Null Flavor");
+
+            //classCode
+            compareClassCode(sourcePatient.getClassCode(),targetPatient.getClassCode(),errorMessage + " -> Class Code");
+        }
     }
 
     private void assignedEntityComparison(AssignedEntity sourceAssignedEntity, AssignedEntity targetAssignedEntity, String errorMessage) {
+        if (sourceAssignedEntity != null && targetAssignedEntity != null) {
+            //realm code
+            compareRealmCodes(sourceAssignedEntity.getRealmCodes(),targetAssignedEntity.getRealmCodes(),errorMessage + " -> Realm Codes");
+
+            //typeID
+            typeIDComparison(sourceAssignedEntity.getTypeId(),targetAssignedEntity.getTypeId(),errorMessage + " -> Type ID");
+
+            //ids
+            compareIDs(sourceAssignedEntity.getIds(),targetAssignedEntity.getIds(),errorMessage + " -> IDs");
+
+            //code
+            compareCode(sourceAssignedEntity.getCode(),targetAssignedEntity.getCode(),errorMessage + " -> Code");
+
+            //addr
+            compareAddr(sourceAssignedEntity.getAddrs(),targetAssignedEntity.getAddrs(),errorMessage + " -> Addr");
+
+            //telecom
+            compareTelcom(sourceAssignedEntity.getTelecoms(),targetAssignedEntity.getTelecoms(),errorMessage + " -> telecom");
+
+            //assignedPerson - Person
+            personComparison(sourceAssignedEntity.getAssignedPerson(),targetAssignedEntity.getAssignedPerson(),errorMessage + " -> Assigned Person");
+
+            //representedOrganiztions - Organization
+            organizationsComparison(sourceAssignedEntity.getRepresentedOrganizations(),targetAssignedEntity.getRepresentedOrganizations(),errorMessage + " -> Represented Organization");
+
+            //nullFlavor
+            compareNullFlavor(sourceAssignedEntity.getNullFlavor(),targetAssignedEntity.getNullFlavor(),errorMessage + " -> Null Flavor");
+
+            //classCode
+            compareClassCode(sourceAssignedEntity.getClassCode(),targetAssignedEntity.getClassCode(),errorMessage + " -> Class Code");
+        }
     }
 
     private void assignedCustodianComparison(AssignedCustodian sourceAssignedCustodian, AssignedCustodian targetAssignedCustodian, String errorMessage) {
+        if (sourceAssignedCustodian != null && targetAssignedCustodian != null) {
+            //realm code
+            compareRealmCodes(sourceAssignedCustodian.getRealmCodes(),targetAssignedCustodian.getRealmCodes(),errorMessage + " -> Realm Codes");
+
+            //typeID
+            typeIDComparison(sourceAssignedCustodian.getTypeId(),targetAssignedCustodian.getTypeId(),errorMessage + " -> Type ID");
+
+            //templateID
+            compareTemplateID(sourceAssignedCustodian.getTemplateIds(),targetAssignedCustodian.getTemplateIds(),errorMessage + " -> Template IDs");
+
+            //representedCustodianOrganization - CustodianOrganization
+            custodianOrganizationComparison(sourceAssignedCustodian.getRepresentedCustodianOrganization(),targetAssignedCustodian.getRepresentedCustodianOrganization(),errorMessage + " -> Represented Custodian Organization");
+
+            //nullFlavor
+            compareNullFlavor(sourceAssignedCustodian.getNullFlavor(),targetClinicalDocument.getNullFlavor(),errorMessage + " -> Null Flavor");
+
+            //classCode
+            compareClassCode(sourceAssignedCustodian.getClassCode(),targetAssignedCustodian.getClassCode(),errorMessage + " -> Class Code");
+        }
     }
 
     private void associatedEntityComparison(AssociatedEntity sourceAssignedEntity, AssociatedEntity targetAssignedEntity, String errorMessage) {
+        if (sourceAssignedEntity != null && targetAssignedEntity != null) {
+            //realm code
+            compareRealmCodes(sourceAssignedEntity.getRealmCodes(),targetAssignedEntity.getRealmCodes(),errorMessage + " -> Realm Codes");
+
+            //typeID
+            typeIDComparison(sourceAssignedEntity.getTypeId(),targetAssignedEntity.getTypeId(),errorMessage + " -> Type ID");
+
+            //template ID
+            compareTemplateID(sourceAssignedEntity.getTemplateIds(),targetAssignedEntity.getTemplateIds(),errorMessage + " -> Template IDs");
+
+            //id
+            compareIDs(sourceAssignedEntity.getTemplateIds(),targetAssignedEntity.getTemplateIds(),errorMessage + " -> IDs");
+
+            //code
+            compareCode(sourceAssignedEntity.getCode(),targetAssignedEntity.getCode(),errorMessage + " -> Code");
+
+            //addr
+            compareAddr(sourceAssignedEntity.getAddrs(),targetAssignedEntity.getAddrs(),errorMessage + " -> Addr");
+
+            //telecom
+            compareTelcom(sourceAssignedEntity.getTelecoms(),targetAssignedEntity.getTelecoms(),errorMessage + " -> Telecoms");
+
+            //associatedPerson - Person
+            personComparison(sourceAssignedEntity.getAssociatedPerson(),targetAssignedEntity.getAssociatedPerson(),errorMessage + " -> Associated Person");
+
+            //scopingOrganization - Organization
+            organizationComparison(sourceAssignedEntity.getScopingOrganization(),targetAssignedEntity.getScopingOrganization(),errorMessage + " -> Scoping Organization");
+
+            //nullFlavor
+            compareNullFlavor(sourceAssignedEntity.getNullFlavor(),targetAssignedEntity.getNullFlavor(),errorMessage + " -> Null Flavor");
+
+            //classCode
+            compareClassCode(sourceAssignedEntity.getClassCode(),targetAssignedEntity.getClassCode(),errorMessage + " -> Class Code");
+        }
     }
 
     private void serviceEventComparison(ServiceEvent sourceServiceEvent, ServiceEvent targetServiceEvent, String errorMessage) {
+        if (sourceServiceEvent != null && targetServiceEvent != null) {
+            //realm code
+            compareRealmCodes(sourceServiceEvent.getRealmCodes(),targetServiceEvent.getRealmCodes(),errorMessage + " -> Realm Codes");
+
+            //typeID
+            typeIDComparison(sourceServiceEvent.getTypeId(),targetServiceEvent.getTypeId(),errorMessage + " -> Type ID");
+
+            //templateID
+            compareTemplateID(sourceServiceEvent.getTemplateIds(),targetServiceEvent.getTemplateIds(),errorMessage + " -> Template ID");
+
+            //id
+            compareIDs(sourceServiceEvent.getIds(),targetServiceEvent.getIds(),errorMessage + " -> IDs");
+
+            //code
+            compareCode(sourceServiceEvent.getCode(),targetServiceEvent.getCode(),errorMessage + " -> Code");
+
+            //effective Time
+            compareEffectiveTime(sourceServiceEvent.getEffectiveTime(),targetServiceEvent.getEffectiveTime(),errorMessage + " -> Effective Time");
+
+            //performer - performer1
+            performersComparison(sourceServiceEvent.getPerformers(),targetServiceEvent.getPerformers(),errorMessage + " -> Performers");
+
+            //null flavor
+            compareNullFlavor(sourceServiceEvent.getNullFlavor(),targetServiceEvent.getNullFlavor(),errorMessage + " -> NullFlavor");
+
+            //class code
+            compareClassCode(sourceServiceEvent.getClassCode(),targetServiceEvent.getClassCode(),errorMessage + " -> Class Code");
+
+            //moodCode
+            compareMoodCode(sourceServiceEvent.getMoodCode(),targetServiceEvent.getMoodCode(),errorMessage + " -> Mood Code");
+        }
     }
 
     private void nonXMLBodyComparison(NonXMLBody sourceNonXMLBody, NonXMLBody targetNonXMLBody, String errorMessage) {
+        if (sourceNonXMLBody != null && targetNonXMLBody != null) {
+            //realmCode
+            compareRealmCodes(sourceNonXMLBody.getRealmCodes(),targetNonXMLBody.getRealmCodes(),errorMessage + " -> Non XML Body Comparison");
+
+            //typeID
+            typeIDComparison(sourceNonXMLBody.getTypeId(),targetNonXMLBody.getTypeId(),errorMessage + " -> type ID");
+
+            //templateID
+            compareTemplateID(sourceNonXMLBody.getTemplateIds(),targetNonXMLBody.getTemplateIds(),errorMessage + " -> Template ID");
+
+            //text
+            compareText(sourceNonXMLBody.getText(),targetNonXMLBody.getText(),errorMessage + " -> Text");
+
+            //confidentialityCode
+            compareConfidentialityCode(sourceNonXMLBody.getConfidentialityCode(),targetNonXMLBody.getConfidentialityCode(),errorMessage + " -> Confidentiality Code");
+
+            //langaugeCode
+            compareLanguageCode(sourceNonXMLBody.getLanguageCode(),targetNonXMLBody.getLanguageCode(),errorMessage + " -> Language Code");
+
+            //null flavor
+            compareNullFlavor(sourceNonXMLBody.getNullFlavor(),targetNonXMLBody.getNullFlavor(),errorMessage + " -> Null Flavor");
+
+            //classCode
+            compareClassCode(sourceNonXMLBody.getClassCode(),targetNonXMLBody.getClassCode(),errorMessage + " -> Class Code");
+
+            //moodCode
+            compareMoodCode(sourceNonXMLBody.getMoodCode(),targetNonXMLBody.getMoodCode(),errorMessage + " -> Mood Code");
+        }
     }
 
     private void structuredBodyComparison(StructuredBody sourceStructuredBody, StructuredBody targetStructuredBody, String errorMessage) {
+        if (sourceStructuredBody != null && targetStructuredBody != null) {
+            //realmCode
+            compareRealmCodes(sourceStructuredBody.getRealmCodes(),targetStructuredBody.getRealmCodes(),errorMessage + " -> Realm Codes");
+
+            //typeID
+            typeIDComparison(sourceStructuredBody.getTypeId(),targetStructuredBody.getTypeId(),errorMessage + " -> TypeID");
+
+            //templateID
+            compareTemplateID(sourceStructuredBody.getTemplateIds(),targetStructuredBody.getTemplateIds(),errorMessage + " -> template ID");
+
+            //confidentiality Code
+            compareConfidentialityCode(sourceStructuredBody.getConfidentialityCode(),targetStructuredBody.getConfidentialityCode(),errorMessage + " -> Confidentiality Code");
+
+            //language Code
+            compareLanguageCode(sourceStructuredBody.getLanguageCode(),targetStructuredBody.getLanguageCode(),errorMessage + " -> Language Code");
+
+            //component - Component 3
+            component3Comparison(sourceStructuredBody.getComponents(),targetStructuredBody.getComponents(),errorMessage + " -> Component");
+
+            //null Flavor
+            compareNullFlavor(sourceStructuredBody.getNullFlavor(),targetStructuredBody.getNullFlavor(),errorMessage + " -> Null Flavor");
+
+            //class Code
+            compareClassCode(sourceStructuredBody.getClassCode(),targetStructuredBody.getClassCode(),errorMessage + " -> Class Code");
+
+            //moodCode
+            compareMoodCode(sourceStructuredBody.getMoodCode(),targetStructuredBody.getMoodCode(),errorMessage + " -> Mood Code");
+        }
     }
+
+    private void relatedEntityComparison(RelatedEntity sourceRelatedEntity, RelatedEntity targetRelatedEntity, String errorMessage) {
+        if (sourceRelatedEntity != null && targetRelatedEntity != null) {
+            //realmCode
+            compareRealmCodes(sourceRelatedEntity.getRealmCodes(),targetRelatedEntity.getRealmCodes(),errorMessage + " -> Realm Codes");
+
+            //typeID
+            typeIDComparison(sourceRelatedEntity.getTypeId(),targetRelatedEntity.getTypeId(),errorMessage + " -> TypeID");
+
+            //templateID
+            compareTemplateID(sourceRelatedEntity.getTemplateIds(),targetRelatedEntity.getTemplateIds(),errorMessage + " -> template IDs");
+
+            //code
+            compareCode(sourceRelatedEntity.getCode(),targetRelatedEntity.getCode(),errorMessage + " -> Code");
+
+            //addr
+            compareAddr(sourceRelatedEntity.getAddrs(),targetRelatedEntity.getAddrs(),errorMessage + " -> Addrs");
+
+            //telecom
+            compareTelcom(sourceRelatedEntity.getTelecoms(),targetRelatedEntity.getTelecoms(),errorMessage + " -> Telecoms");
+
+            //affectiveTime
+            compareEffectiveTime(sourceRelatedEntity.getEffectiveTime(),targetRelatedEntity.getEffectiveTime(),errorMessage + " -> Effective Time");
+
+            //relatedPerson - Person
+            personComparison(sourceRelatedEntity.getRelatedPerson(),targetRelatedEntity.getRelatedPerson(),errorMessage + " -> Related Person");
+
+            //nullFlavor
+            compareNullFlavor(sourceRelatedEntity.getNullFlavor(),targetRelatedEntity.getNullFlavor(),errorMessage + " -> Null Flavor");
+
+            //classCode
+            compareClassCode(sourceRelatedEntity.getClassCode(),targetRelatedEntity.getClassCode(),errorMessage + " -> Class Code");
+        }
+    }
+
+    private void organizationComparison(Organization sourceOrganization, Organization targetOrganization, String errorMessage) {
+    }
+
+    private void organizationsComparison(EList<Organization> sourceOrganization, EList<Organization> targetOrganization, String errorMessage) {
+    }
+
+    private void personComparison(Person sourcePerson, Person targetPerson, String errorMessage) {
+    }
+
+    private void authorizingDeviceComparison(AuthoringDevice sourceAuthorizingDevice, AuthoringDevice targetAuthorizingDevice, String errorMessage) {
+    }
+
+    private void informationRecipientComparison(EList<InformationRecipient> source, EList<InformationRecipient> target, String errorMessage) {
+    }
+
+    private void inFulfillmentOfComparison(EList<InFulfillmentOf> source, EList<InFulfillmentOf> target, String errorMessage) {
+    }
+
+    private void relatedDocumentsComparison(EList<RelatedDocument> source, EList<RelatedDocument> target, String errorMessage) {
+    }
+
+    private void authorizationsComparison(EList<Authorization> source, EList<Authorization> target, String errorMessage) {
+    }
+
+    private void componentOfComparison(Component1 source, Component1 targer, String errorMessage) {
+    }
+
+    private void guardiansComparison(EList<Guardian> source, EList<Guardian> target, String errorMessage) {
+    }
+
+    private void birthplaceComparison(Birthplace source, Birthplace target, String errorMessage) {
+    }
+
+    private void languageCommunicationsComparison(EList<LanguageCommunication> source, EList<LanguageCommunication> target, String errorMessage) {
+    }
+
+    private void custodianOrganizationComparison(CustodianOrganization source, CustodianOrganization target, String errorMessage) {
+    }
+
+    private void performersComparison(EList<Performer1> source, EList<Performer1> target, String errorMessage) {
+    }
+
+    private void authenticatorComparison(EList<Authenticator> source, EList<Authenticator> target, String errorMessage) {
+    }
+
+    private void component3Comparison(EList<Component3> source, EList<Component3> target, String errorMessage) {
+    }
+
+
+
+
+
+
+
+
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     //non complex type comparison Methods
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     private void compareRealmCodes(EList<CS> source, EList<CS> target, String errorMessage) {
-
+        int count = 0;
+        int max = Math.max(source.size(),target.size());
         for (int i=0; i<source.size(); i++) {
             for (int j=0; j<target.size(); j++) {
-                if (!(Objects.equals(source.get(i).getCode(),target.get(0).getCode())
+                if (Objects.equals(source.get(i).getCode(),target.get(j).getCode())
                         && Objects.equals(source.get(i).getNullFlavor().getLiteral(),target.get(j).getNullFlavor().getLiteral())
                         && Objects.equals(source.get(i).getCodeSystem(),target.get(j).getCodeSystem())
                         && Objects.equals(source.get(i).getCodeSystemName(),target.get(j).getCodeSystemName())
                         && Objects.equals(source.get(i).getCodeSystemVersion(),target.get(j).getCodeSystemVersion())
-                        && Objects.equals(source.get(i).getDisplayName(),target.get(j).getDisplayName())
-                ) )
+                        && Objects.equals(source.get(i).getDisplayName(),target.get(j).getDisplayName()))
                 {
-                    comparisonResult.addMessage("RealmCode Comparison Error in" + errorMessage);
+                    count++;
                 }
             }
+        }
+
+        if (count == 0 && max != 0) {
+            comparisonResult.addMessage("RealmCode error in " + errorMessage + "/n");
+        } else if (count < max) {
+            comparisonResult.addMessage("Potential RealmCode error in " + errorMessage + "/n");
         }
     }
 
     private void compareTemplateID(EList<II> source, EList<II> target, String errorMessage) {
+        int count = 0;
+        int max = Math.max(source.size(),target.size());
         for (int i = 0; i < source.size(); i++) {
             for (int j = 0; j < target.size(); j++) {
-                if (!(Objects.equals(source.get(i).getNullFlavor(), target.get(j).getNullFlavor())
+                if (Objects.equals(source.get(i).getNullFlavor(), target.get(j).getNullFlavor())
                         && Objects.equals(source.get(i).getRoot(), target.get(j).getRoot())
                         && Objects.equals(source.get(i).getExtension(), target.get(j).getExtension())
-                        && Objects.equals(source.get(i).getAssigningAuthorityName(), target.get(j).getAssigningAuthorityName()))) {
-                    comparisonResult.addMessage("Potential templateID error in " + errorMessage);
+                        && Objects.equals(source.get(i).getAssigningAuthorityName(), target.get(j).getAssigningAuthorityName())) {
+                    count++;
                 }
             }
+        }
+
+        if (count == 0 && max != 0) {
+            comparisonResult.addMessage("templateID error in " + errorMessage + "/n");
+        } else if (count < max) {
+            comparisonResult.addMessage("Potential templateID error in " + errorMessage + "/n");
         }
     }
 
     private void compareIDs(EList<II> source, EList<II> target, String errorMessage) {
+        int count = 0;
+        int max = Math.max(source.size(),target.size());
         for (int i = 0; i < source.size(); i++) {
             for (int j = 0; j < target.size(); j++) {
-                if (!(Objects.equals(source.get(i).getNullFlavor(), target.get(j).getNullFlavor())
-                        && Objects.equals(source.get(i).getRoot(), target.get(j).getRoot())
-                        && Objects.equals(source.get(i).getExtension(), target.get(j).getExtension())
-                        && Objects.equals(source.get(i).getAssigningAuthorityName(), target.get(j).getAssigningAuthorityName()))) {
-                    comparisonResult.addMessage("Potential IDs error in " + errorMessage);
+                if (source.get(i) != null && target.get(j) != null) { ///////////////////////////////////////////////////////////////////////////why is this needed? size is 1 but everything is null
+                    if (Objects.equals(source.get(i).getNullFlavor(), target.get(j).getNullFlavor())
+                            && Objects.equals(source.get(i).getRoot(), target.get(j).getRoot())
+                            && Objects.equals(source.get(i).getExtension(), target.get(j).getExtension())
+                            && Objects.equals(source.get(i).getAssigningAuthorityName(), target.get(j).getAssigningAuthorityName())) {
+                        count++;
+                    }
+                } else {
+                    count = max;
                 }
             }
+        }
+
+        if (count == 0 && max != 0) {
+            comparisonResult.addMessage("ID error in " + errorMessage + "/n");
+        } else if (count < max) {
+            comparisonResult.addMessage("Potential ID error in " + errorMessage + "/n");
         }
     }
 
     private void compareAddr(EList<AD> source, EList<AD> target, String errorMessage) {
+        int count = 0;
+        int max = Math.max(source.size(),target.size());
         for (int i = 0; i < source.size(); i++) {
             for (int j = 0; j < target.size(); j++) {
-                if (!(Objects.equals(source.get(i).getNullFlavor(), target.get(j).getNullFlavor())
-                        && Objects.equals(source.get(i).getText(), target.get(j).getText()))) {
-                    comparisonResult.addMessage("Potential addrs error in " + errorMessage);
+                if (Objects.equals(source.get(i).getNullFlavor(), target.get(j).getNullFlavor())
+                        && Objects.equals(source.get(i).getText(), target.get(j).getText())) {
+                    count++;
                 }
             }
         }
 
+        if (count == 0 && max != 0) {
+            comparisonResult.addMessage("Addr error in " + errorMessage + "/n");
+        } else if (count < max) {
+            comparisonResult.addMessage("Potential Addr error in " + errorMessage + "/n");
+        }
     }
 
     private void compareTelcom(EList<TEL> source, EList<TEL> target, String errorMessage) {
+        int count = 0;
+        int max = Math.max(source.size(),target.size());
         for (int i = 0; i < source.size(); i++) {
             for (int j = 0; j < target.size(); j++) {
-                if (!(Objects.equals(source.get(i).getNullFlavor(), target.get(j).getNullFlavor())
-                        && Objects.equals(source.get(i).getValue(), target.get(j).getValue()))) {
-                    comparisonResult.addMessage("Potential telecoms error in " + errorMessage);
+                if (Objects.equals(source.get(i).getNullFlavor(), target.get(j).getNullFlavor())
+                        && Objects.equals(source.get(i).getValue(), target.get(j).getValue())) {
+                    count++;
                 }
+            }
+        }
+
+        if (count == 0 && max != 0) {
+            comparisonResult.addMessage("Telecom error in " + errorMessage + "/n");
+        } else if (count < max) {
+            comparisonResult.addMessage("Potential telecom error in " + errorMessage + "/n");
+        }
+    }
+
+    private void compareNames(EList<PN> source, EList<PN> target, String errorMessage) {
+        int count = 0;
+        int max = Math.max(source.size(),target.size());
+        for (int i=0; i<source.size();i++) {
+            for (int j=0; j<target.size();j++) {
+                if(Objects.equals(source.get(i).getText(),target.get(j).getText()) && Objects.equals(source.get(i).getNullFlavor(),target.get(j).getNullFlavor()))
+                {
+                    count++;
+                }
+            }
+        }
+
+        if (count == 0 && max != 0) {
+            comparisonResult.addMessage("Names error in " + errorMessage + "/n");
+        } else if (count < max) {
+            comparisonResult.addMessage("Potential Names error in " + errorMessage + "/n");
+        }
+    }
+
+    private void compareID(II source, II target, String errorMessage) {
+        if (source != null && target != null) {
+            if ( ! (Objects.equals(source.getAssigningAuthorityName(),target.getAssigningAuthorityName())
+                    && Objects.equals(source.getExtension(),target.getExtension())
+                    && Objects.equals(source.getRoot(),target.getRoot())
+                    && Objects.equals(source.getNullFlavor(),target.getNullFlavor())))
+            {
+                comparisonResult.addMessage("IDs Comparison error in " + errorMessage + "/n");
             }
         }
     }
 
     private void compareNullFlavor(NullFlavor source, NullFlavor target, String errorMessage) {
-        if (!(Objects.equals(source.getLiteral(), target.getLiteral()))) {
-            comparisonResult.addMessage("Null Flavor error in " + errorMessage);
+        if (source != null && target != null) {
+            if (!(Objects.equals(source.getLiteral(), target.getLiteral()))) {
+                comparisonResult.addMessage("Null Flavor error in " + errorMessage + "/n");
+            }
         }
     }
 
     private void compareClassCode(RoleClass source, RoleClass target, String errorMessage) {
-        if (!(Objects.equals(source.getLiteral(), target.getLiteral())
-                && Objects.equals(source.getName(), target.getName())
-                && Objects.equals(source.getValue(), target.getValue()))) {
-            comparisonResult.addMessage("Class Code error in " + errorMessage);
+        if (source != null && target != null) {
+            if (!(Objects.equals(source.getLiteral(), target.getLiteral())
+                    && Objects.equals(source.getName(), target.getName())
+                    && Objects.equals(source.getValue(), target.getValue()))) {
+                comparisonResult.addMessage("Class Code error in " + errorMessage + "/n");
+            }
         }
     }
 
+    private void compareClassCode(ActClassRoot source, ActClassRoot target, String errorMessage) {
+        if (source != null && target != null) {
+            if (!(Objects.equals(source.getLiteral(), target.getLiteral())
+                    && Objects.equals(source.getName(), target.getName())
+                    && Objects.equals(source.getValue(), target.getValue()))) {
+                comparisonResult.addMessage("Class Code error in " + errorMessage + "/n");
+            }
+        }
+    }
+
+
+    private void compareClassCode(RoleClassAssociative source, RoleClassAssociative target, String errorMessage) {
+        if (source != null && target != null) {
+            if (!(Objects.equals(source.getLiteral(), target.getLiteral())
+                    && Objects.equals(source.getName(), target.getName())
+                    && Objects.equals(source.getValue(), target.getValue()))) {
+                comparisonResult.addMessage("Class Code error in " + errorMessage + "/n");
+            }
+        }
+    }
+
+    private void compareClassCode(ActClinicalDocument source, ActClinicalDocument target, String errorMessage) {
+        if (source != null && target != null) {
+            if (!(Objects.equals(source.getLiteral(), target.getLiteral())
+                    && Objects.equals(source.getName(), target.getName())
+                    && Objects.equals(source.getValue(), target.getValue()))) {
+                comparisonResult.addMessage("classCode error in " + errorMessage + "/n");
+            }
+        }
+    }
+
+    private void compareClassCode(RoleClassAssignedEntity source, RoleClassAssignedEntity target, String errorMessage) {
+        if (source != null && target != null) {
+            if (!(Objects.equals(source.getLiteral(), target.getLiteral())
+                    && Objects.equals(source.getName(), target.getName())
+                    && Objects.equals(source.getValue(), target.getValue()))) {
+                comparisonResult.addMessage("classCode error in " + errorMessage + "/n");
+            }
+        }
+    }
+    private void compareClassCode(EntityClass source,EntityClass target,String errorMessage) {
+        if (source != null && target != null) {
+            if (!(Objects.equals(source.getLiteral(), target.getLiteral())
+                    && Objects.equals(source.getName(), target.getName())
+                    && Objects.equals(source.getValue(), target.getValue()))) {
+                comparisonResult.addMessage("classCode error in " + errorMessage + "/n");
+            }
+        }
+    }
+    private void compareClassCode(ActClass source,ActClass target,String errorMessage) {
+        if (source != null && target != null) {
+            if (!(Objects.equals(source.getLiteral(), target.getLiteral())
+                    && Objects.equals(source.getName(), target.getName())
+                    && Objects.equals(source.getValue(), target.getValue()))) {
+                comparisonResult.addMessage("classCode error in " + errorMessage + "/n");
+            }
+        }
+    }
+    private void compareClassCode(RoleClassMutualRelationship source,RoleClassMutualRelationship target,String errorMessage) {
+        if (source != null && target != null) {
+            if (!(Objects.equals(source.getLiteral(), target.getLiteral())
+                    && Objects.equals(source.getName(), target.getName())
+                    && Objects.equals(source.getValue(), target.getValue()))) {
+                comparisonResult.addMessage("classCode error in " + errorMessage + "/n");
+            }
+        }
+    }
+
+    private void compareCode(CE source, CE target, String errorMessage) {
+        if (source != null && target != null) {
+            if (!(Objects.equals(source.getCode(), target.getCode())
+                    && Objects.equals(source.getNullFlavor().getLiteral(), target.getNullFlavor().getLiteral())
+                    && Objects.equals(source.getCodeSystem(), target.getCodeSystem())
+                    && Objects.equals(source.getCodeSystemName(), target.getCodeSystemName())
+                    && Objects.equals(source.getCodeSystemVersion(), target.getCodeSystemVersion())
+                    && Objects.equals(source.getDisplayName(), target.getDisplayName()))) {
+                comparisonResult.addMessage("Code Comparison error in " + errorMessage + "/n");
+            }
+        }
+    }
+
+    private void compareConfidentialityCode(CE source, CE target, String errorMessage) {
+        if (source != null && target != null) {
+            if (!(Objects.equals(source.getCode(), target.getCode())
+                    && Objects.equals(source.getNullFlavor().getLiteral(), target.getNullFlavor().getLiteral())
+                    && Objects.equals(source.getCodeSystem(), target.getCodeSystem())
+                    && Objects.equals(source.getCodeSystemName(), target.getCodeSystemName())
+                    && Objects.equals(source.getCodeSystemVersion(), target.getCodeSystemVersion())
+                    && Objects.equals(source.getDisplayName(), target.getDisplayName()))) {
+                comparisonResult.addMessage("Confidentiality Code Comparison error in " + errorMessage + "/n");
+            }
+        }
+    }
+
+    private void compareLanguageCode(CE source, CE target, String errorMessage) {
+        if (source != null && target != null) {
+            if (!(Objects.equals(source.getCode(), target.getCode())
+                    && Objects.equals(source.getNullFlavor().getLiteral(), target.getNullFlavor().getLiteral())
+                    && Objects.equals(source.getCodeSystem(), target.getCodeSystem())
+                    && Objects.equals(source.getCodeSystemName(), target.getCodeSystemName())
+                    && Objects.equals(source.getCodeSystemVersion(), target.getCodeSystemVersion())
+                    && Objects.equals(source.getDisplayName(), target.getDisplayName()))) {
+                comparisonResult.addMessage("Language Code Comparison error in " + errorMessage + "/n");
+            }
+        }
+    }
+
+    private void compareTitle(ST source, ST target, String errorMessage) {
+        if (source != null && target != null) {
+            if (!(Objects.equals(source.getText(), target.getText()))) {
+                comparisonResult.addMessage("Title Comparison error in " + errorMessage + "/n");
+            }
+        }
+    }
+
+    private void compareEffectiveTime(TS source, TS target, String errorMessage) {
+        if (source != null && target != null) {
+            if (!(Objects.equals(source.getValue(), target.getValue())
+                    && Objects.equals(source.getNullFlavor(), target.getNullFlavor()))) {
+                comparisonResult.addMessage("Effective Time error in " + errorMessage + "/n");
+            }
+        }
+    }
+
+    private void compareTypeCode(ParticipationType source, ParticipationType target, String errorMessage) {
+        if (source != null && target != null) {
+            if (!(Objects.equals(source.getLiteral(), target.getLiteral())
+                    && Objects.equals(source.getName(), target.getName())
+                    && Objects.equals(source.getValue(), target.getValue()))) {
+                comparisonResult.addMessage("Type Code error in " + errorMessage + "/n");
+            }
+        }
+    }
+
+    private void compareTypeCode(ActRelationshipHasComponent source, ActRelationshipHasComponent target, String errorMessage) {
+        if (source != null && target != null) {
+            if (!(Objects.equals(source.getLiteral(), target.getLiteral())
+                    && Objects.equals(source.getName(), target.getName())
+                    && Objects.equals(source.getValue(), target.getValue()))) {
+                comparisonResult.addMessage("Type Code error in " + errorMessage + "/n");
+            }
+        }
+    }
+
+    private void compareTypeCode(ActRelationshipType source, ActRelationshipType target, String errorMessage) {
+        if (source != null && target != null) {
+            if (!(Objects.equals(source.getLiteral(), target.getLiteral())
+                    && Objects.equals(source.getName(), target.getName())
+                    && Objects.equals(source.getValue(), target.getValue()))) {
+                comparisonResult.addMessage("Type Code error in " + errorMessage + "/n");
+            }
+        }
+    }
+
+    private void compareContextControlCode(ContextControl source, ContextControl target, String errorMessage) {
+        if (source != null && target != null) {
+            if (!(Objects.equals(source.getLiteral(), target.getLiteral())
+                    && Objects.equals(source.getName(), target.getName())
+                    && Objects.equals(source.getValue(), source.getValue()))) {
+                comparisonResult.addMessage("Context Control Code error in " + errorMessage + "/n");
+            }
+        }
+    }
+
+    private void compareTime(TS source, TS target, String errorMessage) {
+        if (source != null && target != null) {
+            if (!(Objects.equals(source.getValue(), target.getValue())
+                    && Objects.equals(source.getNullFlavor(), target.getNullFlavor()))) {
+                comparisonResult.addMessage("Time error in " + errorMessage + "/n");
+            }
+        }
+    }
+
+    private void compareSignatureCode(CS source, CS target, String errorMessage) {
+        if (source != null && target != null) {
+            if (!(Objects.equals(source.getCode(), target.getCode())
+                    && Objects.equals(source.getNullFlavor().getLiteral(), target.getNullFlavor().getLiteral())
+                    && Objects.equals(source.getCodeSystem(), target.getCodeSystem())
+                    && Objects.equals(source.getCodeSystemName(), target.getCodeSystemName())
+                    && Objects.equals(source.getCodeSystemVersion(), target.getCodeSystemVersion())
+                    && Objects.equals(source.getDisplayName(), target.getDisplayName())))
+            {
+                comparisonResult.addMessage("Signature Code Comparison Error in" + errorMessage + "/n");
+            }
+        }
+    }
+
+    private void compareFunctionCode(CE source, CE target, String errorMessage) {
+        if (source != null && target != null) {
+            if (!(Objects.equals(source.getCode(), target.getCode())
+                    && Objects.equals(source.getNullFlavor().getLiteral(), target.getNullFlavor().getLiteral())
+                    && Objects.equals(source.getCodeSystem(), target.getCodeSystem())
+                    && Objects.equals(source.getCodeSystemName(), target.getCodeSystemName())
+                    && Objects.equals(source.getCodeSystemVersion(), target.getCodeSystemVersion())
+                    && Objects.equals(source.getDisplayName(), target.getDisplayName()))) {
+                comparisonResult.addMessage("Function Code Comparison error in " + errorMessage + "/n");
+            }
+        }
+    }
+
+    private void compareContextConductionInd(Boolean source, Boolean target, String errorMessage) {
+        if (source != null && target != null) {
+            if (!(Objects.equals(source, target))) {
+                comparisonResult.addMessage("Context Conduction Ind error in " + errorMessage + "/n");
+            }
+        }
+    }
+
+    private void compareSetID(II source, II target, String errorMessage) {
+        if (source != null && target != null) {
+            if (!(Objects.equals(source.getAssigningAuthorityName(),target.getAssigningAuthorityName())
+                    && Objects.equals(source.getExtension(),target.getExtension())
+                    && Objects.equals(source.getRoot(),target.getRoot())))
+            {
+                comparisonResult.addMessage("Set ID error in " + errorMessage + "/n");
+            }
+        }
+    }
+
+    private void compareVersionNumber(INT source, INT target, String errorMessage) {
+        if (source != null && target != null) {
+            if (!(Objects.equals(source.getValue(),target.getValue()))) {
+                comparisonResult.addMessage("Version Number error in " + errorMessage + "/n");
+            }
+
+        }
+    }
+
+    private void compareCopyTime(TS source, TS target, String errorMessage) {
+        if (source != null && target != null) {
+            if (!(Objects.equals(source.getValue(),target.getValue()) && Objects.equals(source.getNullFlavor(),target.getValue()))) {
+                comparisonResult.addMessage("Copy Time error in " + errorMessage + "/n");
+            }
+        }
+
+    }
+
+    private void compareAdministrativeGenderCode(CE source, CE target, String errorMessage) {
+        if (source != null && target != null) {
+            if (!(Objects.equals(source.getCode(),target.getCode()) && Objects.equals(source.getNullFlavor(),target.getNullFlavor())))
+            {
+                comparisonResult.addMessage("Administrative Gender Code error in " + errorMessage + "/n");
+            }
+        }
+    }
+
+    private void compareBirthTime(TS source, TS target, String errorMessage) {
+        if (source != null && target != null) {
+            if (!(Objects.equals(source.getValue(),target.getValue())
+                    && Objects.equals(source.getNullFlavor(),target.getNullFlavor())))
+            {
+                comparisonResult.addMessage("Birth Time error in " + errorMessage + "/n");
+            }
+        }
+    }
+
+    private void compareMaritalStatusCode(CE source, CE target, String errorMessage) {
+        if (source != null && target != null) {
+            if (!(Objects.equals(source.getCode(),target.getCode())
+                    && Objects.equals(source.getNullFlavor(),target.getNullFlavor())))
+            {
+                comparisonResult.addMessage("Marital Status Code error in " + errorMessage + "/n");
+            }
+        }
+    }
+
+    private void compareReligiosAffiliationCode(CE source, CE target, String errorMessage) {
+        if (source != null && target != null) {
+            if (!(Objects.equals(source.getNullFlavor(),target.getNullFlavor())
+                    && Objects.equals(source.getCode(),target.getCode())
+                    && Objects.equals(source.getCodeSystem(),target.getCodeSystem())
+                    && Objects.equals(source.getCodeSystemName(),target.getCodeSystemName())
+                    && Objects.equals(source.getCodeSystemVersion(),target.getCodeSystemVersion())
+                    && Objects.equals(source.getDisplayName(),target.getDisplayName())))
+            {
+                comparisonResult.addMessage("Religious Affiliation Code error in " + errorMessage + "/n");
+            }
+        }
+    }
+
+    private void compareRaceCode(CE source, CE target, String errorMessage) {
+        if (source != null && target != null) {
+            if (!(Objects.equals(source.getNullFlavor(),target.getNullFlavor())
+                    && Objects.equals(source.getCode(),target.getCode())
+                    && Objects.equals(source.getCodeSystem(),target.getCodeSystem())
+                    && Objects.equals(source.getCodeSystemName(),target.getCodeSystemName())
+                    && Objects.equals(source.getCodeSystemVersion(),target.getCodeSystemVersion())
+                    && Objects.equals(source.getDisplayName(),target.getDisplayName())))
+            {
+                comparisonResult.addMessage("Race Code error in " + errorMessage + "/n");
+            }
+        }
+    }
+
+    private void compareEthnicGroupCode(CE source, CE target, String errorMessage) {
+        if (source != null && target != null) {
+            if (!(Objects.equals(source.getNullFlavor(),target.getNullFlavor())
+                    && Objects.equals(source.getCode(),target.getCode())
+                    && Objects.equals(source.getCodeSystem(),target.getCodeSystem())
+                    && Objects.equals(source.getCodeSystemName(),target.getCodeSystemName())
+                    && Objects.equals(source.getCodeSystemVersion(),target.getCodeSystemVersion())
+                    && Objects.equals(source.getDisplayName(),target.getDisplayName())))
+            {
+                comparisonResult.addMessage("Ethnic Group Code error in " + errorMessage + "/n");
+            }
+        }
+    }
+
+    private void compareMoodCode(ActMood source, ActMood target, String errorMessage) {
+        if (source != null && target != null) {
+            if (!(Objects.equals(source.getLiteral(),target.getLiteral())
+                    && Objects.equals(source.getName(),target.getName())
+                    && Objects.equals(source.getValue(),target.getValue())))
+            {
+                comparisonResult.addMessage("Mood Code error in " + errorMessage + "/n");
+            }
+        }
+    }
+
+    private void compareText(ED source, ED target, String errorMessage) {
+        if (source != null && target != null) {
+            if (!(Objects.equals(source.getLanguage(), target.getLanguage())
+                    && Objects.equals(source.getText(), target.getText())
+                    && Objects.equals(source.getMediaType(), target.getMediaType())
+                    && Objects.equals(source.getNullFlavor(), target.getNullFlavor()))) {
+                comparisonResult.addMessage("Text error in " + errorMessage + "/n");
+            }
+        }
+    }
 }
