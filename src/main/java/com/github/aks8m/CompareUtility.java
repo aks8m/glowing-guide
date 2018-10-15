@@ -1,30 +1,60 @@
 package com.github.aks8m;
 
+import javafx.application.Platform;
+import javafx.beans.property.SimpleListProperty;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
+import javafx.concurrent.Task;
 import org.eclipse.emf.common.util.EList;
 import org.openhealthtools.mdht.uml.cda.*;
 import org.openhealthtools.mdht.uml.hl7.datatypes.*;
 import org.openhealthtools.mdht.uml.hl7.vocab.*;
 
-import java.awt.*;
-import java.lang.annotation.Target;
 import java.util.Objects;
+import java.util.concurrent.atomic.AtomicInteger;
 
-public class ComparerUtility {
+public class CompareUtility extends Task<Void> {
 
-    private final ClinicalDocument sourceClinicalDocument;
-    private final ClinicalDocument targetClinicalDocument;
-    private final ComparisonResult comparisonResult;
+    private ClinicalDocument sourceClinicalDocument;
+    private ClinicalDocument targetClinicalDocument;
+    private ComparisonResult comparisonResult;
+    private final ObservableList<Mismatch> comparisonResultObservableList = FXCollections.observableArrayList();
+    private final SimpleListProperty<Mismatch> comparisonResults =  new SimpleListProperty<>(comparisonResultObservableList);
 
-    public ComparerUtility(ClinicalDocument sourceClinicalDocument, ClinicalDocument targetClinicalDocument) {
+    public void setSourceClinicalDocument(ClinicalDocument sourceClinicalDocument) {
         this.sourceClinicalDocument = sourceClinicalDocument;
-        this.targetClinicalDocument = targetClinicalDocument;
-        this.comparisonResult = new ComparisonResult();
     }
 
-    public void compare() {
+    public void setTargetClinicalDocument(ClinicalDocument targetClinicalDocument) {
+        this.targetClinicalDocument = targetClinicalDocument;
+    }
 
-        clinicalDocumentComparison("Clinical Document");
+    @Override
+    protected Void call() throws Exception {
 
+        this.comparisonResult = new ComparisonResult();
+
+//        clinicalDocumentComparison("Clinical Document");
+
+        final AtomicInteger i = new AtomicInteger(0);
+        for(; i.get() < 10; i.getAndIncrement()){
+            Platform.runLater(() -> comparisonResultObservableList.add(new Mismatch("Mismatch #" + i + " found!!!")));
+            try {
+                Thread.sleep(5000);
+            }catch (InterruptedException ieE){
+                ieE.printStackTrace();
+            }
+
+        }
+        return null;
+    }
+
+    public ObservableList<Mismatch> getComparisonResults() {
+        return comparisonResults.get();
+    }
+
+    public SimpleListProperty<Mismatch> comparisonResultsProperty() {
+        return comparisonResults;
     }
 
     private void clinicalDocumentComparison(String errorMessage){

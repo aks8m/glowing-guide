@@ -3,20 +3,20 @@
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ListView?>
-<?import javafx.scene.control.TextArea?>
+<?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.Pane?>
 
 <AnchorPane prefHeight="589.0" prefWidth="953.0" xmlns="http://javafx.com/javafx/10.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.github.aks8m.AppController">
    <children>
-      <Pane prefHeight="589.0" prefWidth="953.0">
+      <Pane prefHeight="694.0" prefWidth="953.0">
          <children>
-            <ListView fx:id="comparisonOutput" layoutX="26.0" layoutY="145.0" prefHeight="434.0" prefWidth="903.0" />
-            <Label layoutX="69.0" layoutY="14.0" text="Source" />
-            <Label layoutX="430.0" layoutY="14.0" text="Target" />
-            <TextArea fx:id="sourceTextArea" layoutX="69.0" layoutY="41.0" prefHeight="94.0" prefWidth="343.0" />
-            <TextArea fx:id="targetTextArea" layoutX="430.0" layoutY="41.0" prefHeight="94.0" prefWidth="343.0" />
-            <Button fx:id="compareButton" layoutX="802.0" layoutY="68.0" mnemonicParsing="false" prefHeight="41.0" prefWidth="112.0" text="Compare" />
+            <ListView fx:id="comparisonOutput" layoutX="26.0" layoutY="84.0" prefHeight="598.0" prefWidth="903.0" />
+            <Label layoutX="26.0" layoutY="14.0" text="Source" />
+            <Label layoutX="27.0" layoutY="51.0" text="Target" />
+            <Button fx:id="comparisonButton" layoutX="817.0" layoutY="11.0" mnemonicParsing="false" onAction="#runComparison" prefHeight="62.0" prefWidth="112.0" text="Compare" textOverrun="CLIP" />
+            <TextField fx:id="sourceTextField" layoutX="81.0" layoutY="9.0" prefHeight="27.0" prefWidth="726.0" promptText="Enter Source C-CDA XML File Path" />
+            <TextField fx:id="targetTextField" layoutX="81.0" layoutY="46.0" prefHeight="27.0" prefWidth="726.0" promptText="Enter Target C-CDA XML File Path" />
          </children>
       </Pane>
    </children>

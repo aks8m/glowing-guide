@@ -8,4 +8,5 @@ public class ComparisonResult {
     public void addMessage(String comparison_error) {
         resultString += comparison_error;
     }
+
 }
