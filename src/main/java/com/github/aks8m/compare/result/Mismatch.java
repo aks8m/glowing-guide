@@ -1,4 +1,4 @@
-package com.github.aks8m;
+package com.github.aks8m.compare.result;
 
 public class Mismatch {
 

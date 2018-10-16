@@ -1,6 +1,7 @@
-package com.github.aks8m;
+package com.github.aks8m.compare;
 
-import javafx.application.Platform;
+import com.github.aks8m.compare.result.ComparisonResult;
+import com.github.aks8m.compare.result.Mismatch;
 import javafx.beans.property.SimpleListProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -10,143 +11,169 @@ import org.openhealthtools.mdht.uml.cda.*;
 import org.openhealthtools.mdht.uml.hl7.datatypes.*;
 import org.openhealthtools.mdht.uml.hl7.vocab.*;
 
+import java.util.List;
 import java.util.Objects;
-import java.util.concurrent.atomic.AtomicInteger;
 
-public class CompareUtility extends Task<Void> {
+public class MDHTCompareService extends CompareService{
 
     private ClinicalDocument sourceClinicalDocument;
     private ClinicalDocument targetClinicalDocument;
     private ComparisonResult comparisonResult;
     private final ObservableList<Mismatch> comparisonResultObservableList = FXCollections.observableArrayList();
     private final SimpleListProperty<Mismatch> comparisonResults =  new SimpleListProperty<>(comparisonResultObservableList);
+    private final double PROGRESS_MAX_VALUE = 100.00;
+    private final double PROGRESS_INCREMENT = 3.44;
+    private double currentProgressValue = 0.0;
 
-    public void setSourceClinicalDocument(ClinicalDocument sourceClinicalDocument) {
+
+    public MDHTCompareService(ClinicalDocument sourceClinicalDocument, ClinicalDocument targetClinicalDocument) {
         this.sourceClinicalDocument = sourceClinicalDocument;
+        this.targetClinicalDocument = targetClinicalDocument;
+
+
     }
 
-    public void setTargetClinicalDocument(ClinicalDocument targetClinicalDocument) {
-        this.targetClinicalDocument = targetClinicalDocument;
+    private double computeProgress(double incrementValue){
+        if (this.currentProgressValue == 0) {
+            this.currentProgressValue = incrementValue;
+        } else {
+            this.currentProgressValue += incrementValue;
+        }
+        return this.currentProgressValue;
     }
+
+
 
     @Override
-    protected Void call() throws Exception {
+    protected Task<List<ComparisonResult>> createTask() {
 
-        this.comparisonResult = new ComparisonResult();
+        return new Task<List<ComparisonResult>>() {
+            @Override
+            protected List<ComparisonResult> call() throws Exception {
 
-//        clinicalDocumentComparison("Clinical Document");
+                //compare RealmCode
+                compareRealmCodes(sourceClinicalDocument.getRealmCodes(),targetClinicalDocument.getRealmCodes(), " -> Realm Codes");
+                updateProgress(computeProgress(PROGRESS_INCREMENT), PROGRESS_MAX_VALUE);
 
-        final AtomicInteger i = new AtomicInteger(0);
-        for(; i.get() < 10; i.getAndIncrement()){
-            Platform.runLater(() -> comparisonResultObservableList.add(new Mismatch("Mismatch #" + i + " found!!!")));
-            try {
-                Thread.sleep(5000);
-            }catch (InterruptedException ieE){
-                ieE.printStackTrace();
+                //compare typeID
+                typeIDComparison(sourceClinicalDocument.getTypeId(), targetClinicalDocument.getTypeId()," -> typeIDs");
+                updateProgress(computeProgress(PROGRESS_INCREMENT), PROGRESS_MAX_VALUE);
+
+
+                //compare templateID
+                compareTemplateID(sourceClinicalDocument.getTemplateIds(), targetClinicalDocument.getTemplateIds()," -> Template IDS");
+                updateProgress(computeProgress(PROGRESS_INCREMENT), PROGRESS_MAX_VALUE);
+
+                //compareID
+                compareID(sourceClinicalDocument.getId(),targetClinicalDocument.getId()," -> ID");
+                updateProgress(computeProgress(PROGRESS_INCREMENT), PROGRESS_MAX_VALUE);
+
+                //compare code
+                compareCode(sourceClinicalDocument.getCode(),targetClinicalDocument.getCode()," -> Code");
+                updateProgress(computeProgress(PROGRESS_INCREMENT), PROGRESS_MAX_VALUE);
+
+                //compare title
+                compareTitle(sourceClinicalDocument.getTitle(),targetClinicalDocument.getTitle(), " -> Title");
+                updateProgress(computeProgress(PROGRESS_INCREMENT), PROGRESS_MAX_VALUE);
+
+                //compare Effective Time
+                compareEffectiveTime(sourceClinicalDocument.getEffectiveTime(),targetClinicalDocument.getEffectiveTime()," -> Effective Time");
+                updateProgress(computeProgress(PROGRESS_INCREMENT), PROGRESS_MAX_VALUE);
+
+                //compare confidentiality code
+                compareConfidentialityCode(sourceClinicalDocument.getConfidentialityCode(),targetClinicalDocument.getConfidentialityCode(), " -> Confidentiality Code");
+                updateProgress(computeProgress(PROGRESS_INCREMENT), PROGRESS_MAX_VALUE);
+
+                //compare language code
+                compareLanguageCode(sourceClinicalDocument.getLanguageCode(),targetClinicalDocument.getLanguageCode()," -> Language Code");
+                updateProgress(computeProgress(PROGRESS_INCREMENT), PROGRESS_MAX_VALUE);
+
+                //compare setID
+                compareSetID(sourceClinicalDocument.getSetId(),targetClinicalDocument.getSetId()," -> Set ID");
+                updateProgress(computeProgress(PROGRESS_INCREMENT), PROGRESS_MAX_VALUE);
+
+                //compare versionNumber
+                compareVersionNumber(sourceClinicalDocument.getVersionNumber(),targetClinicalDocument.getVersionNumber()," -> Version Number");
+                updateProgress(computeProgress(PROGRESS_INCREMENT), PROGRESS_MAX_VALUE);
+
+                //compare copyTime
+                compareCopyTime(sourceClinicalDocument.getCopyTime(),targetClinicalDocument.getCopyTime()," -> Copy Time");
+                updateProgress(computeProgress(PROGRESS_INCREMENT), PROGRESS_MAX_VALUE);
+
+                //compare Record Targets
+                recordTargetsComparison(sourceClinicalDocument.getRecordTargets(), targetClinicalDocument.getRecordTargets(), " -> Record Targets");
+                updateProgress(computeProgress(PROGRESS_INCREMENT), PROGRESS_MAX_VALUE);
+
+                //compare Authors
+                authorsComparison(sourceClinicalDocument.getAuthors(), targetClinicalDocument.getAuthors(), " -> Authors");
+                updateProgress(computeProgress(PROGRESS_INCREMENT), PROGRESS_MAX_VALUE);
+
+                //compare Data Enterer
+                dataEntererComparison(sourceClinicalDocument.getDataEnterer(), targetClinicalDocument.getDataEnterer()," -> Data Enterer");
+                updateProgress(computeProgress(PROGRESS_INCREMENT), PROGRESS_MAX_VALUE);
+
+                //compare informants
+                informantsComparison(sourceClinicalDocument.getInformants(), targetClinicalDocument.getInformants(), " -> Informant");
+                updateProgress(computeProgress(PROGRESS_INCREMENT), PROGRESS_MAX_VALUE);
+
+                //compare custodian
+                custodianComparison(sourceClinicalDocument.getCustodian(), targetClinicalDocument.getCustodian()," -> Custodian");
+                updateProgress(computeProgress(PROGRESS_INCREMENT), PROGRESS_MAX_VALUE);
+
+                //compare information recipient
+                informationRecipientComparison(sourceClinicalDocument.getInformationRecipients(),targetClinicalDocument.getInformationRecipients()," -> Information Recipients");
+                updateProgress(computeProgress(PROGRESS_INCREMENT), PROGRESS_MAX_VALUE);
+
+                //compare Legal Authenticator
+                legalAuthenticatorComparison(sourceClinicalDocument.getLegalAuthenticator(), targetClinicalDocument.getLegalAuthenticator()," -> Legal Authenticator");
+                updateProgress(computeProgress(PROGRESS_INCREMENT), PROGRESS_MAX_VALUE);
+
+                //compare Authenticators
+                authenticatorComparison(sourceClinicalDocument.getAuthenticators(),targetClinicalDocument.getAuthenticators()," -> Authenticators");
+                updateProgress(computeProgress(PROGRESS_INCREMENT), PROGRESS_MAX_VALUE);
+
+                //compare participants
+                participants1Comparison(sourceClinicalDocument.getParticipants(),targetClinicalDocument.getParticipants()," -> Participants");
+                updateProgress(computeProgress(PROGRESS_INCREMENT), PROGRESS_MAX_VALUE);
+
+                //compare getInFulfullmentOf
+                inFulfillmentOfComparison(sourceClinicalDocument.getInFulfillmentOfs(),targetClinicalDocument.getInFulfillmentOfs()," -> In Fullfillments Of");
+                updateProgress(computeProgress(PROGRESS_INCREMENT), PROGRESS_MAX_VALUE);
+
+                //compare documentationOf
+                documentationOfsComparison(sourceClinicalDocument.getDocumentationOfs(), targetClinicalDocument.getDocumentationOfs(), " -> Documentation");
+                updateProgress(computeProgress(PROGRESS_INCREMENT), PROGRESS_MAX_VALUE);
+
+                //compare getRelatedDocuments
+                relatedDocumentsComparison(sourceClinicalDocument.getRelatedDocuments(),targetClinicalDocument.getRelatedDocuments(), " -> Related Documents");
+                updateProgress(computeProgress(PROGRESS_INCREMENT), PROGRESS_MAX_VALUE);
+
+                //compare Authorizations
+                authorizationsComparison(sourceClinicalDocument.getAuthorizations(),targetClinicalDocument.getAuthorizations()," -> Authorizations");
+                updateProgress(computeProgress(PROGRESS_INCREMENT), PROGRESS_MAX_VALUE);
+
+                //compare componentOf
+                componentOfComparison(sourceClinicalDocument.getComponentOf(),targetClinicalDocument.getComponentOf()," -> componentOf");
+                updateProgress(computeProgress(PROGRESS_INCREMENT), PROGRESS_MAX_VALUE);
+
+                //compare component
+                component2Comparison(sourceClinicalDocument.getComponent(), targetClinicalDocument.getComponent()," -> Component");
+                updateProgress(computeProgress(PROGRESS_INCREMENT), PROGRESS_MAX_VALUE);
+
+                //compare nullFlavor
+                compareNullFlavor(sourceClinicalDocument.getNullFlavor(),targetClinicalDocument.getNullFlavor()," -> NullFlavor");
+                updateProgress(computeProgress(PROGRESS_INCREMENT), PROGRESS_MAX_VALUE);
+
+                //compare classCode
+                compareClassCode(sourceClinicalDocument.getClassCode(),targetClinicalDocument.getClassCode()," -> Class Code");
+                updateProgress(computeProgress(PROGRESS_INCREMENT), PROGRESS_MAX_VALUE);
+
+
+
+                return null;
             }
-
-        }
-        return null;
+        };
     }
-
-    public ObservableList<Mismatch> getComparisonResults() {
-        return comparisonResults.get();
-    }
-
-    public SimpleListProperty<Mismatch> comparisonResultsProperty() {
-        return comparisonResults;
-    }
-
-    private void clinicalDocumentComparison(String errorMessage){
-
-        //compare RealmCode
-        compareRealmCodes(sourceClinicalDocument.getRealmCodes(),targetClinicalDocument.getRealmCodes(),errorMessage + " -> Realm Codes");
-
-        //compare typeID
-        typeIDComparison(sourceClinicalDocument.getTypeId(), targetClinicalDocument.getTypeId(),errorMessage + " -> typeIDs");
-
-        //compare templateID
-        compareTemplateID(sourceClinicalDocument.getTemplateIds(), targetClinicalDocument.getTemplateIds(),errorMessage + " -> Template IDS");
-
-        //compareID
-        compareID(sourceClinicalDocument.getId(),targetClinicalDocument.getId(),errorMessage + " -> ID");
-
-        //compare code
-        compareCode(sourceClinicalDocument.getCode(),targetClinicalDocument.getCode(),errorMessage + " -> Code");
-
-        //compare title
-        compareTitle(sourceClinicalDocument.getTitle(),targetClinicalDocument.getTitle(), errorMessage + " -> Title");
-
-        //compare Effective Time
-        compareEffectiveTime(sourceClinicalDocument.getEffectiveTime(),targetClinicalDocument.getEffectiveTime(),errorMessage + " -> Effective Time");
-
-        //compare confidentiality code
-        compareConfidentialityCode(sourceClinicalDocument.getConfidentialityCode(),targetClinicalDocument.getConfidentialityCode(), errorMessage + " -> Confidentiality Code");
-
-        //compare language code
-        compareLanguageCode(sourceClinicalDocument.getLanguageCode(),targetClinicalDocument.getLanguageCode(),errorMessage + " -> Language Code");
-
-        //compare setID
-        compareSetID(sourceClinicalDocument.getSetId(),targetClinicalDocument.getSetId(),errorMessage + " -> Set ID");
-
-        //compare versionNumber
-        compareVersionNumber(sourceClinicalDocument.getVersionNumber(),targetClinicalDocument.getVersionNumber(),errorMessage + " -> Version Number");
-
-        //compare copyTime
-        compareCopyTime(sourceClinicalDocument.getCopyTime(),targetClinicalDocument.getCopyTime(),errorMessage + " -> Copy Time");
-
-        //compare Record Targets
-        recordTargetsComparison(sourceClinicalDocument.getRecordTargets(), targetClinicalDocument.getRecordTargets(), errorMessage + " -> Record Targets");
-
-        //compare Authors
-        authorsComparison(sourceClinicalDocument.getAuthors(), targetClinicalDocument.getAuthors(), errorMessage + " -> Authors");
-
-        //compare Data Enterer
-        dataEntererComparison(sourceClinicalDocument.getDataEnterer(), targetClinicalDocument.getDataEnterer(),errorMessage + " -> Data Enterer");
-
-        //compare informants
-        informantsComparison(sourceClinicalDocument.getInformants(), targetClinicalDocument.getInformants(), errorMessage + " -> Informant");
-
-        //compare custodian
-        custodianComparison(sourceClinicalDocument.getCustodian(), targetClinicalDocument.getCustodian(),errorMessage + " -> Custodian");
-
-        //compare information recipient
-        informationRecipientComparison(sourceClinicalDocument.getInformationRecipients(),targetClinicalDocument.getInformationRecipients(),errorMessage + " -> Information Recipients");
-
-        //compare Legal Authenticator
-        legalAuthenticatorComparison(sourceClinicalDocument.getLegalAuthenticator(), targetClinicalDocument.getLegalAuthenticator(),errorMessage + " -> Legal Authenticator");
-
-        //compare Authenticators
-        authenticatorComparison(sourceClinicalDocument.getAuthenticators(),targetClinicalDocument.getAuthenticators(),errorMessage + " -> Authenticators");
-
-        //compare participants
-        participants1Comparison(sourceClinicalDocument.getParticipants(),targetClinicalDocument.getParticipants(),errorMessage + " -> Participants");
-
-        //compare getInFulfullmentOf
-        inFulfillmentOfComparison(sourceClinicalDocument.getInFulfillmentOfs(),targetClinicalDocument.getInFulfillmentOfs(),errorMessage + " -> In Fullfillments Of");
-
-        //compare documentationOf
-        documentationOfsComparison(sourceClinicalDocument.getDocumentationOfs(), targetClinicalDocument.getDocumentationOfs(), errorMessage + " -> Documentation");
-
-        //compare getRelatedDocuments
-        relatedDocumentsComparison(sourceClinicalDocument.getRelatedDocuments(),targetClinicalDocument.getRelatedDocuments(), errorMessage + " -> Related Documents");
-
-        //compare Authorizations
-        authorizationsComparison(sourceClinicalDocument.getAuthorizations(),targetClinicalDocument.getAuthorizations(),errorMessage + " -> Authorizations");
-
-        //compare componentOf
-        componentOfComparison(sourceClinicalDocument.getComponentOf(),targetClinicalDocument.getComponentOf(),errorMessage + " -> componentOf");
-
-        //compare component
-        component2Comparison(sourceClinicalDocument.getComponent(), targetClinicalDocument.getComponent(),errorMessage + " -> Component");
-
-        //compare nullFlavor
-        compareNullFlavor(sourceClinicalDocument.getNullFlavor(),targetClinicalDocument.getNullFlavor(),errorMessage + " -> NullFlavor");
-
-        //compare classCode
-        compareClassCode(sourceClinicalDocument.getClassCode(),targetClinicalDocument.getClassCode(),errorMessage + " -> Class Code");
-    }
-
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     //complex type comparison Methods
@@ -601,7 +628,7 @@ public class CompareUtility extends Task<Void> {
             }
             //classCode
             if (!compareClassCode(sourceAssignedCustodian.getClassCode(),targetAssignedCustodian.getClassCode(),errorMessage + " -> Class Code")) {
-               errorExists = true;
+                errorExists = true;
             }
             return !errorExists;
         }
@@ -5381,8 +5408,8 @@ public class CompareUtility extends Task<Void> {
                 }
             }
             if (source.getValue() != target.getValue()) {
-                    matched = false;
-                    comparisonResult.addMessage("Value error in " + errorMessage + "\n");
+                matched = false;
+                comparisonResult.addMessage("Value error in " + errorMessage + "\n");
             }
         } else if ((source != null && target == null) || (source == null && target != null)) {
             comparisonResult.addMessage("Class Code error in " + errorMessage + "\n");
@@ -7791,6 +7818,5 @@ public class CompareUtility extends Task<Void> {
         }
         return matched;
     }
-
 
 }
