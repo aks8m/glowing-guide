@@ -6775,9 +6775,11 @@ public class MDHTCompareService extends CompareService{
     private boolean compareVersionNumber(INT source, INT target, String errorMessage) {
         boolean matched = true;
         if (source != null && target != null) {
-            if (source.getValue() != target.getValue()) {
-                matched = false;
-                comparisonResult.addMessage("Value error in " + errorMessage + "\n");
+            if (source.getValue() != null && target.getValue() != null) {
+                if (source.getValue().equals(target.getValue())) {
+                    matched = false;
+                    comparisonResult.addMessage("Value error in " + errorMessage + "\n");
+                }
             }
         } else if ((source != null && target == null) || (source == null && target != null)) {
             comparisonResult.addMessage("Version Number error in " + errorMessage + "\n");
@@ -6795,9 +6797,11 @@ public class MDHTCompareService extends CompareService{
                     matched = false;
                 }
             }
-            if (source.getValue() != target.getValue()) {
-                matched = false;
-                comparisonResult.addMessage("Value error in " + errorMessage + "\n");
+            if (source.getValue() != null && target.getValue() != null) {
+                if (source.getValue().equals(target.getValue())) {
+                    matched = false;
+                    comparisonResult.addMessage("Value error in " + errorMessage + "\n");
+                }
             }
         }  else if ((source != null && target == null) || (source == null && target != null)) {
             comparisonResult.addMessage("Copy Time error in " + errorMessage + "\n");
@@ -6837,9 +6841,11 @@ public class MDHTCompareService extends CompareService{
                     matched = false;
                 }
             }
-            if (source.getValue() != target.getValue()) {
-                matched = false;
-                comparisonResult.addMessage("Value Number error in " + errorMessage + "\n");
+            if (source.getValue() != null && target.getValue() != null) {
+                if (source.getValue().equals(target.getValue())) {
+                    matched = false;
+                    comparisonResult.addMessage("Value Number error in " + errorMessage + "\n");
+                }
             }
         }  else if ((source != null && target == null) || (source == null && target != null)) {
             comparisonResult.addMessage("Birth Time error in " + errorMessage + "\n");
@@ -7374,7 +7380,7 @@ public class MDHTCompareService extends CompareService{
                 }
             }
             if (source.getHigh() != null && target.getHigh() != null) {
-                if (source.getHigh().getInclusive() != null && target.getHigh().getValue() != null) {
+                if (source.getHigh().getValue() != null && target.getHigh().getValue() != null) {
                     if (!source.getHigh().getValue().equals(target.getHigh().getValue())) {
                         matched = false;
                         comparisonResult.addMessage("High error in " + errorMessage + "\n");
@@ -7608,7 +7614,7 @@ public class MDHTCompareService extends CompareService{
                 }
             }
             if (source.getHigh() != null && target.getHigh() != null) {
-                if (source.getHigh().getInclusive() != null && target.getHigh().getValue() != null) {
+                if (source.getHigh().getValue() != null && target.getHigh().getValue() != null) {
                     if (!source.getHigh().getValue().equals(target.getHigh().getValue())) {
                         matched = false;
                         comparisonResult.addMessage("High error in " + errorMessage + "\n");
@@ -7777,7 +7783,7 @@ public class MDHTCompareService extends CompareService{
                 }
             }
             if (source.getHigh() != null && target.getHigh() != null) {
-                if (source.getHigh().getInclusive() != null && target.getHigh().getValue() != null) {
+                if (source.getHigh().getValue() != null && target.getHigh().getValue() != null) {
                     if (!source.getHigh().getValue().equals(target.getHigh().getValue())) {
                         matched = false;
                         comparisonResult.addMessage("High error in " + errorMessage + "\n");
