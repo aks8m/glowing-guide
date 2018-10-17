@@ -4237,8 +4237,8 @@ public class MDHTCompareService extends CompareService{
         for (int i=0; i<sourceValue.size(); i++) {
             int targetMatches = 0;
             for (int j=0; j<targetValue.size(); j++) {
-                if (Objects.equals(sourceValue.get(i).getValue(),targetValue.get(j).getValue())
-                        && Objects.equals(sourceValue.get(i).getNullFlavor().getLiteral(),targetValue.get(j).getNullFlavor().getLiteral())
+                if (sourceValue.get(i).getValue().equals(targetValue.get(j).getValue())
+                        && sourceValue.get(i).getNullFlavor().getLiteral().equals(targetValue.get(j).getNullFlavor().getLiteral())
                         && (sourceValue.get(i).isUnsorted() == targetValue.get(j).isUnsorted()))
                 {
                     targetMatches++;
