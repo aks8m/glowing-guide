@@ -2,6 +2,7 @@ package com.github.aks8m.compare;
 
 import com.github.aks8m.compare.report.ComparisonReport;
 import com.github.aks8m.compare.report.result.Mismatch;
+import com.github.aks8m.compare.report.result.Warning;
 import javafx.concurrent.Task;
 import org.eclipse.emf.common.util.EList;
 import org.openhealthtools.mdht.uml.cda.*;
@@ -162,6 +163,7 @@ public class MDHTCompareService extends CompareService{
                 compareClassCode(sourceClinicalDocument.getClassCode(),targetClinicalDocument.getClassCode());
                 updateProgress(computeProgress(PROGRESS_INCREMENT), PROGRESS_MAX_VALUE);
 
+                System.out.println("");
                 return null;
             }
         };
@@ -175,20 +177,20 @@ public class MDHTCompareService extends CompareService{
         if (sourceTypeID != null && targetTypeID != null) {
             if (sourceTypeID.getRoot() != null && targetTypeID.getRoot() != null) {
                 if (!sourceTypeID.getRoot().equals(targetTypeID.getRoot())) {
-                    comparisonReport.addMismatch(new Mismatch("Root",sourceTypeID.getRoot(),targetTypeID.getRoot()));
+                    comparisonReport.addMismatch(new Mismatch(" Type ID: Root",sourceTypeID.getRoot(),targetTypeID.getRoot()));
                     matched = false;
                 }
             }
             if (sourceTypeID.getAssigningAuthorityName() != null && targetTypeID.getAssigningAuthorityName() != null) {
                 if (!sourceTypeID.getAssigningAuthorityName().equals(targetTypeID.getAssigningAuthorityName())) {
-                    comparisonReport.addMismatch(new Mismatch("Assigning Authority Name", sourceTypeID.getAssigningAuthorityName(), targetTypeID.getAssigningAuthorityName()));
+                    comparisonReport.addMismatch(new Mismatch(" Type ID: Assigning Authority Name", sourceTypeID.getAssigningAuthorityName(), targetTypeID.getAssigningAuthorityName()));
 
                     matched = false;
                 }
             }
             if (sourceTypeID.getExtension() != null && targetTypeID.getExtension() != null) {
                 if (!sourceTypeID.getExtension().equals(targetTypeID.getExtension())) {
-                    comparisonReport.addMismatch(new Mismatch("Extension", sourceTypeID.getExtension(), targetTypeID.getExtension()));
+                    comparisonReport.addMismatch(new Mismatch(" Type ID: Extension", sourceTypeID.getExtension(), targetTypeID.getExtension()));
 
                     matched = false;
                 }
@@ -4997,36 +4999,48 @@ public class MDHTCompareService extends CompareService{
                     if (!source.get(i).getCode().equals(target.get(j).getCode())) {
                         sourceTargetMismatch = true;
 //                        comparisonReport.addMessage("Code error source " + i + " in " + errorMessage + "\n");
+                        comparisonReport.addMismatch(new Mismatch(" Realm Codes: Code",source.get(i).getCode(),target.get(j).getCode()));
+
                     }
                 }
                 if (source.get(i).getNullFlavor().getLiteral() != null && target.get(j).getNullFlavor().getLiteral() != null) {
                     if (!source.get(i).getNullFlavor().getLiteral().equals(target.get(j).getNullFlavor().getLiteral())) {
                         sourceTargetMismatch = true;
 //                        comparisonReport.addMessage("Null Flavor error source " + i + " in " + errorMessage + "\n");
+                        comparisonReport.addMismatch(new Mismatch(" Realm Codes: Null Flavor Literal",source.get(i).getNullFlavor().getLiteral(),target.get(j).getNullFlavor().getLiteral()));
+
                     }
                 }
                 if (source.get(i).getCodeSystemName() != null && target.get(j).getCodeSystemName() != null) {
                     if (!source.get(i).getCodeSystemName().equals(target.get(j).getCodeSystemName())) {
                         sourceTargetMismatch = true;
 //                        comparisonReport.addMessage("Code System Name error source " + i + " in " + errorMessage + "\n");
+                        comparisonReport.addMismatch(new Mismatch(" Realm Codes: Code System Name",source.get(i).getCodeSystemName(),target.get(j).getCodeSystemName()));
+
                     }
                 }
                 if (source.get(i).getCodeSystem() != null && target.get(j).getCodeSystem() != null) {
                     if (!source.get(i).getCodeSystem().equals(target.get(j).getCodeSystem())) {
                         sourceTargetMismatch = true;
 //                        comparisonReport.addMessage("Code System error source " + i + " in " + errorMessage + "\n");
+                        comparisonReport.addMismatch(new Mismatch(" Realm Codes: Code System",source.get(i).getCodeSystem(),target.get(j).getCodeSystem()));
+
                     }
                 }
                 if (source.get(i).getCodeSystemVersion() != null && target.get(j).getCodeSystemVersion() != null) {
                     if (!source.get(i).getCodeSystemVersion().equals(target.get(j).getCodeSystemVersion())) {
                         sourceTargetMismatch = true;
 //                        comparisonReport.addMessage("Code System Version error source " + i + " in " + errorMessage + "\n");
+                        comparisonReport.addMismatch(new Mismatch(" Realm Codes: Code System Version",source.get(i).getCodeSystemVersion(),target.get(j).getCodeSystemVersion()));
+
                     }
                 }
                 if (source.get(i).getDisplayName() != null && target.get(j).getDisplayName() != null) {
                     if (!source.get(i).getDisplayName().equals(target.get(j).getDisplayName())) {
                         sourceTargetMismatch = true;
 //                        comparisonReport.addMessage("Display Name error source " + i + " in " + errorMessage + "\n");
+                        comparisonReport.addMismatch(new Mismatch(" Realm Codes: Display Name",source.get(i).getDisplayName(),target.get(j).getDisplayName()));
+
                     }
                 }
 
@@ -5039,6 +5053,8 @@ public class MDHTCompareService extends CompareService{
 //                comparisonReport.addMessage("Realm Codes Error source " + i + " in " + errorMessage + "\n");
             } else if (targetMatches>1) {
 //                comparisonReport.addMessage("Real Codes Warning source " + i + " has " + targetMatches + " in target in " + errorMessage + "\n");
+                comparisonReport.addWarning(new Warning(" Realm Codes: ",source.get(i).toString(),""));
+
             }
         }
         return !errorExists;
@@ -6200,10 +6216,14 @@ public class MDHTCompareService extends CompareService{
                 if (!source.getText().equals(target.getText())) {
                     matched = false;
 //                    comparisonReport.addMessage("Text error in " + errorMessage + "\n");
+                    comparisonReport.addMismatch(new Mismatch(" Title: Text",source.getText(),target.getText()));
+
                 }
             }
         }  else if ((source != null && target == null) || (source == null && target != null)) {
 //            comparisonReport.addMessage("Title Comparison error in " + errorMessage + "\n");
+            comparisonReport.addMismatch(new Mismatch("Title",source.getText(),target.getText()));
+
             return false;
         }
         return matched;
