@@ -30,10 +30,7 @@ public class AppController {
 
     @FXML
     void initialize() {
-
-        this.sourceTextField.setText("/Users/asills/devops/glowing-guide/HSEP_CCDACCDR1.1_AALAND_JAN_09122018.xml");
-        this.targetTextField.setText("/Users/asills/devops/glowing-guide/HSEP_CCDACCDR1.1_AALAND_JAN_09122018.xml");
-
+        
    }
 
    @FXML
@@ -48,6 +45,16 @@ public class AppController {
 
             this.compareService.start();
             this.compareProgressbar.progressProperty().bind(this.compareService.progressProperty());
+            this.compareService.stateProperty().addListener((observable, oldValue, newValue) -> {
+
+                switch (newValue){
+                    case SUCCEEDED:
+                        this.compareService.getValue().getMismatches().stream()
+                                .forEach(mismatch -> this.comparisonOutput.getItems().add(mismatch.toString()));
+                }
+            });
+
+
 
 
         }catch (Exception e){

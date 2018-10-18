@@ -30,4 +30,8 @@ public class ComparisonReport {
     public void addWarning(Warning warning){
         this.warnings.add(warning);
     }
+
+    public List<Mismatch> getMismatches() {
+        return mismatches;
+    }
 }

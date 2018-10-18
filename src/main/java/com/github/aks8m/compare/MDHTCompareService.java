@@ -9,8 +9,6 @@ import org.openhealthtools.mdht.uml.cda.*;
 import org.openhealthtools.mdht.uml.hl7.datatypes.*;
 import org.openhealthtools.mdht.uml.hl7.vocab.*;
 
-import java.util.List;
-
 public class MDHTCompareService extends CompareService{
 
     private ClinicalDocument sourceClinicalDocument;
@@ -163,8 +161,7 @@ public class MDHTCompareService extends CompareService{
                 compareClassCode(sourceClinicalDocument.getClassCode(),targetClinicalDocument.getClassCode());
                 updateProgress(computeProgress(PROGRESS_INCREMENT), PROGRESS_MAX_VALUE);
 
-                System.out.println("");
-                return null;
+                return comparisonReport;
             }
         };
     }
