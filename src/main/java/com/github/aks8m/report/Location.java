@@ -1,4 +1,4 @@
-package com.github.aks8m.compare.report;
+package com.github.aks8m.report;
 
 import java.util.Stack;
 
