@@ -2,9 +2,13 @@ package com.github.aks8m.report;
 
 import java.util.Stack;
 
-public class Location {
+public class ComparisonLocation {
 
-    private Stack<String> locationStack = new Stack<>();
+    private Stack<String> locationStack;
+
+    public ComparisonLocation() {
+        locationStack = new Stack<>();
+    }
 
     public void enter(String location){
         this.locationStack.push(location);

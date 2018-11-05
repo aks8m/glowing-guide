@@ -11,14 +11,18 @@ import java.io.FileNotFoundException;
 
 public class CompareEngineFactory {
 
-    public static CompareEngine CreateMDHTCompareService(String sourceFilePath, String targetFIlePath){
+    public static CompareEngine CreateMDHTCompareEngine(String sourceFilePath, String targetFilePath){
+
+
+        ClinicalDocument source = null;
+        ClinicalDocument target = null;
 
         try {
 
-            ClinicalDocument source = CDAUtil.load(new FileInputStream(sourceFilePath), (ValidationResult) null);
-            ClinicalDocument target = CDAUtil.load(new FileInputStream(targetFIlePath), (ValidationResult) null);
+            source = CDAUtil.load(new FileInputStream(sourceFilePath), (ValidationResult) null);
+            target = CDAUtil.load(new FileInputStream(targetFilePath), (ValidationResult) null);
 
-            PreCompareService preCompareService = new MDHTPreCompareService(source, target);
+            //PreCompareService preCompareService = new MDHTPreCompareService(source, target);
 
 
         }catch (FileNotFoundException fnfE){
@@ -27,9 +31,11 @@ public class CompareEngineFactory {
             e.printStackTrace();
         }
 
-        return null;
+//        return null;
 
-//        return new MDHTComparisonEngine(source,target);
+
+        return new MDHTComparisonEngine(source,target);
+//          return new MDHTPreCompareService(source,target);
     }
 
 }
