@@ -10,6 +10,10 @@ public class ComparisonLocation {
         locationStack = new Stack<>();
     }
 
+    public ComparisonLocation(ComparisonLocation sourceLocation) {
+        locationStack = (Stack<String>) sourceLocation.locationStack.clone();
+    }
+
     public void enter(String location){
         this.locationStack.push(location);
     }

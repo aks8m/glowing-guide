@@ -5,14 +5,16 @@ import java.util.List;
 
 public class ComparisonReport {
 
+    public boolean visited = false;
+
 //    private List<Match> matches;
 //    private List<Mismatch> mismatches;
 //    private List<Warning> warnings;
 //
 //    public ComparisonReport(){
-//        this.matches = new ArrayList<>();
-//        this.mismatches = new ArrayList<>();
-//        this.warnings = new ArrayList<>();
+//        this.matches = new ArrayList<Match>();
+//        this.mismatches = new ArrayList<Mismatch>();
+//        this.warnings = new ArrayList<Warning>();
 //    }
 //
 //    public void addMatch(Match match){

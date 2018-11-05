@@ -2,6 +2,7 @@ package com.github.aks8m;
 
 import com.github.aks8m.compare.engine.CompareEngineFactory;
 import com.github.aks8m.compare.engine.CompareEngine;
+import com.github.aks8m.compare.precompare.MDHTPreCompareService;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
@@ -35,27 +36,27 @@ public class AppController {
 
     @FXML
     void initialize() {
-
+        this.sourceTextField.setText("C:\\Users\\kmaulden\\Documents\\C-CDA Comparison Files\\xmlComparisons\\ErrorsThrown\\HSEP_IPOACKIES_QUENTIN_typeIDAndTitleError1.xml");
+        this.targetTextField.setText("C:\\Users\\kmaulden\\Documents\\C-CDA Comparison Files\\xmlComparisons\\ErrorsThrown\\HSEP_IPOACKIES_QUENTIN_typeIDAndTitleError2.xml");
    }
 
    @FXML
    public void runComparison(ActionEvent actionEvent){
 
         try{
-//            compareEngine = CompareEngineFactory.CreateMDHTCompareService(
-//                   );
-
-//            this.compareEngine.start();
+            compareEngine = CompareEngineFactory.CreateMDHTCompareEngine(this.sourceTextField.getText(),this.targetTextField.getText());
+            //preCompareService.start();
+            this.compareEngine.start();
 //            this.compareProgressbar.progressProperty().bind(this.compareEngine.progressProperty());
-//            this.compareEngine.stateProperty().addListener((observable, oldValue, newValue) -> {
-//
-//                switch (newValue){
-//                    case SUCCEEDED:
+            this.compareEngine.stateProperty().addListener((observable, oldValue, newValue) -> {
+
+                switch (newValue){
+                    case SUCCEEDED:
 //                        this.compareEngine.getValue().getMismatches().stream()
 //                                .forEach(mismatch -> this.comparisonOutput.getItems().add(mismatch.toString()));
-//                }
-//            });
-//
+                }
+        });
+
 
         }catch (Exception e){
             e.printStackTrace();

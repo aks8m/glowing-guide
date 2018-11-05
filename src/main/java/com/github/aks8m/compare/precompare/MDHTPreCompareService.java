@@ -2,21 +2,27 @@ package com.github.aks8m.compare.precompare;
 
 import com.github.aks8m.compare.Comparison;
 import com.github.aks8m.compare.engine.ComparisonUtility;
+import com.github.aks8m.report.ComparisonLocation;
+import com.github.aks8m.report.result.Result;
+import com.github.aks8m.report.result.ResultType;
 import javafx.concurrent.Task;
 import org.eclipse.emf.common.util.EList;
 import org.openhealthtools.mdht.uml.cda.*;
 import org.openhealthtools.mdht.uml.hl7.datatypes.*;
 import org.openhealthtools.mdht.uml.hl7.vocab.*;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.math.BigDecimal;
+import java.math.BigInteger;
+import java.util.*;
+import java.util.function.BiFunction;
 import java.util.stream.Collectors;
 
 public class MDHTPreCompareService extends PreCompareService {
 
     private ClinicalDocument sourceClinicalDocument;
     private ClinicalDocument targetClinicalDocument;
-    private final List<Comparison> comparisons = new ArrayList<>();
+    private List<Comparison> comparisons = new ArrayList<>();
+    private ComparisonLocation currentLocation = new ComparisonLocation();
 
     public MDHTPreCompareService(ClinicalDocument sourceClinicalDocument, ClinicalDocument targetClinicalDocument) {
         this.sourceClinicalDocument = sourceClinicalDocument;
@@ -33,21 +39,23 @@ public class MDHTPreCompareService extends PreCompareService {
             @Override
             protected List<Comparison> call() throws Exception {
 
-//                //compare RealmCode
-//                compareRealmCodes(sourceClinicalDocument.getRealmCodes(),targetClinicalDocument.getRealmCodes());
-//
-//                //compare typeID
-//                typeIDComparison(sourceClinicalDocument.getTypeId(), targetClinicalDocument.getTypeId());
-//
-//                //compare templateID
-//                compareTemplateID(sourceClinicalDocument.getTemplateIds(), targetClinicalDocument.getTemplateIds());
-//
-//                //compareID
-//                compareID(sourceClinicalDocument.getId(),targetClinicalDocument.getId());
-//
+                currentLocation.enter("Clinical Document");
+
+                //compare RealmCode
+                compareRealmCodes(sourceClinicalDocument.getRealmCodes(),targetClinicalDocument.getRealmCodes());
+
+                //compare typeID
+                typeIDComparison(sourceClinicalDocument.getTypeId(), targetClinicalDocument.getTypeId());
+
+                //compare templateID
+                compareTemplateID(sourceClinicalDocument.getTemplateIds(), targetClinicalDocument.getTemplateIds());
+
+                //compareID
+                compareID(sourceClinicalDocument.getId(),targetClinicalDocument.getId());
+
 //                //compare code
 //                compareCode(sourceClinicalDocument.getCode(),targetClinicalDocument.getCode());
-//
+
 //                //compare title
 //                compareTitle(sourceClinicalDocument.getTitle(),targetClinicalDocument.getTitle());
 //
@@ -120,6 +128,8 @@ public class MDHTPreCompareService extends PreCompareService {
 //                //compare classCode
 //                compareClassCode(sourceClinicalDocument.getClassCode(),targetClinicalDocument.getClassCode());
 
+                currentLocation.exit();
+
                 return comparisons;
             }
         };
@@ -128,115 +138,92 @@ public class MDHTPreCompareService extends PreCompareService {
 //    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //    //complex result comparison Methods
 //    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-//    private void typeIDComparison(InfrastructureRootTypeId sourceTypeID, InfrastructureRootTypeId targetTypeID) {
-//        if (sourceTypeID != null && targetTypeID != null) {
-//            comparisons.add(new Comparison<String, String>(
-//                            null,
-//                            ComparisonUtility.StringComparison(),
-//                            sourceTypeID.getRoot(),
-//                            targetTypeID.getRoot()));
-//            comparisons.add(new Comparison<String, String>(
-//                    null,
-//                    ComparisonUtility.StringComparison(),
-//                    sourceTypeID.getAssigningAuthorityName(),
-//                    targetTypeID.getAssigningAuthorityName()));
-//            comparisons.add(new Comparison<String, String>(
-//                    null, ComparisonUtility.StringComparison(),
-//                    sourceTypeID.getExtension(),
-//                    targetTypeID.getExtension()));
-//        }
-//    }
-//
-//    private void dataEntererComparison(DataEnterer sourceDataEnterer, DataEnterer targetDataEnterer) {
-//        if (sourceDataEnterer != null && targetDataEnterer != null) {
-//            //compare realm codes
-//            compareRealmCodes(sourceDataEnterer.getRealmCodes(),targetDataEnterer.getRealmCodes());
-//
-//            //compare typeID
-//            typeIDComparison(sourceDataEnterer.getTypeId(),targetDataEnterer.getTypeId());
-//
-//            //compare templateID
-//            compareTemplateID(sourceDataEnterer.getTemplateIds(), targetDataEnterer.getTemplateIds());
-//
-//            //compare time
-//            compareTime(sourceDataEnterer.getTime(),targetDataEnterer.getTime());
-//
-//            //compare assigned entity
-//            assignedEntityComparison(sourceDataEnterer.getAssignedEntity(),targetDataEnterer.getAssignedEntity());
-//
-//            //compare nullFlavor
-//            compareNullFlavor(sourceDataEnterer.getNullFlavor(),targetDataEnterer.getNullFlavor());
-//
-//            //compare typeCode
-//            compareTypeCode(sourceDataEnterer.getTypeCode(),targetDataEnterer.getTypeCode());
-//        }
-//    }
-//
-//    private void custodianComparison(Custodian sourceCustodian, Custodian targetCustodian) {
-//        if (sourceCustodian != null && targetCustodian != null) {
-//            //realm code
-//            compareRealmCodes(sourceCustodian.getRealmCodes(),targetCustodian.getRealmCodes());
-//
-//            //typeID
-//            typeIDComparison(sourceCustodian.getTypeId(),targetCustodian.getTypeId());
-//
-//            //templateID
-//            compareTemplateID(sourceCustodian.getTemplateIds(), targetCustodian.getTemplateIds());
-//
-//            //AssignedCustodian
-//            assignedCustodianComparison(sourceCustodian.getAssignedCustodian(),targetCustodian.getAssignedCustodian());
-//
-//            //nullFlavor
-//            compareNullFlavor(sourceCustodian.getNullFlavor(),targetCustodian.getNullFlavor());
-//
-//            //typeCode
-//            compareTypeCode(sourceCustodian.getTypeCode(),targetCustodian.getTypeCode());
-//        }
-//    }
-//
-//    private void legalAuthenticatorComparison(LegalAuthenticator sourceLegalAuthenticator, LegalAuthenticator targetLegalAuthenticator) {
-//        if (sourceLegalAuthenticator != null && targetLegalAuthenticator != null) {
-//            //realmCode
-//            compareRealmCodes(sourceLegalAuthenticator.getRealmCodes(),targetLegalAuthenticator.getRealmCodes());
-//
-//            //compare typeID
-//            typeIDComparison(sourceLegalAuthenticator.getTypeId(),targetLegalAuthenticator.getTypeId());
-//
-//            //compare templateID
-//            compareTemplateID(sourceLegalAuthenticator.getTemplateIds(), targetLegalAuthenticator.getTemplateIds());
-//
-//            //compare time
-//            compareTime(sourceLegalAuthenticator.getTime(),targetLegalAuthenticator.getTime());
-//
-//            //compare signatureCode
-//            compareSignatureCode(sourceLegalAuthenticator.getSignatureCode(),targetLegalAuthenticator.getSignatureCode());
-//
-//            //compare assignedEntity
-//            assignedEntityComparison(sourceLegalAuthenticator.getAssignedEntity(),targetLegalAuthenticator.getAssignedEntity());
-//
-//            //compare nullFlavor
-//            compareNullFlavor(sourceLegalAuthenticator.getNullFlavor(),targetLegalAuthenticator.getNullFlavor());
-//
-//            //compare typeCode
-//            compareTypeCode(sourceLegalAuthenticator.getTypeCode(),targetLegalAuthenticator.getTypeCode());
-//
-//            //compare contextControlCode
-//            compareContextControlCode(sourceLegalAuthenticator.getContextControlCode(),targetLegalAuthenticator.getContextControlCode());
-//        }
-//    }
-//
-//    private void component2Comparison(Component2 sourceComponent, Component2 targetComponent) {
-//        if (sourceComponent != null && targetComponent != null) {
-//            //realmCode
-//            compareRealmCodes(sourceComponent.getRealmCodes(),targetComponent.getRealmCodes());
-//
-//            //typeID
-//            typeIDComparison(sourceComponent.getTypeId(),targetComponent.getTypeId());
-//
-//            //templateID
-//            compareTemplateID(sourceComponent.getTemplateIds(), targetComponent.getTemplateIds());
-//
-//            //Choice - Non XML Body
+    private void typeIDComparison(InfrastructureRootTypeId sourceTypeID, InfrastructureRootTypeId targetTypeID) {
+        currentLocation.enter("Type ID");
+        if (sourceTypeID != null && targetTypeID != null) {
+            comparisons.add(new Comparison<String, String>(new ComparisonLocation(currentLocation), ComparisonUtility.StringComparison(), sourceTypeID.getRoot(), targetTypeID.getRoot()));
+            comparisons.add(new Comparison<String, String>(new ComparisonLocation(currentLocation), ComparisonUtility.StringComparison(), sourceTypeID.getAssigningAuthorityName(), targetTypeID.getAssigningAuthorityName()));
+            comparisons.add(new Comparison<String, String>(new ComparisonLocation(currentLocation), ComparisonUtility.StringComparison(), sourceTypeID.getExtension(), targetTypeID.getExtension()));
+        }
+        currentLocation.exit();
+    }
+
+    private void dataEntererComparison(DataEnterer sourceDataEnterer, DataEnterer targetDataEnterer) {
+        currentLocation.enter("Data Enterer");
+        if (sourceDataEnterer != null && targetDataEnterer != null) {
+            //compare realm codes
+            compareRealmCodes(sourceDataEnterer.getRealmCodes(),targetDataEnterer.getRealmCodes());
+            //compare typeID
+            typeIDComparison(sourceDataEnterer.getTypeId(),targetDataEnterer.getTypeId());
+            //compare templateID
+            compareTemplateID(sourceDataEnterer.getTemplateIds(), targetDataEnterer.getTemplateIds());
+            //compare time
+            compareTime(sourceDataEnterer.getTime(),targetDataEnterer.getTime());
+            //compare assigned entity
+            assignedEntityComparison(sourceDataEnterer.getAssignedEntity(),targetDataEnterer.getAssignedEntity());
+            //compare nullFlavor
+            compareNullFlavor(sourceDataEnterer.getNullFlavor(),targetDataEnterer.getNullFlavor());
+            //compare typeCode
+            compareTypeCode(sourceDataEnterer.getTypeCode(),targetDataEnterer.getTypeCode());
+        }
+        currentLocation.exit();
+    }
+
+    private void custodianComparison(Custodian sourceCustodian, Custodian targetCustodian) {
+        currentLocation.enter("Custodian");
+        if (sourceCustodian != null && targetCustodian != null) {
+            //realm code
+            compareRealmCodes(sourceCustodian.getRealmCodes(),targetCustodian.getRealmCodes());
+            //typeID
+            typeIDComparison(sourceCustodian.getTypeId(),targetCustodian.getTypeId());
+            //templateID
+            compareTemplateID(sourceCustodian.getTemplateIds(), targetCustodian.getTemplateIds());
+            //AssignedCustodian
+            assignedCustodianComparison(sourceCustodian.getAssignedCustodian(),targetCustodian.getAssignedCustodian());
+            //nullFlavor
+            compareNullFlavor(sourceCustodian.getNullFlavor(),targetCustodian.getNullFlavor());
+            //typeCode
+            compareTypeCode(sourceCustodian.getTypeCode(),targetCustodian.getTypeCode());
+        }
+        currentLocation.exit();
+    }
+
+    private void legalAuthenticatorComparison(LegalAuthenticator sourceLegalAuthenticator, LegalAuthenticator targetLegalAuthenticator) {
+        currentLocation.enter("Legal Authenticator");
+        if (sourceLegalAuthenticator != null && targetLegalAuthenticator != null) {
+            //realmCode
+            compareRealmCodes(sourceLegalAuthenticator.getRealmCodes(),targetLegalAuthenticator.getRealmCodes());
+            //compare typeID
+            typeIDComparison(sourceLegalAuthenticator.getTypeId(),targetLegalAuthenticator.getTypeId());
+            //compare templateID
+            compareTemplateID(sourceLegalAuthenticator.getTemplateIds(), targetLegalAuthenticator.getTemplateIds());
+            //compare time
+            compareTime(sourceLegalAuthenticator.getTime(),targetLegalAuthenticator.getTime());
+            //compare signatureCode
+            compareSignatureCode(sourceLegalAuthenticator.getSignatureCode(),targetLegalAuthenticator.getSignatureCode());
+            //compare assignedEntity
+            assignedEntityComparison(sourceLegalAuthenticator.getAssignedEntity(),targetLegalAuthenticator.getAssignedEntity());
+            //compare nullFlavor
+            compareNullFlavor(sourceLegalAuthenticator.getNullFlavor(),targetLegalAuthenticator.getNullFlavor());
+            //compare typeCode
+            compareTypeCode(sourceLegalAuthenticator.getTypeCode(),targetLegalAuthenticator.getTypeCode());
+            //compare contextControlCode
+            compareContextControlCode(sourceLegalAuthenticator.getContextControlCode(),targetLegalAuthenticator.getContextControlCode());
+        }
+        currentLocation.exit();
+    }
+
+    private void component2Comparison(Component2 sourceComponent, Component2 targetComponent) {
+        currentLocation.enter("Component2");
+        if (sourceComponent != null && targetComponent != null) {
+            //realmCode
+            compareRealmCodes(sourceComponent.getRealmCodes(),targetComponent.getRealmCodes());
+            //typeID
+            typeIDComparison(sourceComponent.getTypeId(),targetComponent.getTypeId());
+            //templateID
+            compareTemplateID(sourceComponent.getTemplateIds(), targetComponent.getTemplateIds());
+
+            //Choice - Non XML Body /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //            if(sourceComponent.getNonXMLBody() != null && targetComponent.getNonXMLBody() != null){
 //                nonXMLBodyComparison(sourceComponent.getNonXMLBody(), targetComponent.getNonXMLBody());
 //            }
@@ -245,480 +232,374 @@ public class MDHTPreCompareService extends PreCompareService {
 //            if(sourceComponent.getStructuredBody() != null && targetComponent.getStructuredBody() != null){
 //                structuredBodyComparison(sourceComponent.getStructuredBody(), targetComponent.getStructuredBody());
 //            }
-//
-//            //nullFlavor
-//            compareNullFlavor(sourceComponent.getNullFlavor(),targetComponent.getNullFlavor());
-//
-//            //typeCode
-//            compareTypeCode(sourceComponent.getTypeCode(),targetComponent.getTypeCode());
-//
-//            //contextConductionInd
-//            comparisons.add(new Comparison<Boolean, Boolean>(
-//                    null,
-//                    ComparisonUtility.BooleanComparison(),
-//                    sourceComponent.getContextConductionInd(),
-//                    targetComponent.getContextConductionInd()));
-//        }
-//    }
-//
-//    private void patientRoleComparison(PatientRole sourcePatientRole, PatientRole targetPatientRole) {
-//        if (sourcePatientRole != null && targetPatientRole != null) {
-//            //compare realmCode
-//            compareRealmCodes(sourcePatientRole.getRealmCodes(),targetPatientRole.getRealmCodes());
-//
-//            //compare typeID
-//            typeIDComparison(sourcePatientRole.getTypeId(),targetPatientRole.getTypeId());
-//
-//            //compare templateID
-//            compareTemplateID(sourcePatientRole.getTemplateIds(), targetPatientRole.getTemplateIds());
-//
-//            //compare id
-//            compareIDs(sourcePatientRole.getIds(),targetPatientRole.getIds());
-//
-//            //compare addr
-//            compareAddr(sourcePatientRole.getAddrs(),targetPatientRole.getAddrs());
-//
-//            //compare telecom
-//            compareTelcom(sourcePatientRole.getTelecoms(),targetPatientRole.getTelecoms());
-//
-//            //compare Patient
-//            patientComparison(sourcePatientRole.getPatient(), targetPatientRole.getPatient());
-//
-//            //compareNullFlavor
-//            compareNullFlavor(sourcePatientRole.getNullFlavor(),targetPatientRole.getNullFlavor());
-//
-//            //compare ClassCode
-//            compareClassCode(sourcePatientRole.getClassCode(),targetPatientRole.getClassCode());
-//        }
-//    }
-//
-//
-//    private void assignedAuthorComparison(AssignedAuthor sourceAssignedAuthor, AssignedAuthor targetAssignedAuthor) {
-//        if (sourceAssignedAuthor != null && targetAssignedAuthor != null) {
-//            //realm Code
-//            compareRealmCodes(sourceAssignedAuthor.getRealmCodes(),targetAssignedAuthor.getRealmCodes());
-//
-//            //result ID
-//            typeIDComparison(sourceAssignedAuthor.getTypeId(),targetAssignedAuthor.getTypeId());
-//
-//            //templateID
-//            compareTemplateID(sourceAssignedAuthor.getTemplateIds(), targetAssignedAuthor.getTemplateIds());
-//
-//            //ids
-//            compareIDs(sourceAssignedAuthor.getIds(),targetAssignedAuthor.getIds());
-//
-//            //code
-//            compareCode(sourceAssignedAuthor.getCode(),targetAssignedAuthor.getCode());
-//
-//            //addr
-//            compareAddr(sourceAssignedAuthor.getAddrs(),targetAssignedAuthor.getAddrs());
-//
-//            //telecom
-//            compareTelcom(sourceAssignedAuthor.getTelecoms(),targetAssignedAuthor.getTelecoms());
-//
-//            //choice - assignedPerson (Person)
+            //nullFlavor
+            compareNullFlavor(sourceComponent.getNullFlavor(),targetComponent.getNullFlavor());
+            //typeCode
+            compareTypeCode(sourceComponent.getTypeCode(),targetComponent.getTypeCode());
+            //contextConductionInd
+            compareContextConductionInd(sourceComponent.getContextConductionInd(),targetComponent.getContextConductionInd());
+        }
+        currentLocation.exit();
+    }
+
+    private void patientRoleComparison(PatientRole sourcePatientRole, PatientRole targetPatientRole) {
+        currentLocation.enter("Patient Role");
+        if (sourcePatientRole != null && targetPatientRole != null) {
+            //compare realmCode
+            compareRealmCodes(sourcePatientRole.getRealmCodes(),targetPatientRole.getRealmCodes());
+            //compare typeID
+            typeIDComparison(sourcePatientRole.getTypeId(),targetPatientRole.getTypeId());
+            //compare templateID
+            compareTemplateID(sourcePatientRole.getTemplateIds(), targetPatientRole.getTemplateIds());
+            //compare id
+            compareIDs(sourcePatientRole.getIds(),targetPatientRole.getIds());
+            //compare addr
+            compareAddr(sourcePatientRole.getAddrs(),targetPatientRole.getAddrs());
+            //compare telecom
+            compareTelcom(sourcePatientRole.getTelecoms(),targetPatientRole.getTelecoms());
+            //compare Patient
+            patientComparison(sourcePatientRole.getPatient(), targetPatientRole.getPatient());
+            //compareNullFlavor
+            compareNullFlavor(sourcePatientRole.getNullFlavor(),targetPatientRole.getNullFlavor());
+            //compare ClassCode
+            compareClassCode(sourcePatientRole.getClassCode(),targetPatientRole.getClassCode());
+        }
+        currentLocation.exit();
+    }
+
+
+    private void assignedAuthorComparison(AssignedAuthor sourceAssignedAuthor, AssignedAuthor targetAssignedAuthor) {
+        currentLocation.enter("Assigned Author");
+        if (sourceAssignedAuthor != null && targetAssignedAuthor != null) {
+            //realm Code
+            compareRealmCodes(sourceAssignedAuthor.getRealmCodes(),targetAssignedAuthor.getRealmCodes());
+            //result ID
+            typeIDComparison(sourceAssignedAuthor.getTypeId(),targetAssignedAuthor.getTypeId());
+            //templateID
+            compareTemplateID(sourceAssignedAuthor.getTemplateIds(), targetAssignedAuthor.getTemplateIds());
+            //ids
+            compareIDs(sourceAssignedAuthor.getIds(),targetAssignedAuthor.getIds());
+            //code
+            compareCode(sourceAssignedAuthor.getCode(),targetAssignedAuthor.getCode());
+            //addr
+            compareAddr(sourceAssignedAuthor.getAddrs(),targetAssignedAuthor.getAddrs());
+            //telecom
+            compareTelcom(sourceAssignedAuthor.getTelecoms(),targetAssignedAuthor.getTelecoms());
+            //choice - assignedPerson (Person)
 //            if(sourceAssignedAuthor.getAssignedPerson() != null && targetAssignedAuthor.getAssignedPerson() != null){
 //                personComparison(sourceAssignedAuthor.getAssignedPerson(), targetAssignedAuthor.getAssignedPerson());
 //            }
-//
 //            //choice - assignedAuthorizing Device(Authorizing Device)
 //            if(targetAssignedAuthor.getAssignedAuthoringDevice() != null && sourceAssignedAuthor.getAssignedAuthoringDevice() != null){
 //                authorizingDeviceComparison(sourceAssignedAuthor.getAssignedAuthoringDevice(), targetAssignedAuthor.getAssignedAuthoringDevice());
 //            }
-//
-//            //represented Organization
-//            organizationComparison(sourceAssignedAuthor.getRepresentedOrganization(),targetAssignedAuthor.getRepresentedOrganization());
-//
-//            //null flavor
-//            compareNullFlavor(sourceAssignedAuthor.getNullFlavor(),targetAssignedAuthor.getNullFlavor());
-//
-//            //class code
-//            compareClassCode(sourceAssignedAuthor.getClassCode(),targetAssignedAuthor.getClassCode());
-//        }
-//    }
-//
-//    private void patientComparison(Patient sourcePatient, Patient targetPatient) {
-//        if (sourcePatient != null && targetPatient != null) {
-//            //realm code
-//            compareRealmCodes(sourcePatient.getRealmCodes(),targetPatient.getRealmCodes());
-//
-//            //typeID
-//            typeIDComparison(sourcePatient.getTypeId(),targetPatient.getTypeId());
-//
-//            //templateID
-//            compareTemplateID(sourcePatient.getTemplateIds(),targetPatient.getTemplateIds());
-//
-//            //ids
-//            compareIDs(sourcePatient.getIds(),targetPatient.getIds());
-//
-//            //names
-//            compareNamesPN(sourcePatient.getNames(),targetPatient.getNames());
-//
-//            //administrativeGenderCode
-//            compareAdministrativeGenderCode(sourcePatient.getAdministrativeGenderCode(),targetPatient.getAdministrativeGenderCode());
-//
-//            //birthTime
-//            compareBirthTime(sourcePatient.getBirthTime(),targetPatient.getBirthTime());
-//
-//            //marital status code
-//            compareMaritalStatusCode(sourcePatient.getMaritalStatusCode(),targetPatient.getMaritalStatusCode());
-//
-//            //religious affiliation code
-//            compareReligiosAffiliationCode(sourcePatient.getReligiousAffiliationCode(),targetPatient.getReligiousAffiliationCode());
-//
-//            //race Code
-//            compareRaceCode(sourcePatient.getRaceCode(),targetPatient.getRaceCode());
-//
-//            //ethnic group code
-//            compareEthnicGroupCode(sourcePatient.getEthnicGroupCode(),targetPatient.getEthnicGroupCode());
-//
-//            //guardian - Guardian
-//            guardiansComparison(sourcePatient.getGuardians(),targetPatient.getGuardians());
-//
-//            //birthPlace - Birthplace
-//            birthplaceComparison(sourcePatient.getBirthplace(),targetPatient.getBirthplace());
-//
-//            //Language Communication - Language Communication
-//            languageCommunicationsComparison(sourcePatient.getLanguageCommunications(),targetPatient.getLanguageCommunications());
-//
-//            //nullFlavor
-//            compareNullFlavor(sourcePatient.getNullFlavor(),targetPatient.getNullFlavor());
-//
-//            //classCode
-//            compareClassCode(sourcePatient.getClassCode(),targetPatient.getClassCode());
-//
-//        }
-//    }
-//
-//    private void assignedEntityComparison(AssignedEntity sourceAssignedEntity, AssignedEntity targetAssignedEntity) {
-//        if (sourceAssignedEntity != null && targetAssignedEntity != null) {
-//            //realm code
-//            compareRealmCodes(sourceAssignedEntity.getRealmCodes(),targetAssignedEntity.getRealmCodes())
-//
-//            //typeID
-//            typeIDComparison(sourceAssignedEntity.getTypeId(),targetAssignedEntity.getTypeId())
-//
-//            //ids
-//            compareIDs(sourceAssignedEntity.getIds(),targetAssignedEntity.getIds())
-//
-//            //code
-//            compareCode(sourceAssignedEntity.getCode(),targetAssignedEntity.getCode())
-//
-//            //addr
-//            compareAddr(sourceAssignedEntity.getAddrs(),targetAssignedEntity.getAddrs())
-//
-//            //telecom
-//            compareTelcom(sourceAssignedEntity.getTelecoms(),targetAssignedEntity.getTelecoms())
-//
-//            //assignedPerson - Person
-//            personComparison(sourceAssignedEntity.getAssignedPerson(),targetAssignedEntity.getAssignedPerson())
-//
-//            //representedOrganiztions - Organization
-//            organizationsComparison(sourceAssignedEntity.getRepresentedOrganizations(),targetAssignedEntity.getRepresentedOrganizations())
-//
-//            //nullFlavor
-//            compareNullFlavor(sourceAssignedEntity.getNullFlavor(),targetAssignedEntity.getNullFlavor())
-//
-//            //classCode
-//            compareClassCode(sourceAssignedEntity.getClassCode(),targetAssignedEntity.getClassCode())
-//
-//        }
-//    }
-//
-//    private boolean assignedCustodianComparison(AssignedCustodian sourceAssignedCustodian, AssignedCustodian targetAssignedCustodian) {
-//        if (sourceAssignedCustodian != null && targetAssignedCustodian != null) {
-//            //realm code
-//            compareRealmCodes(sourceAssignedCustodian.getRealmCodes(),targetAssignedCustodian.getRealmCodes())
-//
-//            //typeID
-//            typeIDComparison(sourceAssignedCustodian.getTypeId(),targetAssignedCustodian.getTypeId())
-//
-//            //templateID
-//            compareTemplateID(sourceAssignedCustodian.getTemplateIds(),targetAssignedCustodian.getTemplateIds())
-//
-//            //representedCustodianOrganization - CustodianOrganization
-//            custodianOrganizationComparison(sourceAssignedCustodian.getRepresentedCustodianOrganization(),targetAssignedCustodian.getRepresentedCustodianOrganization())
-//
-//            //nullFlavor
-//            compareNullFlavor(sourceAssignedCustodian.getNullFlavor(),targetAssignedCustodian.getNullFlavor())
-//
-//            //classCode
-//            compareClassCode(sourceAssignedCustodian.getClassCode(),targetAssignedCustodian.getClassCode())
-//
-//        }
-//    }
-//
-//    private void associatedEntityComparison(AssociatedEntity sourceAssignedEntity, AssociatedEntity targetAssignedEntity) {
-//        if (sourceAssignedEntity != null && targetAssignedEntity != null) {
-//            //realm code
-//            compareRealmCodes(sourceAssignedEntity.getRealmCodes(),targetAssignedEntity.getRealmCodes());
-//
-//            //typeID
-//            typeIDComparison(sourceAssignedEntity.getTypeId(),targetAssignedEntity.getTypeId());
-//
-//            //template ID
-//            compareTemplateID(sourceAssignedEntity.getTemplateIds(),targetAssignedEntity.getTemplateIds());
-//
-//            //id
-//            compareIDs(sourceAssignedEntity.getTemplateIds(),targetAssignedEntity.getTemplateIds());
-//
-//            //code
-//            compareCode(sourceAssignedEntity.getCode(),targetAssignedEntity.getCode());
-//
-//            //addr
-//            compareAddr(sourceAssignedEntity.getAddrs(),targetAssignedEntity.getAddrs());
-//
-//            //telecom
-//            compareTelcom(sourceAssignedEntity.getTelecoms(),targetAssignedEntity.getTelecoms());
-//
-//            //associatedPerson - Person
-//            personComparison(sourceAssignedEntity.getAssociatedPerson(),targetAssignedEntity.getAssociatedPerson());
-//
-//            //scopingOrganization - Organization
-//            organizationComparison(sourceAssignedEntity.getScopingOrganization(),targetAssignedEntity.getScopingOrganization());
-//
-//            //nullFlavor
-//            compareNullFlavor(sourceAssignedEntity.getNullFlavor(),targetAssignedEntity.getNullFlavor());
-//
-//            //classCode
-//            compareClassCode(sourceAssignedEntity.getClassCode(),targetAssignedEntity.getClassCode());
-//        }
-//    }
-//
-//    private void serviceEventComparison(ServiceEvent sourceServiceEvent, ServiceEvent targetServiceEvent) {
-//        if (sourceServiceEvent != null && targetServiceEvent != null) {
-//            //realmCode
-//            compareRealmCodes(sourceServiceEvent.getRealmCodes(),targetServiceEvent.getRealmCodes());
-//
-//            //typeID
-//            typeIDComparison(sourceServiceEvent.getTypeId(),targetServiceEvent.getTypeId());
-//
-//            //templateID
-//            compareTemplateID(sourceServiceEvent.getTemplateIds(),targetServiceEvent.getTemplateIds());
-//
-//            //id
-//            compareIDs(sourceServiceEvent.getIds(),targetServiceEvent.getIds());
-//
-//            //code
-//            compareCode(sourceServiceEvent.getCode(),targetServiceEvent.getCode());
-//
-//            //effective Time
-//            compareEffectiveTime(sourceServiceEvent.getEffectiveTime(),targetServiceEvent.getEffectiveTime());
-//
-//            //performer - performer1
-//            performersComparison(sourceServiceEvent.getPerformers(),targetServiceEvent.getPerformers());
-//
-//            //null flavor
-//            compareNullFlavor(sourceServiceEvent.getNullFlavor(),targetServiceEvent.getNullFlavor());
-//
-//            //class code
-//            compareClassCode(sourceServiceEvent.getClassCode(),targetServiceEvent.getClassCode());
-//
-//            //moodCode
-//            compareMoodCode(sourceServiceEvent.getMoodCode(),targetServiceEvent.getMoodCode());
-//
-//        }
-//    }
-//
-//    private void nonXMLBodyComparison(NonXMLBody sourceNonXMLBody, NonXMLBody targetNonXMLBody) {
-//        if (sourceNonXMLBody != null && targetNonXMLBody != null) {
-//            //realmCode
-//            compareRealmCodes(sourceNonXMLBody.getRealmCodes(),targetNonXMLBody.getRealmCodes());
-//
-//            //typeID
-//            typeIDComparison(sourceNonXMLBody.getTypeId(),targetNonXMLBody.getTypeId());
-//
-//            //templateID
-//            compareTemplateID(sourceNonXMLBody.getTemplateIds(),targetNonXMLBody.getTemplateIds());
-//
-//            //text
-//            compareText(sourceNonXMLBody.getText(),targetNonXMLBody.getText());
-//
-//            //confidentialityCode
-//            compareConfidentialityCode(sourceNonXMLBody.getConfidentialityCode(),targetNonXMLBody.getConfidentialityCode());
-//
-//            //langaugeCode
-//            compareLanguageCode(sourceNonXMLBody.getLanguageCode(),targetNonXMLBody.getLanguageCode());
-//
-//            //null flavor
-//            compareNullFlavor(sourceNonXMLBody.getNullFlavor(),targetNonXMLBody.getNullFlavor());
-//
-//            //classCode
-//            compareClassCode(sourceNonXMLBody.getClassCode(),targetNonXMLBody.getClassCode());
-//
-//            //moodCode
-//            compareMoodCode(sourceNonXMLBody.getMoodCode(),targetNonXMLBody.getMoodCode());
-//
-//        }
-//    }
-//
-//    private void structuredBodyComparison(StructuredBody sourceStructuredBody, StructuredBody targetStructuredBody) {
-//        if (sourceStructuredBody != null && targetStructuredBody != null) {
-//            //realmCode
-//            compareRealmCodes(sourceStructuredBody.getRealmCodes(),targetStructuredBody.getRealmCodes());
-//
-//            //typeID
-//            typeIDComparison(sourceStructuredBody.getTypeId(),targetStructuredBody.getTypeId());
-//
-//            //templateID
-//            compareTemplateID(sourceStructuredBody.getTemplateIds(),targetStructuredBody.getTemplateIds());
-//
-//            //confidentiality Code
-//            compareConfidentialityCode(sourceStructuredBody.getConfidentialityCode(),targetStructuredBody.getConfidentialityCode());
-//
-//            //language Code
-//            compareLanguageCode(sourceStructuredBody.getLanguageCode(),targetStructuredBody.getLanguageCode());
-//
-//            //component - Component 3
-//            component3Comparison(sourceStructuredBody.getComponents(),targetStructuredBody.getComponents());
-//
-//            //null Flavor
-//            compareNullFlavor(sourceStructuredBody.getNullFlavor(),targetStructuredBody.getNullFlavor());
-//
-//            //class Code
-//            compareClassCode(sourceStructuredBody.getClassCode(),targetStructuredBody.getClassCode());
-//
-//            //moodCode
-//            compareMoodCode(sourceStructuredBody.getMoodCode(),targetStructuredBody.getMoodCode());
-//
-//        }
-//    }
-//
-//    private void relatedEntityComparison(RelatedEntity sourceRelatedEntity, RelatedEntity targetRelatedEntity) {
-//        if (sourceRelatedEntity != null && targetRelatedEntity != null) {
-//            //realmCode
-//            compareRealmCodes(sourceRelatedEntity.getRealmCodes(),targetRelatedEntity.getRealmCodes());
-//
-//            //typeID
-//            typeIDComparison(sourceRelatedEntity.getTypeId(),targetRelatedEntity.getTypeId());
-//
-//            //templateID
-//            compareTemplateID(sourceRelatedEntity.getTemplateIds(),targetRelatedEntity.getTemplateIds());
-//
-//            //code
-//            compareCode(sourceRelatedEntity.getCode(),targetRelatedEntity.getCode());
-//
-//            //addr
-//            compareAddr(sourceRelatedEntity.getAddrs(),targetRelatedEntity.getAddrs())
-//
-//            //telecom
-//            compareTelcom(sourceRelatedEntity.getTelecoms(),targetRelatedEntity.getTelecoms())
-//
-//            //affectiveTime
-//            compareEffectiveTime(sourceRelatedEntity.getEffectiveTime(),targetRelatedEntity.getEffectiveTime())
-//
-//            //relatedPerson - Person
-//            personComparison(sourceRelatedEntity.getRelatedPerson(),targetRelatedEntity.getRelatedPerson())
-//
-//            //nullFlavor
-//            compareNullFlavor(sourceRelatedEntity.getNullFlavor(),targetRelatedEntity.getNullFlavor())
-//
-//            //classCode
-//            compareClassCode(sourceRelatedEntity.getClassCode(),targetRelatedEntity.getClassCode())
-//
-//        }
-//    }
-//
-//    private void organizationComparison(Organization sourceOrganization, Organization targetOrganization) {
-//        if (sourceOrganization != null && targetOrganization != null) {
-//            //realmCode
-//            compareRealmCodes(sourceOrganization.getRealmCodes(),targetOrganization.getRealmCodes());
-//
-//            //typeID
-//            typeIDComparison(sourceOrganization.getTypeId(),targetOrganization.getTypeId())
-//
-//            //templatedID
-//            compareTemplateID(sourceOrganization.getTemplateIds(),targetOrganization.getTemplateIds())
-//
-//            //ids
-//            compareIDs(sourceOrganization.getIds(),targetOrganization.getIds())
-//
-//            //name
-//            compareNamesON(sourceOrganization.getNames(),targetOrganization.getNames())
-//
-//            //telecom
-//            compareTelcom(sourceOrganization.getTelecoms(),targetOrganization.getTelecoms())
-//
-//            //addr
-//            compareAddr(sourceOrganization.getAddrs(),targetOrganization.getAddrs())
-//
-//            //standardIndustryClassCode
-//            compareCode(sourceOrganization.getStandardIndustryClassCode(),targetOrganization.getStandardIndustryClassCode())
-//
-//            //asOrganizationPartOf - OrganizationPartOf
-//            organizationPartOfComparison(sourceOrganization.getAsOrganizationPartOf(),targetOrganization.getAsOrganizationPartOf())
-//
-//            //nullFlavor
-//            compareNullFlavor(sourceOrganization.getNullFlavor(),targetOrganization.getNullFlavor())
-//
-//            //classCode
-//            compareClassCode(sourceOrganization.getClassCode(),targetOrganization.getClassCode())
-//
-//            //determinerCode
-//            compareDeterminerCode(sourceOrganization.getDeterminerCode(),targetOrganization.getDeterminerCode())
-//
-//        }
-//    }
-//
-//    private void personComparison(Person sourcePerson, Person targetPerson) {
-//        if (sourcePerson != null && targetPerson != null) {
-//            //realm code
-//            compareRealmCodes(sourcePerson.getRealmCodes(),targetPerson.getRealmCodes());
-//
-//            //typeID
-//            typeIDComparison(sourcePerson.getTypeId(),targetPerson.getTypeId());
-//
-//            //templateID
-//            compareTemplateID(sourcePerson.getTemplateIds(),targetPerson.getTemplateIds());
-//
-//            //name
-//            compareNamesPN(sourcePerson.getNames(),targetPerson.getNames());
-//
-//            //nullFlavor
-//            compareNullFlavor(sourcePerson.getNullFlavor(),targetPerson.getNullFlavor());
-//
-//            //classCode
-//            compareClassCode(sourcePerson.getClassCode(),targetPerson.getClassCode());
-//
-//        }
-//    }
-//
-//    private void authorizingDeviceComparison(AuthoringDevice sourceAuthorizingDevice, AuthoringDevice targetAuthorizingDevice) {
-//        if (sourceAuthorizingDevice != null && targetAuthorizingDevice != null) {
-//            //realmCode
-//            compareRealmCodes(sourceAuthorizingDevice.getRealmCodes(),targetAuthorizingDevice.getRealmCodes())
-//
-//            //result Id
-//            typeIDComparison(sourceAuthorizingDevice.getTypeId(),targetAuthorizingDevice.getTypeId())
-//
-//            //template ID
-//            compareTemplateID(sourceAuthorizingDevice.getTemplateIds(),targetAuthorizingDevice.getTemplateIds())
-//
-//            //code
-//            compareCode(sourceAuthorizingDevice.getCode(),targetAuthorizingDevice.getCode())
-//
-//            //manufacturedModelName
-//            compareSCName(sourceAuthorizingDevice.getManufacturerModelName(),targetAuthorizingDevice.getManufacturerModelName())
-//
-//            //softwareName
-//            compareSCName(sourceAuthorizingDevice.getSoftwareName(),targetAuthorizingDevice.getSoftwareName())
-//
-//            //asMaintainedEntity - MaintainedEntity
-//            maintainedEntityComparison(sourceAuthorizingDevice.getAsMaintainedEntities(),targetAuthorizingDevice.getAsMaintainedEntities())
-//
-//            //nullFlavor
-//            compareNullFlavor(sourceAuthorizingDevice.getNullFlavor(),targetAuthorizingDevice.getNullFlavor())
-//
-//            //classCode
-//            compareClassCode(sourceAuthorizingDevice.getClassCode(),targetAuthorizingDevice.getClassCode())
-//
-//            //determinerCode
-//            compareDeterminerCode(sourceAuthorizingDevice.getDeterminerCode(),targetAuthorizingDevice.getDeterminerCode())
-//
-//        }
-//    }
-//
-//    private void informantsComparison(EList<Informant12> sourceInformant12, EList<Informant12> targetInformant12) {
+            //represented Organization
+            organizationComparison(sourceAssignedAuthor.getRepresentedOrganization(),targetAssignedAuthor.getRepresentedOrganization());
+            //null flavor
+            compareNullFlavor(sourceAssignedAuthor.getNullFlavor(),targetAssignedAuthor.getNullFlavor());
+            //class code
+            compareClassCode(sourceAssignedAuthor.getClassCode(),targetAssignedAuthor.getClassCode());
+        }
+        currentLocation.exit();
+    }
+
+    private void patientComparison(Patient sourcePatient, Patient targetPatient) {
+        currentLocation.enter("Patient");
+        if (sourcePatient != null && targetPatient != null) {
+            //realm code
+            compareRealmCodes(sourcePatient.getRealmCodes(),targetPatient.getRealmCodes());
+            //typeID
+            typeIDComparison(sourcePatient.getTypeId(),targetPatient.getTypeId());
+            //templateID
+            compareTemplateID(sourcePatient.getTemplateIds(),targetPatient.getTemplateIds());
+            //ids
+            compareIDs(sourcePatient.getIds(),targetPatient.getIds());
+            //names
+            compareNamesPN(sourcePatient.getNames(),targetPatient.getNames());
+            //administrativeGenderCode
+            compareAdministrativeGenderCode(sourcePatient.getAdministrativeGenderCode(),targetPatient.getAdministrativeGenderCode());
+            //birthTime
+            compareBirthTime(sourcePatient.getBirthTime(),targetPatient.getBirthTime());
+            //marital status code
+            compareMaritalStatusCode(sourcePatient.getMaritalStatusCode(),targetPatient.getMaritalStatusCode());
+            //religious affiliation code
+            compareReligiosAffiliationCode(sourcePatient.getReligiousAffiliationCode(),targetPatient.getReligiousAffiliationCode());
+            //race Code
+            compareRaceCode(sourcePatient.getRaceCode(),targetPatient.getRaceCode());
+            //ethnic group code
+            compareEthnicGroupCode(sourcePatient.getEthnicGroupCode(),targetPatient.getEthnicGroupCode());
+            //guardian - Guardian
+            guardiansComparison(sourcePatient.getGuardians(),targetPatient.getGuardians());
+            //birthPlace - Birthplace
+            birthplaceComparison(sourcePatient.getBirthplace(),targetPatient.getBirthplace());
+            //Language Communication - Language Communication
+            languageCommunicationsComparison(sourcePatient.getLanguageCommunications(),targetPatient.getLanguageCommunications());
+            //nullFlavor
+            compareNullFlavor(sourcePatient.getNullFlavor(),targetPatient.getNullFlavor());
+            //classCode
+            compareClassCode(sourcePatient.getClassCode(),targetPatient.getClassCode());
+        }
+        currentLocation.exit();
+    }
+
+    private void assignedEntityComparison(AssignedEntity sourceAssignedEntity, AssignedEntity targetAssignedEntity) {
+        currentLocation.enter("Assigned Entity");
+        if (sourceAssignedEntity != null && targetAssignedEntity != null) {
+            //realm code
+            compareRealmCodes(sourceAssignedEntity.getRealmCodes(),targetAssignedEntity.getRealmCodes());
+            //typeID
+            typeIDComparison(sourceAssignedEntity.getTypeId(),targetAssignedEntity.getTypeId());
+            //ids
+            compareIDs(sourceAssignedEntity.getIds(),targetAssignedEntity.getIds());
+            //code
+            compareCode(sourceAssignedEntity.getCode(),targetAssignedEntity.getCode());
+            //addr
+            compareAddr(sourceAssignedEntity.getAddrs(),targetAssignedEntity.getAddrs());
+            //telecom
+            compareTelcom(sourceAssignedEntity.getTelecoms(),targetAssignedEntity.getTelecoms());
+            //assignedPerson - Person
+            personComparison(sourceAssignedEntity.getAssignedPerson(),targetAssignedEntity.getAssignedPerson());
+            //representedOrganiztions - Organization
+            organizationsComparison(sourceAssignedEntity.getRepresentedOrganizations(),targetAssignedEntity.getRepresentedOrganizations());
+            //nullFlavor
+            compareNullFlavor(sourceAssignedEntity.getNullFlavor(),targetAssignedEntity.getNullFlavor());
+            //classCode
+            compareClassCode(sourceAssignedEntity.getClassCode(),targetAssignedEntity.getClassCode());
+        }
+        currentLocation.exit();
+    }
+
+    private void assignedCustodianComparison(AssignedCustodian sourceAssignedCustodian, AssignedCustodian targetAssignedCustodian) {
+        currentLocation.enter("Assigned Custodian");
+        if (sourceAssignedCustodian != null && targetAssignedCustodian != null) {
+            //realm code
+            compareRealmCodes(sourceAssignedCustodian.getRealmCodes(),targetAssignedCustodian.getRealmCodes());
+            //typeID
+            typeIDComparison(sourceAssignedCustodian.getTypeId(),targetAssignedCustodian.getTypeId());
+            //templateID
+            compareTemplateID(sourceAssignedCustodian.getTemplateIds(),targetAssignedCustodian.getTemplateIds());
+            //representedCustodianOrganization - CustodianOrganization
+            custodianOrganizationComparison(sourceAssignedCustodian.getRepresentedCustodianOrganization(),targetAssignedCustodian.getRepresentedCustodianOrganization());
+            //nullFlavor
+            compareNullFlavor(sourceAssignedCustodian.getNullFlavor(),targetAssignedCustodian.getNullFlavor());
+            //classCode
+            compareClassCode(sourceAssignedCustodian.getClassCode(),targetAssignedCustodian.getClassCode());
+        }
+        currentLocation.exit();
+    }
+
+    private void associatedEntityComparison(AssociatedEntity sourceAssignedEntity, AssociatedEntity targetAssignedEntity) {
+        currentLocation.enter("Assigned Entity");
+        if (sourceAssignedEntity != null && targetAssignedEntity != null) {
+            //realm code
+            compareRealmCodes(sourceAssignedEntity.getRealmCodes(),targetAssignedEntity.getRealmCodes());
+            //typeID
+            typeIDComparison(sourceAssignedEntity.getTypeId(),targetAssignedEntity.getTypeId());
+            //template ID
+            compareTemplateID(sourceAssignedEntity.getTemplateIds(),targetAssignedEntity.getTemplateIds());
+            //id
+            compareIDs(sourceAssignedEntity.getTemplateIds(),targetAssignedEntity.getTemplateIds());
+            //code
+            compareCode(sourceAssignedEntity.getCode(),targetAssignedEntity.getCode());
+            //addr
+            compareAddr(sourceAssignedEntity.getAddrs(),targetAssignedEntity.getAddrs());
+            //telecom
+            compareTelcom(sourceAssignedEntity.getTelecoms(),targetAssignedEntity.getTelecoms());
+            //associatedPerson - Person
+            personComparison(sourceAssignedEntity.getAssociatedPerson(),targetAssignedEntity.getAssociatedPerson());
+            //scopingOrganization - Organization
+            organizationComparison(sourceAssignedEntity.getScopingOrganization(),targetAssignedEntity.getScopingOrganization());
+            //nullFlavor
+            compareNullFlavor(sourceAssignedEntity.getNullFlavor(),targetAssignedEntity.getNullFlavor());
+            //classCode
+            compareClassCode(sourceAssignedEntity.getClassCode(),targetAssignedEntity.getClassCode());
+        }
+        currentLocation.exit();
+    }
+
+    private void serviceEventComparison(ServiceEvent sourceServiceEvent, ServiceEvent targetServiceEvent) {
+        currentLocation.enter("Service Event");
+        if (sourceServiceEvent != null && targetServiceEvent != null) {
+            //realmCode
+            compareRealmCodes(sourceServiceEvent.getRealmCodes(),targetServiceEvent.getRealmCodes());
+            //typeID
+            typeIDComparison(sourceServiceEvent.getTypeId(),targetServiceEvent.getTypeId());
+            //templateID
+            compareTemplateID(sourceServiceEvent.getTemplateIds(),targetServiceEvent.getTemplateIds());
+            //id
+            compareIDs(sourceServiceEvent.getIds(),targetServiceEvent.getIds());
+            //code
+            compareCode(sourceServiceEvent.getCode(),targetServiceEvent.getCode());
+            //effective Time
+            compareEffectiveTime(sourceServiceEvent.getEffectiveTime(),targetServiceEvent.getEffectiveTime());
+            //performer - performer1
+            performersComparison(sourceServiceEvent.getPerformers(),targetServiceEvent.getPerformers());
+            //null flavor
+            compareNullFlavor(sourceServiceEvent.getNullFlavor(),targetServiceEvent.getNullFlavor());
+            //class code
+            compareClassCode(sourceServiceEvent.getClassCode(),targetServiceEvent.getClassCode());
+            //moodCode
+            compareMoodCode(sourceServiceEvent.getMoodCode(),targetServiceEvent.getMoodCode());
+        }
+        currentLocation.exit();
+    }
+
+    private void nonXMLBodyComparison(NonXMLBody sourceNonXMLBody, NonXMLBody targetNonXMLBody) {
+        currentLocation.enter("Non XML Body");
+        if (sourceNonXMLBody != null && targetNonXMLBody != null) {
+            //realmCode
+            compareRealmCodes(sourceNonXMLBody.getRealmCodes(),targetNonXMLBody.getRealmCodes());
+            //typeID
+            typeIDComparison(sourceNonXMLBody.getTypeId(),targetNonXMLBody.getTypeId());
+            //templateID
+            compareTemplateID(sourceNonXMLBody.getTemplateIds(),targetNonXMLBody.getTemplateIds());
+            //text
+            compareText(sourceNonXMLBody.getText(),targetNonXMLBody.getText());
+            //confidentialityCode
+            compareConfidentialityCode(sourceNonXMLBody.getConfidentialityCode(),targetNonXMLBody.getConfidentialityCode());
+            //langaugeCode
+            compareLanguageCode(sourceNonXMLBody.getLanguageCode(),targetNonXMLBody.getLanguageCode());
+            //null flavor
+            compareNullFlavor(sourceNonXMLBody.getNullFlavor(),targetNonXMLBody.getNullFlavor());
+            //classCode
+            compareClassCode(sourceNonXMLBody.getClassCode(),targetNonXMLBody.getClassCode());
+            //moodCode
+            compareMoodCode(sourceNonXMLBody.getMoodCode(),targetNonXMLBody.getMoodCode());
+        }
+        currentLocation.exit();
+    }
+
+    private void structuredBodyComparison(StructuredBody sourceStructuredBody, StructuredBody targetStructuredBody) {
+        currentLocation.enter("Structured Body");
+        if (sourceStructuredBody != null && targetStructuredBody != null) {
+            //realmCode
+            compareRealmCodes(sourceStructuredBody.getRealmCodes(),targetStructuredBody.getRealmCodes());
+            //typeID
+            typeIDComparison(sourceStructuredBody.getTypeId(),targetStructuredBody.getTypeId());
+            //templateID
+            compareTemplateID(sourceStructuredBody.getTemplateIds(),targetStructuredBody.getTemplateIds());
+            //confidentiality Code
+            compareConfidentialityCode(sourceStructuredBody.getConfidentialityCode(),targetStructuredBody.getConfidentialityCode());
+            //language Code
+            compareLanguageCode(sourceStructuredBody.getLanguageCode(),targetStructuredBody.getLanguageCode());
+            //component - Component 3
+            component3Comparison(sourceStructuredBody.getComponents(),targetStructuredBody.getComponents());
+            //null Flavor
+            compareNullFlavor(sourceStructuredBody.getNullFlavor(),targetStructuredBody.getNullFlavor());
+            //class Code
+            compareClassCode(sourceStructuredBody.getClassCode(),targetStructuredBody.getClassCode());
+            //moodCode
+            compareMoodCode(sourceStructuredBody.getMoodCode(),targetStructuredBody.getMoodCode());
+        }
+        currentLocation.exit();
+    }
+
+    private void relatedEntityComparison(RelatedEntity sourceRelatedEntity, RelatedEntity targetRelatedEntity) {
+        currentLocation.enter("Related Entity");
+        if (sourceRelatedEntity != null && targetRelatedEntity != null) {
+            //realmCode
+            compareRealmCodes(sourceRelatedEntity.getRealmCodes(),targetRelatedEntity.getRealmCodes());
+            //typeID
+            typeIDComparison(sourceRelatedEntity.getTypeId(),targetRelatedEntity.getTypeId());
+            //templateID
+            compareTemplateID(sourceRelatedEntity.getTemplateIds(),targetRelatedEntity.getTemplateIds());
+            //code
+            compareCode(sourceRelatedEntity.getCode(),targetRelatedEntity.getCode());
+            //addr
+            compareAddr(sourceRelatedEntity.getAddrs(),targetRelatedEntity.getAddrs());
+            //telecom
+            compareTelcom(sourceRelatedEntity.getTelecoms(),targetRelatedEntity.getTelecoms());
+            //affectiveTime
+            compareEffectiveTime(sourceRelatedEntity.getEffectiveTime(),targetRelatedEntity.getEffectiveTime());
+            //relatedPerson - Person
+            personComparison(sourceRelatedEntity.getRelatedPerson(),targetRelatedEntity.getRelatedPerson());
+            //nullFlavor
+            compareNullFlavor(sourceRelatedEntity.getNullFlavor(),targetRelatedEntity.getNullFlavor());
+            //classCode
+            compareClassCode(sourceRelatedEntity.getClassCode(),targetRelatedEntity.getClassCode());
+        }
+        currentLocation.exit();
+    }
+
+    private void organizationComparison(Organization sourceOrganization, Organization targetOrganization) {
+        currentLocation.enter("Organization");
+        if (sourceOrganization != null && targetOrganization != null) {
+            //realmCode
+            compareRealmCodes(sourceOrganization.getRealmCodes(),targetOrganization.getRealmCodes());
+            //typeID
+            typeIDComparison(sourceOrganization.getTypeId(),targetOrganization.getTypeId());
+            //templatedID
+            compareTemplateID(sourceOrganization.getTemplateIds(),targetOrganization.getTemplateIds());
+            //ids
+            compareIDs(sourceOrganization.getIds(),targetOrganization.getIds());
+            //name
+            compareNamesON(sourceOrganization.getNames(),targetOrganization.getNames());
+            //telecom
+            compareTelcom(sourceOrganization.getTelecoms(),targetOrganization.getTelecoms());
+            //addr
+            compareAddr(sourceOrganization.getAddrs(),targetOrganization.getAddrs());
+            //standardIndustryClassCode
+            compareCode(sourceOrganization.getStandardIndustryClassCode(),targetOrganization.getStandardIndustryClassCode());
+            //asOrganizationPartOf - OrganizationPartOf
+            organizationPartOfComparison(sourceOrganization.getAsOrganizationPartOf(),targetOrganization.getAsOrganizationPartOf());
+            //nullFlavor
+            compareNullFlavor(sourceOrganization.getNullFlavor(),targetOrganization.getNullFlavor());
+            //classCode
+            compareClassCode(sourceOrganization.getClassCode(),targetOrganization.getClassCode());
+            //determinerCode
+            compareDeterminerCode(sourceOrganization.getDeterminerCode(),targetOrganization.getDeterminerCode());
+        }
+        currentLocation.exit();
+    }
+
+    private void personComparison(Person sourcePerson, Person targetPerson) {
+        currentLocation.enter("Person");
+        if (sourcePerson != null && targetPerson != null) {
+            //realm code
+            compareRealmCodes(sourcePerson.getRealmCodes(),targetPerson.getRealmCodes());
+            //typeID
+            typeIDComparison(sourcePerson.getTypeId(),targetPerson.getTypeId());
+            //templateID
+            compareTemplateID(sourcePerson.getTemplateIds(),targetPerson.getTemplateIds());
+            //name
+            compareNamesPN(sourcePerson.getNames(),targetPerson.getNames());
+            //nullFlavor
+            compareNullFlavor(sourcePerson.getNullFlavor(),targetPerson.getNullFlavor());
+            //classCode
+            compareClassCode(sourcePerson.getClassCode(),targetPerson.getClassCode());
+        }
+        currentLocation.exit();
+    }
+
+    private void authorizingDeviceComparison(AuthoringDevice sourceAuthorizingDevice, AuthoringDevice targetAuthorizingDevice) {
+        currentLocation.enter("Authorizing Device");
+        if (sourceAuthorizingDevice != null && targetAuthorizingDevice != null) {
+            //realmCode
+            compareRealmCodes(sourceAuthorizingDevice.getRealmCodes(),targetAuthorizingDevice.getRealmCodes());
+            //result Id
+            typeIDComparison(sourceAuthorizingDevice.getTypeId(),targetAuthorizingDevice.getTypeId());
+            //template ID
+            compareTemplateID(sourceAuthorizingDevice.getTemplateIds(),targetAuthorizingDevice.getTemplateIds());
+            //code
+            compareCode(sourceAuthorizingDevice.getCode(),targetAuthorizingDevice.getCode());
+            //manufacturedModelName
+            compareSCName(sourceAuthorizingDevice.getManufacturerModelName(),targetAuthorizingDevice.getManufacturerModelName());
+            //softwareName
+            compareSCName(sourceAuthorizingDevice.getSoftwareName(),targetAuthorizingDevice.getSoftwareName());
+            //asMaintainedEntity - MaintainedEntity
+            maintainedEntityComparison(sourceAuthorizingDevice.getAsMaintainedEntities(),targetAuthorizingDevice.getAsMaintainedEntities());
+            //nullFlavor
+            compareNullFlavor(sourceAuthorizingDevice.getNullFlavor(),targetAuthorizingDevice.getNullFlavor());
+            //classCode
+            compareClassCode(sourceAuthorizingDevice.getClassCode(),targetAuthorizingDevice.getClassCode());
+            //determinerCode
+            compareDeterminerCode(sourceAuthorizingDevice.getDeterminerCode(),targetAuthorizingDevice.getDeterminerCode());
+        }
+        currentLocation.exit();
+    }
+
+    private void informantsComparison(EList<Informant12> sourceInformant12, EList<Informant12> targetInformant12) {
+        currentLocation.enter("Informants");
 //        for (int i=0; i<sourceInformant12.size(); i++) {
 //            for (int j=0; j<targetInformant12.size(); j++) {
 //                if (sourceInformant12.get(i) != null && targetInformant12.get(j) != null) {
@@ -753,9 +634,11 @@ public class MDHTPreCompareService extends PreCompareService {
 //                }
 //            }
 //        }
-//    }
-//
-//    private boolean recordTargetsComparison(EList<RecordTarget> sourceRecordTargets, EList<RecordTarget> targetRecordTargets) {
+        currentLocation.exit();
+    }
+
+    private void recordTargetsComparison(EList<RecordTarget> sourceRecordTargets, EList<RecordTarget> targetRecordTargets) {
+        currentLocation.enter("Record Targets");
 //        boolean errorExists = false;
 //        for (int i = 0; i < sourceRecordTargets.size(); i++) {
 //            int targetMatches = 0;
@@ -798,10 +681,12 @@ public class MDHTPreCompareService extends PreCompareService {
 //            }
 //        }
 //        return !errorExists;
-//    }
-//
-//
-//    private boolean authorsComparison(EList<Author> sourceAuthors, EList<Author> targetAuthors) {
+        currentLocation.exit();
+    }
+
+
+    private void authorsComparison(EList<Author> sourceAuthors, EList<Author> targetAuthors) {
+        currentLocation.enter("Authors");
 //        boolean errorExists = false;
 //        for (int i=0; i<sourceAuthors.size(); i++) {
 //            int targetMatches = 0;
@@ -856,9 +741,11 @@ public class MDHTPreCompareService extends PreCompareService {
 //            }
 //        }
 //        return !errorExists;
-//    }
-//
-//    private boolean participants1Comparison(EList<Participant1> sourceParticipant, EList<Participant1> targetParticipant) {
+        currentLocation.exit();
+    }
+
+    private void participants1Comparison(EList<Participant1> sourceParticipant, EList<Participant1> targetParticipant) {
+        currentLocation.enter("Patricipants1");
 //        boolean errorExists = false;
 //        for (int i=0;i<sourceParticipant.size();i++) {
 //            int targetMatches = 0;
@@ -909,9 +796,11 @@ public class MDHTPreCompareService extends PreCompareService {
 //            }
 //        }
 //        return !errorExists;
-//    }
-//
-//    private boolean documentationOfsComparison(EList<DocumentationOf> sourceDocumentationOf, EList<DocumentationOf> targetDocumentationOf) {
+        currentLocation.exit();
+    }
+
+    private void documentationOfsComparison(EList<DocumentationOf> sourceDocumentationOf, EList<DocumentationOf> targetDocumentationOf) {
+        currentLocation.enter("DocumentationOfs");
 //        boolean errorExists = false;
 //        for (int i=0;i<sourceDocumentationOf.size();i++) {
 //            int targetMatches = 0;
@@ -955,9 +844,11 @@ public class MDHTPreCompareService extends PreCompareService {
 //            }
 //        }
 //        return !errorExists;
-//    }
-//
-//    private boolean organizationsComparison(EList<Organization> sourceOrganization, EList<Organization> targetOrganization)  {
+        currentLocation.exit();
+    }
+
+    private void organizationsComparison(EList<Organization> sourceOrganization, EList<Organization> targetOrganization)  {
+        currentLocation.enter("Organizations");
 //        boolean errorExists = false;
 //        for (int i=0;i<sourceOrganization.size();i++) {
 //            int targetMatches = 0;
@@ -1025,9 +916,11 @@ public class MDHTPreCompareService extends PreCompareService {
 //            }
 //        }
 //        return !errorExists;
-//    }
-//
-//    private boolean informationRecipientComparison(EList<InformationRecipient> sourceInformationRecipient, EList<InformationRecipient> targetInformationRecipient) {
+        currentLocation.exit();
+    }
+
+    private void informationRecipientComparison(EList<InformationRecipient> sourceInformationRecipient, EList<InformationRecipient> targetInformationRecipient) {
+        currentLocation.enter("Information Recipient");
 //        boolean errorExists = false;
 //        for (int i=0;i<sourceInformationRecipient.size();i++) {
 //            int targetMatches = 0;
@@ -1071,9 +964,11 @@ public class MDHTPreCompareService extends PreCompareService {
 //            }
 //        }
 //        return !errorExists;
-//    }
-//
-//    private boolean inFulfillmentOfComparison(EList<InFulfillmentOf> sourceInFulfillmentOf, EList<InFulfillmentOf> targetInFulfillmentOf) {
+        currentLocation.exit();
+    }
+
+    private void inFulfillmentOfComparison(EList<InFulfillmentOf> sourceInFulfillmentOf, EList<InFulfillmentOf> targetInFulfillmentOf) {
+        currentLocation.enter("In Fulfillment Of");
 //        boolean errorExists = false;
 //        for (int i=0;i<sourceInFulfillmentOf.size();i++) {
 //            int targetMatches = 0;
@@ -1117,9 +1012,11 @@ public class MDHTPreCompareService extends PreCompareService {
 //            }
 //        }
 //        return !errorExists;
-//    }
-//
-//    private boolean relatedDocumentsComparison(EList<RelatedDocument> sourceRelatedDocument, EList<RelatedDocument> targetRelatedDocument) {
+        currentLocation.exit();
+    }
+
+    private void relatedDocumentsComparison(EList<RelatedDocument> sourceRelatedDocument, EList<RelatedDocument> targetRelatedDocument) {
+        currentLocation.enter("Related Documents");
 //        boolean errorExists = false;
 //        for (int i=0;i<sourceRelatedDocument.size();i++) {
 //            int targetMatches = 0;
@@ -1164,9 +1061,11 @@ public class MDHTPreCompareService extends PreCompareService {
 //            }
 //        }
 //        return !errorExists;
-//    }
-//
-//    private boolean authorizationsComparison(EList<Authorization> sourceAuthorizations, EList<Authorization> targetAuthorizations) {
+        currentLocation.exit();
+    }
+
+    private void authorizationsComparison(EList<Authorization> sourceAuthorizations, EList<Authorization> targetAuthorizations) {
+        currentLocation.enter("Authorizations");
 //        boolean errorExists = false;
 //        for (int i=0;i<sourceAuthorizations.size();i++) {
 //            int targetMatches = 0;
@@ -1210,43 +1109,30 @@ public class MDHTPreCompareService extends PreCompareService {
 //            }
 //        }
 //        return !errorExists;
-//    }
-//
-//    private boolean componentOfComparison(Component1 sourceComponent1, Component1 targetComponent1) {
-//        boolean errorExists = false;
-//        if (sourceComponent1 == null && targetComponent1 == null) {
-//            return true;
-//        } else if (sourceComponent1 != null && targetComponent1 != null) {
-//            //realm code
-//            if (!compareRealmCodes(sourceComponent1.getRealmCodes(),targetComponent1.getRealmCodes())) {
-//                errorExists = true;
-//            }
-//            //typeID
-//            if (!typeIDComparison(sourceComponent1.getTypeId(),targetComponent1.getTypeId())) {
-//                errorExists = true;
-//            }
-//            //templateID
-//            if (!compareTemplateID(sourceComponent1.getTemplateIds(),targetComponent1.getTemplateIds())) {
-//                errorExists = true;
-//            }
-//            //Encompassong Encounter
-//            if (!encompassingEncounterComparison(sourceComponent1.getEncompassingEncounter(),targetComponent1.getEncompassingEncounter())) {
-//                errorExists = true;
-//            }
-//            //nullFlavor
-//            if (!compareNullFlavor(sourceComponent1.getNullFlavor(),targetComponent1.getNullFlavor())) {
-//                errorExists = true;
-//            }
-//            //TypeCode
-//            if (!compareTypeCode(sourceComponent1.getTypeCode(),targetComponent1.getTypeCode())) {
-//                errorExists = true;
-//            }
-//            return !errorExists;
-//        }
-//        return false;
-//    }
-//
-//    private boolean guardiansComparison(EList<Guardian> sourceGuardian, EList<Guardian> targetGuardian) {
+        currentLocation.exit();
+    }
+
+    private void componentOfComparison(Component1 sourceComponent1, Component1 targetComponent1) {
+        currentLocation.enter("Component Of");
+        if (sourceComponent1 != null && targetComponent1 != null) {
+            //realm code
+            compareRealmCodes(sourceComponent1.getRealmCodes(),targetComponent1.getRealmCodes());
+            //typeID
+            typeIDComparison(sourceComponent1.getTypeId(),targetComponent1.getTypeId());
+            //templateID
+            compareTemplateID(sourceComponent1.getTemplateIds(),targetComponent1.getTemplateIds());
+            //Encompassong Encounter
+            encompassingEncounterComparison(sourceComponent1.getEncompassingEncounter(),targetComponent1.getEncompassingEncounter());
+            //nullFlavor
+            compareNullFlavor(sourceComponent1.getNullFlavor(),targetComponent1.getNullFlavor());
+            //TypeCode
+            compareTypeCode(sourceComponent1.getTypeCode(),targetComponent1.getTypeCode());
+        }
+        currentLocation.exit();
+    }
+
+    private void guardiansComparison(EList<Guardian> sourceGuardian, EList<Guardian> targetGuardian) {
+        currentLocation.enter("Guardians");
 //        boolean errorExists = false;
 //        for (int i=0;i<sourceGuardian.size();i++) {
 //            int targetMatches = 0;
@@ -1310,43 +1196,30 @@ public class MDHTPreCompareService extends PreCompareService {
 //            }
 //        }
 //        return !errorExists;
-//    }
-//
-//    private boolean birthplaceComparison(Birthplace sourceBirthplace, Birthplace targetBirthplace) {
-//        boolean errorExists = false;
-//        if (sourceBirthplace == null && targetBirthplace == null) {
-//            return true;
-//        } else if (sourceBirthplace != null && targetBirthplace != null) {
-//            //realm code
-//            if (!compareRealmCodes(sourceBirthplace.getRealmCodes(),targetBirthplace.getRealmCodes())) {
-//                errorExists = true;
-//            }
-//            //typeID
-//            if (!typeIDComparison(sourceBirthplace.getTypeId(),targetBirthplace.getTypeId())) {
-//                errorExists = true;
-//            }
-//            //templateID
-//            if (!compareTemplateID(sourceBirthplace.getTemplateIds(),targetBirthplace.getTemplateIds())) {
-//                errorExists = true;
-//            }
-//            //Place
-//            if (!placeComparison(sourceBirthplace.getPlace(),targetBirthplace.getPlace())) {
-//                errorExists = true;
-//            }
-//            //nullFlavor
-//            if (!compareNullFlavor(sourceBirthplace.getNullFlavor(),targetBirthplace.getNullFlavor())) {
-//                errorExists = true;
-//            }
-//            //TypeCode
-//            if (!compareClassCode(sourceBirthplace.getClassCode(),targetBirthplace.getClassCode())) {
-//                errorExists = true;
-//            }
-//            return !errorExists;
-//        }
-//        return false;
-//    }
-//
-//    private boolean languageCommunicationsComparison(EList<LanguageCommunication> sourceLanguageCommmunication, EList<LanguageCommunication> targetLanguageCommunication) {
+        currentLocation.exit();
+    }
+
+    private void birthplaceComparison(Birthplace sourceBirthplace, Birthplace targetBirthplace) {
+        currentLocation.enter("Birthplace");
+        if (sourceBirthplace != null && targetBirthplace != null) {
+            //realm code
+            compareRealmCodes(sourceBirthplace.getRealmCodes(),targetBirthplace.getRealmCodes());
+            //typeID
+            typeIDComparison(sourceBirthplace.getTypeId(),targetBirthplace.getTypeId());
+            //templateID
+            compareTemplateID(sourceBirthplace.getTemplateIds(),targetBirthplace.getTemplateIds());
+            //Place
+            placeComparison(sourceBirthplace.getPlace(),targetBirthplace.getPlace());
+            //nullFlavor
+            compareNullFlavor(sourceBirthplace.getNullFlavor(),targetBirthplace.getNullFlavor());
+            //TypeCode
+            compareClassCode(sourceBirthplace.getClassCode(),targetBirthplace.getClassCode());
+        }
+        currentLocation.exit();
+    }
+
+    private void languageCommunicationsComparison(EList<LanguageCommunication> sourceLanguageCommmunication, EList<LanguageCommunication> targetLanguageCommunication) {
+        currentLocation.enter("Language Communications");
 //        boolean errorExists = false;
 //        for (int i=0;i<sourceLanguageCommmunication.size();i++) {
 //            int targetMatches = 0;
@@ -1395,59 +1268,38 @@ public class MDHTPreCompareService extends PreCompareService {
 //            }
 //        }
 //        return !errorExists;
-//    }
-//
-//    private boolean custodianOrganizationComparison(CustodianOrganization sourceCustodianOrganization, CustodianOrganization targetCustodianOrganization) {
-//        boolean errorExists = false;
-//        if (sourceCustodianOrganization == null && targetCustodianOrganization == null) {
-//            return true;
-//        } else if (sourceCustodianOrganization != null && targetCustodianOrganization != null) {
-//            //realmCode
-//            if (!compareRealmCodes(sourceCustodianOrganization.getRealmCodes(),targetCustodianOrganization.getRealmCodes())) {
-//                errorExists = true;
-//            }
-//            //result Id
-//            if (!typeIDComparison(sourceCustodianOrganization.getTypeId(),targetCustodianOrganization.getTypeId())) {
-//                errorExists = true;
-//            }
-//            //template ID
-//            if (!compareTemplateID(sourceCustodianOrganization.getTemplateIds(),targetCustodianOrganization.getTemplateIds())) {
-//                errorExists = true;
-//            }
-//            //id
-//            if (!compareIDs(sourceCustodianOrganization.getIds(),targetCustodianOrganization.getIds())) {
-//                errorExists = true;
-//            }
-//            //name
-//            if (!compareNamesEN(sourceCustodianOrganization.getNames(),targetCustodianOrganization.getNames())) {
-//                errorExists = true;
-//            }
-//            //telecom
-//            if (!compareTelcom(sourceCustodianOrganization.getTelecoms(),targetCustodianOrganization.getTelecoms())) {
-//                errorExists = true;
-//            }
-//            // addr
-//            if (!compareAddr(sourceCustodianOrganization.getAddrs(),targetCustodianOrganization.getAddrs())) {
-//                errorExists = true;
-//            }
-//            //nullFlavor
-//            if (!compareNullFlavor(sourceCustodianOrganization.getNullFlavor(),targetCustodianOrganization.getNullFlavor())) {
-//                errorExists = true;
-//            }
-//            //classCode
-//            if (!compareClassCode(sourceCustodianOrganization.getClassCode(),targetCustodianOrganization.getClassCode())) {
-//                errorExists = true;
-//            }
-//            //determinerCode
-//            if (!compareDeterminerCode(sourceCustodianOrganization.getDeterminerCode(),targetCustodianOrganization.getDeterminerCode())) {
-//                errorExists = true;
-//            }
-//            return !errorExists;
-//        }
-//        return false;
-//    }
-//
-//    private boolean performersComparison(EList<Performer1> sourcePerformer1, EList<Performer1> targetPerformer1) {
+        currentLocation.exit();
+    }
+
+    private void custodianOrganizationComparison(CustodianOrganization sourceCustodianOrganization, CustodianOrganization targetCustodianOrganization) {
+        currentLocation.enter("Custodian Organization");
+        if (sourceCustodianOrganization != null && targetCustodianOrganization != null) {
+            //realmCode
+            compareRealmCodes(sourceCustodianOrganization.getRealmCodes(),targetCustodianOrganization.getRealmCodes());
+            //result Id
+            typeIDComparison(sourceCustodianOrganization.getTypeId(),targetCustodianOrganization.getTypeId());
+            //template ID
+            compareTemplateID(sourceCustodianOrganization.getTemplateIds(),targetCustodianOrganization.getTemplateIds());
+            //id
+            compareIDs(sourceCustodianOrganization.getIds(),targetCustodianOrganization.getIds());
+            //name
+            compareNamesEN(sourceCustodianOrganization.getNames(),targetCustodianOrganization.getNames());
+            //telecom
+            compareTelcom(sourceCustodianOrganization.getTelecoms(),targetCustodianOrganization.getTelecoms());
+            // addr
+            compareAddr(sourceCustodianOrganization.getAddrs(),targetCustodianOrganization.getAddrs());
+            //nullFlavor
+            compareNullFlavor(sourceCustodianOrganization.getNullFlavor(),targetCustodianOrganization.getNullFlavor());
+            //classCode
+            compareClassCode(sourceCustodianOrganization.getClassCode(),targetCustodianOrganization.getClassCode());
+            //determinerCode
+            compareDeterminerCode(sourceCustodianOrganization.getDeterminerCode(),targetCustodianOrganization.getDeterminerCode());
+        }
+        currentLocation.exit();
+    }
+
+    private void performersComparison(EList<Performer1> sourcePerformer1, EList<Performer1> targetPerformer1) {
+        currentLocation.enter("Performers");
 //        boolean errorExists = false;
 //        for (int i=0;i<sourcePerformer1.size();i++) {
 //            int targetMatches = 0;
@@ -1500,9 +1352,11 @@ public class MDHTPreCompareService extends PreCompareService {
 //            }
 //        }
 //        return !errorExists;
-//    }
-//
-//    private boolean authenticatorComparison(EList<Authenticator> sourceAuthenticator, EList<Authenticator> targetAuthenticator) {
+        currentLocation.exit();
+    }
+
+    private void authenticatorComparison(EList<Authenticator> sourceAuthenticator, EList<Authenticator> targetAuthenticator) {
+        currentLocation.enter("Authenticator");
 //        boolean errorExists = false;
 //        for (int i=0;i<sourceAuthenticator.size();i++) {
 //            int targetMatches = 0;
@@ -1555,9 +1409,11 @@ public class MDHTPreCompareService extends PreCompareService {
 //            }
 //        }
 //        return !errorExists;
-//    }
-//
-//    private boolean component3Comparison(EList<Component3> sourceComponent3, EList<Component3> targetComponent3) {
+        currentLocation.exit();
+    }
+
+    private void component3Comparison(EList<Component3> sourceComponent3, EList<Component3> targetComponent3) {
+        currentLocation.enter("Component3");
 //        boolean errorExists = false;
 //        for (int i=0;i<sourceComponent3.size();i++) {
 //            int targetMatches = 0;
@@ -1607,59 +1463,39 @@ public class MDHTPreCompareService extends PreCompareService {
 //            }
 //        }
 //        return !errorExists;
-//    }
-//
-//    private boolean organizationPartOfComparison(OrganizationPartOf sourceOrganizationPartOf, OrganizationPartOf targetOrganizationPartOf) {
-//        boolean errorExists = false;
-//        if (sourceOrganizationPartOf == null && targetOrganizationPartOf == null) {
-//            return true;
-//        } else if (sourceOrganizationPartOf != null && targetOrganizationPartOf != null) {
-//            //realmCode
-//            if (!compareRealmCodes(sourceOrganizationPartOf.getRealmCodes(),targetOrganizationPartOf.getRealmCodes())) {
-//                errorExists = true;
-//            }
-//            //result Id
-//            if (!typeIDComparison(sourceOrganizationPartOf.getTypeId(),targetOrganizationPartOf.getTypeId())) {
-//                errorExists = true;
-//            }
-//            //template ID
-//            if (!compareTemplateID(sourceOrganizationPartOf.getTemplateIds(),targetOrganizationPartOf.getTemplateIds())) {
-//                errorExists = true;
-//            }
-//            //id
-//            if (!compareIDs(sourceOrganizationPartOf.getIds(),targetOrganizationPartOf.getIds())) {
-//                errorExists = true;
-//            }
-//            //code
-//            if (!compareCode(sourceOrganizationPartOf.getCode(),targetOrganizationPartOf.getCode())) {
-//                errorExists = true;
-//            }
-//            //statusCode
-//            if (!compareCode(sourceOrganizationPartOf.getStatusCode(),targetOrganizationPartOf.getStatusCode())) {
-//                errorExists = true;
-//            }
-//            // effectiveTime
-//            if (!compareEffectiveTime(sourceOrganizationPartOf.getEffectiveTime(),targetOrganizationPartOf.getEffectiveTime())) {
-//                errorExists = true;
-//            }
-//            // wholeOrganization - Organization
-//            if (!organizationComparison(sourceOrganizationPartOf.getWholeOrganization(),targetOrganizationPartOf.getWholeOrganization())) {
-//                errorExists = true;
-//            }
-//            //nullFlavor
-//            if (!compareNullFlavor(sourceOrganizationPartOf.getNullFlavor(),targetOrganizationPartOf.getNullFlavor())) {
-//                errorExists = true;
-//            }
-//            //classCode
-//            if (!compareClassCode(sourceOrganizationPartOf.getClassCode(),targetOrganizationPartOf.getClassCode())) {
-//                errorExists = true;
-//            }
-//            return !errorExists;
-//        }
-//        return false;
-//    }
-//
-//    private boolean maintainedEntityComparison(EList<MaintainedEntity> sourceMaintainedEntity, EList<MaintainedEntity> targetMaintainedEntity) {
+        currentLocation.exit();
+    }
+
+    private void organizationPartOfComparison(OrganizationPartOf sourceOrganizationPartOf, OrganizationPartOf targetOrganizationPartOf) {
+        currentLocation.enter("Organization Part Of");
+        if (sourceOrganizationPartOf != null && targetOrganizationPartOf != null) {
+            //realmCode
+            compareRealmCodes(sourceOrganizationPartOf.getRealmCodes(),targetOrganizationPartOf.getRealmCodes());
+            //result Id
+            typeIDComparison(sourceOrganizationPartOf.getTypeId(),targetOrganizationPartOf.getTypeId());
+            //template ID
+            compareTemplateID(sourceOrganizationPartOf.getTemplateIds(),targetOrganizationPartOf.getTemplateIds());
+            //id
+            compareIDs(sourceOrganizationPartOf.getIds(),targetOrganizationPartOf.getIds());
+            //code
+            compareCode(sourceOrganizationPartOf.getCode(),targetOrganizationPartOf.getCode());
+            //statusCode
+            compareCode(sourceOrganizationPartOf.getStatusCode(),targetOrganizationPartOf.getStatusCode());
+            // effectiveTime
+            compareEffectiveTime(sourceOrganizationPartOf.getEffectiveTime(),targetOrganizationPartOf.getEffectiveTime());
+            // wholeOrganization - Organization
+            organizationComparison(sourceOrganizationPartOf.getWholeOrganization(),targetOrganizationPartOf.getWholeOrganization());
+            //nullFlavor
+            compareNullFlavor(sourceOrganizationPartOf.getNullFlavor(),targetOrganizationPartOf.getNullFlavor());
+            //classCode
+            compareClassCode(sourceOrganizationPartOf.getClassCode(),targetOrganizationPartOf.getClassCode());
+
+        }
+        currentLocation.exit();
+    }
+
+    private void maintainedEntityComparison(EList<MaintainedEntity> sourceMaintainedEntity, EList<MaintainedEntity> targetMaintainedEntity) {
+        currentLocation.enter("Maintained Entity");
 //        boolean errorExists = false;
 //        for (int i=0;i<sourceMaintainedEntity.size();i++) {
 //            int targetMatches = 0;
@@ -1708,421 +1544,233 @@ public class MDHTPreCompareService extends PreCompareService {
 //            }
 //        }
 //        return !errorExists;
-//    }
-//
-//    private boolean intendedRecipientComparison(IntendedRecipient sourceIntendedRecipeint, IntendedRecipient targetIntendedRecipient) {
-//        boolean errorExists = false;
-//        if (sourceIntendedRecipeint == null && targetIntendedRecipient == null) {
-//            return true;
-//        } else if (sourceIntendedRecipeint != null && targetIntendedRecipient != null) {
-//            //realmCode
-//            if (!compareRealmCodes(sourceIntendedRecipeint.getRealmCodes(),targetIntendedRecipient.getRealmCodes())) {
-//                errorExists = true;
-//            }
-//            //result Id
-//            if (!typeIDComparison(sourceIntendedRecipeint.getTypeId(),targetIntendedRecipient.getTypeId())) {
-//                errorExists = true;
-//            }
-//            //id
-//            if (!compareIDs(sourceIntendedRecipeint.getIds(),targetIntendedRecipient.getIds())) {
-//                errorExists = true;
-//            }
-//            //Addr
-//            if (!compareAddr(sourceIntendedRecipeint.getAddrs(),targetIntendedRecipient.getAddrs())) {
-//                errorExists = true;
-//            }
-//            //Telecom
-//            if (!compareTelcom(sourceIntendedRecipeint.getTelecoms(),targetIntendedRecipient.getTelecoms())) {
-//                errorExists = true;
-//            }
-//            //Information Recipient
-//            if (!personComparison(sourceIntendedRecipeint.getInformationRecipient(),targetIntendedRecipient.getInformationRecipient())) {
-//                errorExists = true;
-//            }
-//            // ReceivedOrganization - Organization
-//            if (!organizationComparison(sourceIntendedRecipeint.getReceivedOrganization(),targetIntendedRecipient.getReceivedOrganization())) {
-//                errorExists = true;
-//            }
-//            //nullFlavor
-//            if (!compareNullFlavor(sourceIntendedRecipeint.getNullFlavor(),targetIntendedRecipient.getNullFlavor())) {
-//                errorExists = true;
-//            }
-//            //classCode
-//            if (!compareClassCode(sourceIntendedRecipeint.getClassCode(),targetIntendedRecipient.getClassCode())) {
-//                errorExists = true;
-//            }
-//            return !errorExists;
-//        }
-//        return false;
-//    }
-//
-//    private boolean orderComparison(Order sourceOrder, Order targetOrder) {
-//        boolean errorExists = false;
-//        if (sourceOrder == null && targetOrder == null) {
-//            return true;
-//        } else if (sourceOrder != null && targetOrder != null) {
-//            //realmCode
-//            if (!compareRealmCodes(sourceOrder.getRealmCodes(),targetOrder.getRealmCodes())) {
-//                errorExists = true;
-//            }
-//            //result Id
-//            if (!typeIDComparison(sourceOrder.getTypeId(),targetOrder.getTypeId())) {
-//                errorExists = true;
-//            }
-//            //templateID
-//            if (!compareTemplateID(sourceOrder.getTemplateIds(),targetOrder.getTemplateIds())) {
-//                errorExists = true;
-//            }
-//            //id
-//            if (!compareIDs(sourceOrder.getIds(),targetOrder.getIds())) {
-//                errorExists = true;
-//            }
-//            //code
-//            if (!compareCode(sourceOrder.getCode(),targetOrder.getCode())) {
-//                errorExists = true;
-//            }
-//            //PriorityCode
-//            if (!compareCode(sourceOrder.getPriorityCode(),targetOrder.getPriorityCode())) {
-//                errorExists = true;
-//            }
-//            //nullFlavor
-//            if (!compareNullFlavor(sourceOrder.getNullFlavor(),targetOrder.getNullFlavor())) {
-//                errorExists = true;
-//            }
-//            //classCode
-//            if (!compareClassCode(sourceOrder.getClassCode(),targetOrder.getClassCode())) {
-//                errorExists = true;
-//            }
-//            //moodCode
-//            if (!compareMoodCode(sourceOrder.getMoodCode(),targetOrder.getMoodCode())) {
-//                errorExists = true;
-//            }
-//            return !errorExists;
-//        }
-//        return false;
-//    }
-//
-//    private boolean parentDocumentComparison(ParentDocument sourceParentDocument, ParentDocument targetParentDocument) {
-//        boolean errorExists = false;
-//        if (sourceParentDocument == null && targetParentDocument == null) {
-//            return true;
-//        } else if (sourceParentDocument != null && targetParentDocument != null) {
-//            //realmCode
-//            if (!compareRealmCodes(sourceParentDocument.getRealmCodes(),targetParentDocument.getRealmCodes())) {
-//                errorExists = true;
-//            }
-//            //result Id
-//            if (!typeIDComparison(sourceParentDocument.getTypeId(),targetParentDocument.getTypeId())) {
-//                errorExists = true;
-//            }
-//            //templateID
-//            if (!compareTemplateID(sourceParentDocument.getTemplateIds(),targetParentDocument.getTemplateIds())) {
-//                errorExists = true;
-//            }
-//            //id
-//            if (!compareIDs(sourceParentDocument.getIds(),targetParentDocument.getIds())) {
-//                errorExists = true;
-//            }
-//            //code
-//            if (!compareCode(sourceParentDocument.getCode(),targetParentDocument.getCode())) {
-//                errorExists = true;
-//            }
-//            //text
-//            if (!compareText(sourceParentDocument.getText(),targetParentDocument.getText())) {
-//                errorExists = true;
-//            }
-//            //setID
-//            if (!compareSetID(sourceParentDocument.getSetId(),targetParentDocument.getSetId())) {
-//                errorExists = true;
-//            }
-//            //versionNumber
-//            if (!compareVersionNumber(sourceParentDocument.getVersionNumber(),targetParentDocument.getVersionNumber())) {
-//                errorExists = true;
-//            }
-//            //nullFlavor
-//            if (!compareNullFlavor(sourceParentDocument.getNullFlavor(),targetParentDocument.getNullFlavor())) {
-//                errorExists = true;
-//            }
-//            //classCode
-//            if (!compareClassCode(sourceParentDocument.getClassCode(),targetParentDocument.getClassCode())) {
-//                errorExists = true;
-//            }
-//            //moodCode
-//            if (!compareMoodCode(sourceParentDocument.getMoodCode(),targetParentDocument.getMoodCode())) {
-//                errorExists = true;
-//            }
-//            return !errorExists;
-//        }
-//        return false;
-//    }
-//
-//    private boolean consentComparison(Consent sourceConsent, Consent targetConsesnt) {
-//        boolean errorExists = false;
-//        if (sourceConsent == null && targetConsesnt == null) {
-//            return true;
-//        } else if (sourceConsent != null && targetConsesnt != null) {
-//            //realmCode
-//            if (!compareRealmCodes(sourceConsent.getRealmCodes(),targetConsesnt.getRealmCodes())) {
-//                errorExists = true;
-//            }
-//            //result Id
-//            if (!typeIDComparison(sourceConsent.getTypeId(),targetConsesnt.getTypeId())) {
-//                errorExists = true;
-//            }
-//            //templateID
-//            if (!compareTemplateID(sourceConsent.getTemplateIds(),targetConsesnt.getTemplateIds())) {
-//                errorExists = true;
-//            }
-//            //id
-//            if (!compareIDs(sourceConsent.getIds(),targetConsesnt.getIds())) {
-//                errorExists = true;
-//            }
-//            //code
-//            if (!compareCode(sourceConsent.getCode(),targetConsesnt.getCode())) {
-//                errorExists = true;
-//            }
-//            //statusCode
-//            if (!compareCode(sourceConsent.getStatusCode(),targetConsesnt.getStatusCode())) {
-//                errorExists = true;
-//            }
-//            //nullFlavor
-//            if (!compareNullFlavor(sourceConsent.getNullFlavor(),targetConsesnt.getNullFlavor())) {
-//                errorExists = true;
-//            }
-//            //classCode
-//            if (!compareClassCode(sourceConsent.getClassCode(),targetConsesnt.getClassCode())) {
-//                errorExists = true;
-//            }
-//            //moodCode
-//            if (!compareMoodCode(sourceConsent.getMoodCode(),targetConsesnt.getMoodCode())) {
-//                errorExists = true;
-//            }
-//            return !errorExists;
-//        }
-//        return false;
-//    }
-//
-//    private boolean encompassingEncounterComparison(EncompassingEncounter sourceEncompassingEncounter, EncompassingEncounter targetEncompassingEncounter) {
-//        boolean errorExists = false;
-//        if (sourceEncompassingEncounter == null && targetEncompassingEncounter == null) {
-//            return true;
-//        } else if (sourceEncompassingEncounter != null && targetEncompassingEncounter != null) {
-//            //realmCode
-//            if (!compareRealmCodes(sourceEncompassingEncounter.getRealmCodes(),targetEncompassingEncounter.getRealmCodes())) {
-//                errorExists = true;
-//            }
-//            //result Id
-//            if (!typeIDComparison(sourceEncompassingEncounter.getTypeId(),targetEncompassingEncounter.getTypeId())) {
-//                errorExists = true;
-//            }
-//            //templateID
-//            if (!compareTemplateID(sourceEncompassingEncounter.getTemplateIds(),targetEncompassingEncounter.getTemplateIds())) {
-//                errorExists = true;
-//            }
-//            //id
-//            if (!compareIDs(sourceEncompassingEncounter.getIds(),targetEncompassingEncounter.getIds())) {
-//                errorExists = true;
-//            }
-//            //code
-//            if (!compareCode(sourceEncompassingEncounter.getCode(),targetEncompassingEncounter.getCode())) {
-//                errorExists = true;
-//            }
-//            //effectiveTime
-//            if (!compareEffectiveTime(sourceEncompassingEncounter.getEffectiveTime(),targetEncompassingEncounter.getEffectiveTime())) {
-//                errorExists = true;
-//            }
-//            //dischargeDispositionCode
-//            if (!compareCode(sourceEncompassingEncounter.getDischargeDispositionCode(),targetEncompassingEncounter.getDischargeDispositionCode())) {
-//                errorExists = true;
-//            }
-//            //responsibleParty
-//            if (!responsiblePartyComparison(sourceEncompassingEncounter.getResponsibleParty(),targetEncompassingEncounter.getResponsibleParty())) {
-//                errorExists = true;
-//            }
-//            //encounterParticipant
-//            if (!encounterParticipantComparison(sourceEncompassingEncounter.getEncounterParticipants(),targetEncompassingEncounter.getEncounterParticipants())) {
-//                errorExists = true;
-//            }
-//            //location
-//            if (!locationComparison(sourceEncompassingEncounter.getLocation(),targetEncompassingEncounter.getLocation())) {
-//                errorExists = true;
-//            }
-//            //nullFlavor
-//            if (!compareNullFlavor(sourceEncompassingEncounter.getNullFlavor(),targetEncompassingEncounter.getNullFlavor())) {
-//                errorExists = true;
-//            }
-//            //classCode
-//            if (!compareClassCode(sourceEncompassingEncounter.getClassCode(),targetEncompassingEncounter.getClassCode())) {
-//                errorExists = true;
-//            }
-//            //moodCode
-//            if (!compareMoodCode(sourceEncompassingEncounter.getMoodCode(),targetEncompassingEncounter.getMoodCode())) {
-//                errorExists = true;
-//            }
-//            return !errorExists;
-//        }
-//        return false;
-//    }
-//
-//    private boolean placeComparison(Place sourcePlace, Place targetPlace) {
-//        boolean errorExists = false;
-//        if (sourcePlace == null && targetPlace == null) {
-//            return true;
-//        } else if (sourcePlace != null && targetPlace != null) {
-//            //realmCode
-//            if (!compareRealmCodes(sourcePlace.getRealmCodes(),targetPlace.getRealmCodes())) {
-//                errorExists = true;
-//            }
-//            //result Id
-//            if (!typeIDComparison(sourcePlace.getTypeId(),targetPlace.getTypeId())) {
-//                errorExists = true;
-//            }
-//            //templateID
-//            if (!compareTemplateID(sourcePlace.getTemplateIds(),targetPlace.getTemplateIds())) {
-//                errorExists = true;
-//            }
-//            //name
-//            if (!compareNamesEN(sourcePlace.getNames(),targetPlace.getNames())) {
-//                errorExists = true;
-//            }
-//            //Addr
-//            if (!compareAddr(sourcePlace.getAddrs(),targetPlace.getAddrs())) {
-//                errorExists = true;
-//            }
-//            //nullFlavor
-//            if (!compareNullFlavor(sourcePlace.getNullFlavor(),targetPlace.getNullFlavor())) {
-//                errorExists = true;
-//            }
-//            //classCode
-//            if (!compareClassCode(sourcePlace.getClassCode(),targetPlace.getClassCode())) {
-//                errorExists = true;
-//            }
-//            //DeterminerCode
-//            if (!compareDeterminerCode(sourcePlace.getDeterminerCode(),targetPlace.getDeterminerCode())) {
-//                errorExists = true;
-//            }
-//            return !errorExists;
-//        }
-//        return false;
-//    }
-//
-//    private boolean sectionComparison(Section sourceSection, Section targetSection) {
-//        boolean errorExists = false;
-//        if (sourceSection == null && targetSection == null) {
-//            return true;
-//        } else if (sourceSection != null && targetSection != null) {
-//            //realmCode
-//            if (!compareRealmCodes(sourceSection.getRealmCodes(),targetSection.getRealmCodes())) {
-//                errorExists = true;
-//            }
-//            //result Id
-//            if (!typeIDComparison(sourceSection.getTypeId(),targetSection.getTypeId())) {
-//                errorExists = true;
-//            }
-//            //templateID
-//            if (!compareTemplateID(sourceSection.getTemplateIds(),targetSection.getTemplateIds())) {
-//                errorExists = true;
-//            }
-//            //id
-//            if (!compareID(sourceSection.getId(),targetSection.getId())) {
-//                errorExists = true;
-//            }
-//            //code
-//            if (!compareCode(sourceSection.getCode(),targetSection.getCode())) {
-//                errorExists = true;
-//            }
-//            //title
-//            if (!compareTitle(sourceSection.getTitle(),targetSection.getTitle())) {
-//                errorExists = true;
-//            }
-//            //text
-//            if (!compareText(sourceSection.getText(),targetSection.getText())) {
-//                errorExists = true;
-//            }
-//            //confidentialityCode
-//            if (!compareCode(sourceSection.getConfidentialityCode(),targetSection.getConfidentialityCode())) {
-//                errorExists = true;
-//            }
-//            //languageCode
-//            if (!compareLanguageCode(sourceSection.getLanguageCode(),targetSection.getLanguageCode())) {
-//                errorExists = true;
-//            }
-//            //subject
-//            if (!subjectComparison(sourceSection.getSubject(),targetSection.getSubject())) {
-//                errorExists = true;
-//            }
-//            //Author
-//            if (!authorsComparison(sourceSection.getAuthors(),targetSection.getAuthors())) {
-//                errorExists = true;
-//            }
-//            //Informant12
-//            if (!informantsComparison(sourceSection.getInformants(),targetSection.getInformants())) {
-//                errorExists = true;
-//            }
-//            //Entry
-//            if (!entryComparison(sourceSection.getEntries(),targetSection.getEntries())) {
-//                errorExists = true;
-//            }
-//            //Component 5
-//            if (!component5Comparison(sourceSection.getComponents(),targetSection.getComponents())) {
-//                errorExists = true;
-//            }
-//            //ID
-//            if (!compareIDAttribute(sourceSection.getSectionId(),targetSection.getSectionId())) {
-//                errorExists = true;
-//            }
-//            //nullFlavor
-//            if (!compareNullFlavor(sourceSection.getNullFlavor(),targetSection.getNullFlavor())) {
-//                errorExists = true;
-//            }
-//            //classCode
-//            if (!compareClassCode(sourceSection.getClassCode(),targetSection.getClassCode())) {
-//                errorExists = true;
-//            }
-//            //moodCode
-//            if (!compareMoodCode(sourceSection.getMoodCode(),targetSection.getMoodCode())) {
-//                errorExists = true;
-//            }
-//            return !errorExists;
-//        }
-//        return false;
-//    }
-//
-//    private boolean responsiblePartyComparison(ResponsibleParty sourceResponsibleParty, ResponsibleParty targetResponsibleParty) {
-//        boolean errorExists = false;
-//        if (sourceResponsibleParty == null && targetResponsibleParty == null) {
-//            return true;
-//        } else if (sourceResponsibleParty != null && targetResponsibleParty != null) {
-//            //realmCode
-//            if (!compareRealmCodes(sourceResponsibleParty.getRealmCodes(),targetResponsibleParty.getRealmCodes())) {
-//                errorExists = true;
-//            }
-//            //result Id
-//            if (!typeIDComparison(sourceResponsibleParty.getTypeId(),targetResponsibleParty.getTypeId())) {
-//                errorExists = true;
-//            }
-//            //templateID
-//            if (!compareTemplateID(sourceResponsibleParty.getTemplateIds(),targetResponsibleParty.getTemplateIds())) {
-//                errorExists = true;
-//            }
-//            //AssignedEntity
-//            if (!assignedEntityComparison(sourceResponsibleParty.getAssignedEntity(),targetResponsibleParty.getAssignedEntity())) {
-//                errorExists = true;
-//            }
-//            //nullFlavor
-//            if (!compareNullFlavor(sourceResponsibleParty.getNullFlavor(),targetResponsibleParty.getNullFlavor())) {
-//                errorExists = true;
-//            }
-//            //typeCode
-//            if (!compareTypeCode(sourceResponsibleParty.getTypeCode(),targetResponsibleParty.getTypeCode())) {
-//                errorExists = true;
-//            }
-//            return !errorExists;
-//        }
-//        return false;
-//    }
-//
-//    private boolean encounterParticipantComparison(EList<EncounterParticipant> sourceEncounterParticipant, EList<EncounterParticipant> targetEncounterParticipant) {
+        currentLocation.exit();
+    }
+
+    private void intendedRecipientComparison(IntendedRecipient sourceIntendedRecipeint, IntendedRecipient targetIntendedRecipient) {
+        currentLocation.enter("Intended Recipient");
+        if (sourceIntendedRecipeint != null && targetIntendedRecipient != null) {
+            //realmCode
+            compareRealmCodes(sourceIntendedRecipeint.getRealmCodes(),targetIntendedRecipient.getRealmCodes());
+            //result Id
+            typeIDComparison(sourceIntendedRecipeint.getTypeId(),targetIntendedRecipient.getTypeId());
+            //id
+            compareIDs(sourceIntendedRecipeint.getIds(),targetIntendedRecipient.getIds());
+            //Addr
+            compareAddr(sourceIntendedRecipeint.getAddrs(),targetIntendedRecipient.getAddrs());
+            //Telecom
+            compareTelcom(sourceIntendedRecipeint.getTelecoms(),targetIntendedRecipient.getTelecoms());
+            //Information Recipient
+            personComparison(sourceIntendedRecipeint.getInformationRecipient(),targetIntendedRecipient.getInformationRecipient());
+            // ReceivedOrganization - Organization
+            organizationComparison(sourceIntendedRecipeint.getReceivedOrganization(),targetIntendedRecipient.getReceivedOrganization());
+            //nullFlavor
+            compareNullFlavor(sourceIntendedRecipeint.getNullFlavor(),targetIntendedRecipient.getNullFlavor());
+            //classCode
+            compareClassCode(sourceIntendedRecipeint.getClassCode(),targetIntendedRecipient.getClassCode());
+        }
+        currentLocation.exit();
+    }
+
+    private void orderComparison(Order sourceOrder, Order targetOrder) {
+        currentLocation.enter("Order");
+        if (sourceOrder != null && targetOrder != null) {
+            //realmCode
+            compareRealmCodes(sourceOrder.getRealmCodes(),targetOrder.getRealmCodes());
+            //result Id
+            typeIDComparison(sourceOrder.getTypeId(),targetOrder.getTypeId());
+            //templateID
+            compareTemplateID(sourceOrder.getTemplateIds(),targetOrder.getTemplateIds());
+            //id
+            compareIDs(sourceOrder.getIds(),targetOrder.getIds());
+            //code
+            compareCode(sourceOrder.getCode(),targetOrder.getCode());
+            //PriorityCode
+            compareCode(sourceOrder.getPriorityCode(),targetOrder.getPriorityCode());
+            //nullFlavor
+            compareNullFlavor(sourceOrder.getNullFlavor(),targetOrder.getNullFlavor());
+            //classCode
+            compareClassCode(sourceOrder.getClassCode(),targetOrder.getClassCode());
+            //moodCode
+            compareMoodCode(sourceOrder.getMoodCode(),targetOrder.getMoodCode());
+        }
+        currentLocation.exit();
+    }
+
+    private void parentDocumentComparison(ParentDocument sourceParentDocument, ParentDocument targetParentDocument) {
+        currentLocation.enter("Parent Document");
+        if (sourceParentDocument != null && targetParentDocument != null) {
+            //realmCode
+            compareRealmCodes(sourceParentDocument.getRealmCodes(),targetParentDocument.getRealmCodes());
+            //result Id
+            typeIDComparison(sourceParentDocument.getTypeId(),targetParentDocument.getTypeId());
+            //templateID
+            compareTemplateID(sourceParentDocument.getTemplateIds(),targetParentDocument.getTemplateIds());
+            //id
+            compareIDs(sourceParentDocument.getIds(),targetParentDocument.getIds());
+            //code
+            compareCode(sourceParentDocument.getCode(),targetParentDocument.getCode());
+            //text
+            compareText(sourceParentDocument.getText(),targetParentDocument.getText());
+            //setID
+            compareSetID(sourceParentDocument.getSetId(),targetParentDocument.getSetId());
+            //versionNumber
+            compareVersionNumber(sourceParentDocument.getVersionNumber(),targetParentDocument.getVersionNumber());
+            //nullFlavor
+            compareNullFlavor(sourceParentDocument.getNullFlavor(),targetParentDocument.getNullFlavor());
+            //classCode
+            compareClassCode(sourceParentDocument.getClassCode(),targetParentDocument.getClassCode());
+            //moodCode
+            compareMoodCode(sourceParentDocument.getMoodCode(),targetParentDocument.getMoodCode());
+        }
+        currentLocation.exit();
+    }
+
+    private void consentComparison(Consent sourceConsent, Consent targetConsesnt) {
+        currentLocation.enter("Consent");
+        if (sourceConsent != null && targetConsesnt != null) {
+            //realmCode
+            compareRealmCodes(sourceConsent.getRealmCodes(),targetConsesnt.getRealmCodes());
+            //result Id
+            typeIDComparison(sourceConsent.getTypeId(),targetConsesnt.getTypeId());
+            //templateID
+            compareTemplateID(sourceConsent.getTemplateIds(),targetConsesnt.getTemplateIds());
+            //id
+            compareIDs(sourceConsent.getIds(),targetConsesnt.getIds());
+            //code
+            compareCode(sourceConsent.getCode(),targetConsesnt.getCode());
+            //statusCode
+            compareCode(sourceConsent.getStatusCode(),targetConsesnt.getStatusCode());
+            //nullFlavor
+            compareNullFlavor(sourceConsent.getNullFlavor(),targetConsesnt.getNullFlavor());
+            //classCode
+            compareClassCode(sourceConsent.getClassCode(),targetConsesnt.getClassCode());
+            //moodCode
+            compareMoodCode(sourceConsent.getMoodCode(),targetConsesnt.getMoodCode());
+        }
+        currentLocation.exit();
+    }
+
+    private void encompassingEncounterComparison(EncompassingEncounter sourceEncompassingEncounter, EncompassingEncounter targetEncompassingEncounter) {
+        currentLocation.enter("Encompassing Encounter");
+        if (sourceEncompassingEncounter != null && targetEncompassingEncounter != null) {
+            //realmCode
+            compareRealmCodes(sourceEncompassingEncounter.getRealmCodes(),targetEncompassingEncounter.getRealmCodes());
+            //result Id
+            typeIDComparison(sourceEncompassingEncounter.getTypeId(),targetEncompassingEncounter.getTypeId());
+            //templateID
+            compareTemplateID(sourceEncompassingEncounter.getTemplateIds(),targetEncompassingEncounter.getTemplateIds());
+            //id
+            compareIDs(sourceEncompassingEncounter.getIds(),targetEncompassingEncounter.getIds());
+            //code
+            compareCode(sourceEncompassingEncounter.getCode(),targetEncompassingEncounter.getCode());
+            //effectiveTime
+            compareEffectiveTime(sourceEncompassingEncounter.getEffectiveTime(),targetEncompassingEncounter.getEffectiveTime());
+            //dischargeDispositionCode
+            compareCode(sourceEncompassingEncounter.getDischargeDispositionCode(),targetEncompassingEncounter.getDischargeDispositionCode());
+            //responsibleParty
+            responsiblePartyComparison(sourceEncompassingEncounter.getResponsibleParty(),targetEncompassingEncounter.getResponsibleParty());
+            //encounterParticipant
+            encounterParticipantComparison(sourceEncompassingEncounter.getEncounterParticipants(),targetEncompassingEncounter.getEncounterParticipants());
+            //location
+            locationComparison(sourceEncompassingEncounter.getLocation(),targetEncompassingEncounter.getLocation());
+            //nullFlavor
+            compareNullFlavor(sourceEncompassingEncounter.getNullFlavor(),targetEncompassingEncounter.getNullFlavor());
+            //classCode
+            compareClassCode(sourceEncompassingEncounter.getClassCode(),targetEncompassingEncounter.getClassCode());
+            //moodCode
+            compareMoodCode(sourceEncompassingEncounter.getMoodCode(),targetEncompassingEncounter.getMoodCode());
+        }
+        currentLocation.exit();
+    }
+
+    private void placeComparison(Place sourcePlace, Place targetPlace) {
+        currentLocation.enter("Place");
+        if (sourcePlace != null && targetPlace != null) {
+            //realmCode
+            compareRealmCodes(sourcePlace.getRealmCodes(),targetPlace.getRealmCodes());
+            //result Id
+            typeIDComparison(sourcePlace.getTypeId(),targetPlace.getTypeId());
+            //templateID
+            compareTemplateID(sourcePlace.getTemplateIds(),targetPlace.getTemplateIds());
+            //name
+            compareNamesEN(sourcePlace.getNames(),targetPlace.getNames());
+            //Addr
+            compareAddr(sourcePlace.getAddrs(),targetPlace.getAddrs());
+            //nullFlavor
+            compareNullFlavor(sourcePlace.getNullFlavor(),targetPlace.getNullFlavor());
+            //classCode
+            compareClassCode(sourcePlace.getClassCode(),targetPlace.getClassCode());
+            //DeterminerCode
+            compareDeterminerCode(sourcePlace.getDeterminerCode(),targetPlace.getDeterminerCode());
+        }
+        currentLocation.exit();
+    }
+
+    private void sectionComparison(Section sourceSection, Section targetSection) {
+        currentLocation.enter("Section");
+        if (sourceSection != null && targetSection != null) {
+            //realmCode
+            compareRealmCodes(sourceSection.getRealmCodes(),targetSection.getRealmCodes());
+            //result Id
+            typeIDComparison(sourceSection.getTypeId(),targetSection.getTypeId());
+            //templateID
+            compareTemplateID(sourceSection.getTemplateIds(),targetSection.getTemplateIds());
+            //id
+            compareID(sourceSection.getId(),targetSection.getId());
+            //code
+            compareCode(sourceSection.getCode(),targetSection.getCode());
+            //title
+            compareTitle(sourceSection.getTitle(),targetSection.getTitle());
+            //text
+            compareText(sourceSection.getText(),targetSection.getText());
+            //confidentialityCode
+            compareCode(sourceSection.getConfidentialityCode(),targetSection.getConfidentialityCode());
+            //languageCode
+            compareLanguageCode(sourceSection.getLanguageCode(),targetSection.getLanguageCode());
+            //subject
+            subjectComparison(sourceSection.getSubject(),targetSection.getSubject());
+            //Author
+            authorsComparison(sourceSection.getAuthors(),targetSection.getAuthors());
+            //Informant12
+            informantsComparison(sourceSection.getInformants(),targetSection.getInformants());
+            //Entry
+            entryComparison(sourceSection.getEntries(),targetSection.getEntries());
+            //Component 5
+            component5Comparison(sourceSection.getComponents(),targetSection.getComponents());
+            //ID
+            compareIDAttribute(sourceSection.getSectionId(),targetSection.getSectionId());
+            //nullFlavor
+            compareNullFlavor(sourceSection.getNullFlavor(),targetSection.getNullFlavor());
+            //classCode
+            compareClassCode(sourceSection.getClassCode(),targetSection.getClassCode());
+            //moodCode
+            compareMoodCode(sourceSection.getMoodCode(),targetSection.getMoodCode());
+        }
+        currentLocation.exit();
+    }
+
+    private void responsiblePartyComparison(ResponsibleParty sourceResponsibleParty, ResponsibleParty targetResponsibleParty) {
+        currentLocation.enter("Responsible Party");
+        if (sourceResponsibleParty != null && targetResponsibleParty != null) {
+            //realmCode
+            compareRealmCodes(sourceResponsibleParty.getRealmCodes(),targetResponsibleParty.getRealmCodes());
+            //result Id
+            typeIDComparison(sourceResponsibleParty.getTypeId(),targetResponsibleParty.getTypeId());
+            //templateID
+            compareTemplateID(sourceResponsibleParty.getTemplateIds(),targetResponsibleParty.getTemplateIds());
+            //AssignedEntity
+            assignedEntityComparison(sourceResponsibleParty.getAssignedEntity(),targetResponsibleParty.getAssignedEntity());
+            //nullFlavor
+            compareNullFlavor(sourceResponsibleParty.getNullFlavor(),targetResponsibleParty.getNullFlavor());
+            //typeCode
+            compareTypeCode(sourceResponsibleParty.getTypeCode(),targetResponsibleParty.getTypeCode());
+        }
+        currentLocation.exit();
+    }
+
+    private void encounterParticipantComparison(EList<EncounterParticipant> sourceEncounterParticipant, EList<EncounterParticipant> targetEncounterParticipant) {
+        currentLocation.enter("Encounter Participant");
 //        boolean errorExists = false;
 //        for (int i=0;i<sourceEncounterParticipant.size();i++) {
 //            int targetMatches = 0;
@@ -2171,86 +1819,53 @@ public class MDHTPreCompareService extends PreCompareService {
 //            }
 //        }
 //        return !errorExists;
-//
-//    }
-//
-//    private boolean locationComparison(Location sourceLocation, Location targetLocation) {
-//        boolean errorExists = false;
-//        if (sourceLocation == null && targetLocation == null) {
-//            return true;
-//        } else if (sourceLocation != null && targetLocation != null) {
-//            //realmCode
-//            if (!compareRealmCodes(sourceLocation.getRealmCodes(),targetLocation.getRealmCodes())) {
-//                errorExists = true;
-//            }
-//            //result Id
-//            if (!typeIDComparison(sourceLocation.getTypeId(),targetLocation.getTypeId())) {
-//                errorExists = true;
-//            }
-//            //templateID
-//            if (!compareTemplateID(sourceLocation.getTemplateIds(),targetLocation.getTemplateIds())) {
-//                errorExists = true;
-//            }
-//            //HealthCareFacility
-//            if (!healthCareFacilityComparison(sourceLocation.getHealthCareFacility(),targetLocation.getHealthCareFacility())) {
-//                errorExists = true;
-//            }
-//            //nullFlavor
-//            if (!compareNullFlavor(sourceLocation.getNullFlavor(),targetLocation.getNullFlavor())) {
-//                errorExists = true;
-//            }
-//            //typeCode
-//            if (!compareTypeCode(sourceLocation.getTypeCode(),targetLocation.getTypeCode())) {
-//                errorExists = true;
-//            }
-//            return !errorExists;
-//        }
-//        return false;
-//    }
-//
-//    private boolean subjectComparison(Subject sourceSubject, Subject targetSubject) {
-//        boolean errorExists = false;
-//        if (sourceSubject == null && targetSubject == null) {
-//            return true;
-//        } else if (sourceSubject != null && targetSubject != null) {
-//            //realmCode
-//            if (!compareRealmCodes(sourceSubject.getRealmCodes(),targetSubject.getRealmCodes())) {
-//                errorExists = true;
-//            }
-//            //result Id
-//            if (!typeIDComparison(sourceSubject.getTypeId(),targetSubject.getTypeId())) {
-//                errorExists = true;
-//            }
-//            //templateID
-//            if (!compareTemplateID(sourceSubject.getTemplateIds(),targetSubject.getTemplateIds())) {
-//                errorExists = true;
-//            }
-//            //AwarenessCode
-//            if (!compareCode(sourceSubject.getAwarenessCode(),targetSubject.getAwarenessCode())) {
-//                errorExists = true;
-//            }
-//            //Related Subject
-//            if (!relatedSubjectComparison(sourceSubject.getRelatedSubject(),targetSubject.getRelatedSubject())) {
-//                errorExists = true;
-//            }
-//            //nullFlavor
-//            if (!compareNullFlavor(sourceSubject.getNullFlavor(),targetSubject.getNullFlavor())) {
-//                errorExists = true;
-//            }
-//            //typeCode
-//            if (!compareTypeCode(sourceSubject.getTypeCode(),targetSubject.getTypeCode())) {
-//                errorExists = true;
-//            }
-//            //contextControlCode
-//            if (!compareContextControlCode(sourceSubject.getContextControlCode(),targetSubject.getContextControlCode())) {
-//                errorExists = true;
-//            }
-//            return !errorExists;
-//        }
-//        return false;
-//    }
-//
-//    private boolean entryComparison(EList<Entry> sourceEntry, EList<Entry> targetEntry) {
+        currentLocation.exit();
+    }
+
+    private void locationComparison(Location sourceLocation, Location targetLocation) {
+        currentLocation.enter("Location");
+        if (sourceLocation != null && targetLocation != null) {
+            //realmCode
+            compareRealmCodes(sourceLocation.getRealmCodes(),targetLocation.getRealmCodes());
+            //result Id
+            typeIDComparison(sourceLocation.getTypeId(),targetLocation.getTypeId());
+            //templateID
+            compareTemplateID(sourceLocation.getTemplateIds(),targetLocation.getTemplateIds());
+            //HealthCareFacility
+            healthCareFacilityComparison(sourceLocation.getHealthCareFacility(),targetLocation.getHealthCareFacility());
+            //nullFlavor
+            compareNullFlavor(sourceLocation.getNullFlavor(),targetLocation.getNullFlavor());
+            //typeCode
+            compareTypeCode(sourceLocation.getTypeCode(),targetLocation.getTypeCode());
+        }
+        currentLocation.exit();
+    }
+
+    private void subjectComparison(Subject sourceSubject, Subject targetSubject) {
+        currentLocation.enter("Subject");
+        if (sourceSubject != null && targetSubject != null) {
+            //realmCode
+            compareRealmCodes(sourceSubject.getRealmCodes(),targetSubject.getRealmCodes());
+            //result Id
+            typeIDComparison(sourceSubject.getTypeId(),targetSubject.getTypeId());
+            //templateID
+            compareTemplateID(sourceSubject.getTemplateIds(),targetSubject.getTemplateIds());
+            //AwarenessCode
+            compareCode(sourceSubject.getAwarenessCode(),targetSubject.getAwarenessCode());
+            //Related Subject
+            relatedSubjectComparison(sourceSubject.getRelatedSubject(),targetSubject.getRelatedSubject());
+            //nullFlavor
+            compareNullFlavor(sourceSubject.getNullFlavor(),targetSubject.getNullFlavor());
+            //typeCode
+            compareTypeCode(sourceSubject.getTypeCode(),targetSubject.getTypeCode());
+            //contextControlCode
+            compareContextControlCode(sourceSubject.getContextControlCode(),targetSubject.getContextControlCode());
+        }
+        currentLocation.exit();
+    }
+
+    private void entryComparison(EList<Entry> sourceEntry, EList<Entry> targetEntry) {
+        currentLocation.enter("Entry");
 //        boolean errorExists = false;
 //        for (int i=0;i<sourceEntry.size();i++) {
 //            int targetMatches = 0;
@@ -2318,9 +1933,11 @@ public class MDHTPreCompareService extends PreCompareService {
 //            }
 //        }
 //        return !errorExists;
-//    }
-//
-//    private boolean component5Comparison(EList<Component5> sourceComponent, EList<Component5> targetComponent) {
+        currentLocation.exit();
+    }
+
+    private void component5Comparison(EList<Component5> sourceComponent, EList<Component5> targetComponent) {
+        currentLocation.enter("Component5");
 //        boolean errorExists = false;
 //        for (int i=0;i<sourceComponent.size();i++) {
 //            int targetMatches = 0;
@@ -2370,1075 +1987,567 @@ public class MDHTPreCompareService extends PreCompareService {
 //            }
 //        }
 //        return !errorExists;
-//    }
-//
-//    private boolean healthCareFacilityComparison(HealthCareFacility sourceHealthCareFacility, HealthCareFacility targetHealthCareFacility) {
-//        boolean errorExists = false;
-//        if (sourceHealthCareFacility == null && targetHealthCareFacility == null) {
-//            return true;
-//        } else if (sourceHealthCareFacility != null && targetHealthCareFacility != null) {
-//            //realmCode
-//            if (!compareRealmCodes(sourceHealthCareFacility.getRealmCodes(),targetHealthCareFacility.getRealmCodes())) {
-//                errorExists = true;
-//            }
-//            //result Id
-//            if (!typeIDComparison(sourceHealthCareFacility.getTypeId(),targetHealthCareFacility.getTypeId())) {
-//                errorExists = true;
-//            }
-//            //templateID
-//            if (!compareTemplateID(sourceHealthCareFacility.getTemplateIds(),targetHealthCareFacility.getTemplateIds())) {
-//                errorExists = true;
-//            }
-//            //id
-//            if (!compareIDs(sourceHealthCareFacility.getIds(),targetHealthCareFacility.getIds())) {
-//                errorExists = true;
-//            }
-//            //code
-//            if (!compareCode(sourceHealthCareFacility.getCode(),targetHealthCareFacility.getCode())) {
-//                errorExists = true;
-//            }
-//            //location - Place
-//            if (!placeComparison(sourceHealthCareFacility.getLocation(),targetHealthCareFacility.getLocation())) {
-//                errorExists = true;
-//            }
-//            //serviceProviderOgranization - Organization
-//            if (!organizationComparison(sourceHealthCareFacility.getServiceProviderOrganization(),targetHealthCareFacility.getServiceProviderOrganization())) {
-//                errorExists = true;
-//            }
-//            //nullFlavor
-//            if (!compareNullFlavor(sourceHealthCareFacility.getNullFlavor(),targetHealthCareFacility.getNullFlavor())) {
-//                errorExists = true;
-//            }
-//            //ClassCode
-//            if (!compareClassCode(sourceHealthCareFacility.getClassCode(),targetHealthCareFacility.getClassCode())) {
-//                errorExists = true;
-//            }
-//            return !errorExists;
-//        }
-//        return false;
-//    }
-//
-//    private boolean relatedSubjectComparison(RelatedSubject sourceRelatedSubject, RelatedSubject targetRelatedSubject) {
-//        boolean errorExists = false;
-//        if (sourceRelatedSubject == null && targetRelatedSubject == null) {
-//            return true;
-//        } else if (sourceRelatedSubject != null && targetRelatedSubject != null) {
-//            //realmCode
-//            if (!compareRealmCodes(sourceRelatedSubject.getRealmCodes(),targetRelatedSubject.getRealmCodes())) {
-//                errorExists = true;
-//            }
-//            //result Id
-//            if (!typeIDComparison(sourceRelatedSubject.getTypeId(),targetRelatedSubject.getTypeId())) {
-//                errorExists = true;
-//            }
-//            //templateID
-//            if (!compareTemplateID(sourceRelatedSubject.getTemplateIds(),targetRelatedSubject.getTemplateIds())) {
-//                errorExists = true;
-//            }
-//            //code
-//            if (!compareCode(sourceRelatedSubject.getCode(),targetRelatedSubject.getCode())) {
-//                errorExists = true;
-//            }
-//            //Addr
-//            if (!compareAddr(sourceRelatedSubject.getAddrs(),targetRelatedSubject.getAddrs())) {
-//                errorExists = true;
-//            }
-//            //Telecom
-//            if (!compareTelcom(sourceRelatedSubject.getTelecoms(),targetRelatedSubject.getTelecoms())) {
-//                errorExists = true;
-//            }
-//            //subject - SubjectPerson
-//            if (!subjectPersonComparison(sourceRelatedSubject.getSubject(),targetRelatedSubject.getSubject())) {
-//                errorExists = true;
-//            }
-//            //nullFlavor
-//            if (!compareNullFlavor(sourceRelatedSubject.getNullFlavor(),targetRelatedSubject.getNullFlavor())) {
-//                errorExists = true;
-//            }
-//            //ClassCode
-//            if (!compareClassCode(sourceRelatedSubject.getClassCode(),targetRelatedSubject.getClassCode())) {
-//                errorExists = true;
-//            }
-//            return !errorExists;
-//        }
-//        return false;
-//    }
-//
-//    private boolean actComparison(Act sourceAct, Act targetAct) {
-//        boolean errorExists = false;
-//        if (sourceAct == null && targetAct == null) {
-//            return true;
-//        } else if (sourceAct != null && targetAct != null) {
-//            //realmCode
-//            if (!compareRealmCodes(sourceAct.getRealmCodes(),targetAct.getRealmCodes())) {
-//                errorExists = true;
-//            }
-//            //result Id
-//            if (!typeIDComparison(sourceAct.getTypeId(),targetAct.getTypeId())) {
-//                errorExists = true;
-//            }
-//            //templateID
-//            if (!compareTemplateID(sourceAct.getTemplateIds(),targetAct.getTemplateIds())) {
-//                errorExists = true;
-//            }
-//            //id
-//            if (!compareIDs(sourceAct.getIds(),targetAct.getIds())) {
-//                errorExists = true;
-//            }
-//            //code
-//            if (!compareCode(sourceAct.getCode(),targetAct.getCode())) {
-//                errorExists = true;
-//            }
-//            //text
-//            if (!compareText(sourceAct.getText(),targetAct.getText())) {
-//                errorExists = true;
-//            }
-//            //statusCode
-//            if (!compareCode(sourceAct.getCode(),targetAct.getCode())) {
-//                errorExists = true;
-//            }
-//            //effectiveTime
-//            if (!compareEffectiveTime(sourceAct.getEffectiveTime(),targetAct.getEffectiveTime())) {
-//                errorExists = true;
-//            }
-//            //priorityCode
-//            if (!compareCode(sourceAct.getPriorityCode(),targetAct.getPriorityCode())) {
-//                errorExists = true;
-//            }
-//            //languageCode
-//            if (!compareLanguageCode(sourceAct.getLanguageCode(),targetAct.getLanguageCode())) {
-//                errorExists = true;
-//            }
-//            //subject
-//            if (!subjectComparison(sourceAct.getSubject(),targetAct.getSubject())) {
-//                errorExists = true;
-//            }
-//            //Specimen
-//            if (!specimenComparison(sourceAct.getSpecimens(),targetAct.getSpecimens())) {
-//                errorExists = true;
-//            }
-//            //performer - Performer2
-//            if (!performer2Comparison(sourceAct.getPerformers(),targetAct.getPerformers())) {
-//                errorExists = true;
-//            }
-//            //author - Author
-//            if (!authorsComparison(sourceAct.getAuthors(),targetAct.getAuthors())) {
-//                errorExists = true;
-//            }
-//            //informant - Informant12
-//            if (!informantsComparison(sourceAct.getInformants(),targetAct.getInformants())) {
-//                errorExists = true;
-//            }
-//            //participant - Participant2
-//            if (!participants2Comparison(sourceAct.getParticipants(),targetAct.getParticipants())) {
-//                errorExists = true;
-//            }
-//            //entryRelationship - EntryRelationship
-//            if (!entryRelationshipComparison(sourceAct.getEntryRelationships(),targetAct.getEntryRelationships())) {
-//                errorExists = true;
-//            }
-//            //reference - Reference
-//            if (!referenceComparison(sourceAct.getReferences(),targetAct.getReferences())) {
-//                errorExists = true;
-//            }
-//            //Precondition - Precondition
-//            if (!preconditionComparison(sourceAct.getPreconditions(),targetAct.getPreconditions())) {
-//                errorExists = true;
-//            }
-//            //nullFlavor
-//            if (!compareNullFlavor(sourceAct.getNullFlavor(),targetAct.getNullFlavor())) {
-//                errorExists = true;
-//            }
-//            //ClassCode
-//            if (!compareClassCode(sourceAct.getClassCode(),targetAct.getClassCode())) {
-//                errorExists = true;
-//            }
-//            //moodCode
-//            if (!compareMoodCode(sourceAct.getMoodCode(),targetAct.getMoodCode())) {
-//                errorExists = true;
-//            }
-//            //negationInd
-//            if (sourceAct.getNegationInd() != targetAct.getNegationInd()) {
-//                errorExists = true;
-////                comparisonReport.addMessage("Negation Ind error in " + errorMessage + " -> Negation Ind");
-//            }
-//            return !errorExists;
-//        }
-//        return false;
-//    }
-//
-//    private boolean encounterComparison(Encounter sourceEncounter, Encounter targetEncounter) {
-//        boolean errorExists = false;
-//        if (sourceEncounter == null && targetEncounter == null) {
-//            return true;
-//        } else if (sourceEncounter != null && targetEncounter != null) {
-//            //realmCode
-//            if (!compareRealmCodes(sourceEncounter.getRealmCodes(),targetEncounter.getRealmCodes())) {
-//                errorExists = true;
-//            }
-//            //result Id
-//            if (!typeIDComparison(sourceEncounter.getTypeId(),targetEncounter.getTypeId())) {
-//                errorExists = true;
-//            }
-//            //templateID
-//            if (!compareTemplateID(sourceEncounter.getTemplateIds(),targetEncounter.getTemplateIds())) {
-//                errorExists = true;
-//            }
-//            //id
-//            if (!compareIDs(sourceEncounter.getIds(),targetEncounter.getIds())) {
-//                errorExists = true;
-//            }
-//            //code
-//            if (!compareCode(sourceEncounter.getCode(),targetEncounter.getCode())) {
-//                errorExists = true;
-//            }
-//            //text
-//            if (!compareText(sourceEncounter.getText(),targetEncounter.getText())) {
-//                errorExists = true;
-//            }
-//            //statusCode
-//            if (!compareCode(sourceEncounter.getCode(),targetEncounter.getCode())) {
-//                errorExists = true;
-//            }
-//            //effectiveTime
-//            if (!compareEffectiveTime(sourceEncounter.getEffectiveTime(),targetEncounter.getEffectiveTime())) {
-//                errorExists = true;
-//            }
-//            //priorityCode
-//            if (!compareCode(sourceEncounter.getPriorityCode(),targetEncounter.getPriorityCode())) {
-//                errorExists = true;
-//            }
-//            //subject
-//            if (!subjectComparison(sourceEncounter.getSubject(),targetEncounter.getSubject())) {
-//                errorExists = true;
-//            }
-//            //Specimen
-//            if (!specimenComparison(sourceEncounter.getSpecimens(),targetEncounter.getSpecimens())) {
-//                errorExists = true;
-//            }
-//            //performer - Performer2
-//            if (!performer2Comparison(sourceEncounter.getPerformers(),targetEncounter.getPerformers())) {
-//                errorExists = true;
-//            }
-//            //author - Author
-//            if (!authorsComparison(sourceEncounter.getAuthors(),targetEncounter.getAuthors())) {
-//                errorExists = true;
-//            }
-//            //informant - Informant12
-//            if (!informantsComparison(sourceEncounter.getInformants(),targetEncounter.getInformants())) {
-//                errorExists = true;
-//            }
-//            //participant - Participant2
-//            if (!participants2Comparison(sourceEncounter.getParticipants(),targetEncounter.getParticipants())) {
-//                errorExists = true;
-//            }
-//            //entryRelationship - EntryRelationship
-//            if (!entryRelationshipComparison(sourceEncounter.getEntryRelationships(),targetEncounter.getEntryRelationships())) {
-//                errorExists = true;
-//            }
-//            //reference - Reference
-//            if (!referenceComparison(sourceEncounter.getReferences(),targetEncounter.getReferences())) {
-//                errorExists = true;
-//            }
-//            //Precondition - Precondition
-//            if (!preconditionComparison(sourceEncounter.getPreconditions(),targetEncounter.getPreconditions())) {
-//                errorExists = true;
-//            }
-//            //nullFlavor
-//            if (!compareNullFlavor(sourceEncounter.getNullFlavor(),targetEncounter.getNullFlavor())) {
-//                errorExists = true;
-//            }
-//            //ClassCode
-//            if (!compareClassCode(sourceEncounter.getClassCode(),targetEncounter.getClassCode())) {
-//                errorExists = true;
-//            }
-//            //moodCode
-//            if (!compareMoodCode(sourceEncounter.getMoodCode(),targetEncounter.getMoodCode())) {
-//                errorExists = true;
-//            }
-//            return !errorExists;
-//        }
-//        return false;
-//    }
-//
-//    private boolean observationComparison(Observation sourceObservation, Observation targetObservation) {
-//        boolean errorExists = false;
-//        if (sourceObservation == null && targetObservation == null) {
-//            return true;
-//        } else if (sourceObservation != null && targetObservation != null) {
-//            //realmCode
-//            if (!compareRealmCodes(sourceObservation.getRealmCodes(),targetObservation.getRealmCodes())) {
-//                errorExists = true;
-//            }
-//            //result Id
-//            if (!typeIDComparison(sourceObservation.getTypeId(),targetObservation.getTypeId())) {
-//                errorExists = true;
-//            }
-//            //templateID
-//            if (!compareTemplateID(sourceObservation.getTemplateIds(),targetObservation.getTemplateIds())) {
-//                errorExists = true;
-//            }
-//            //id
-//            if (!compareIDs(sourceObservation.getIds(),targetObservation.getIds())) {
-//                errorExists = true;
-//            }
-//            //code
-//            if (!compareCode(sourceObservation.getCode(),targetObservation.getCode())) {
-//                errorExists = true;
-//            }
-//            //derivationExpr
-//            if (!compareDerivationExpr(sourceObservation.getDerivationExpr(),targetObservation.getDerivationExpr())) {
-//                errorExists = true;
-//            }
-//            //text
-//            if (!compareText(sourceObservation.getText(),targetObservation.getText())) {
-//                errorExists = true;
-//            }
-//            //statusCode
-//            if (!compareCode(sourceObservation.getCode(),targetObservation.getCode())) {
-//                errorExists = true;
-//            }
-//            //effectiveTime
-//            if (!compareEffectiveTime(sourceObservation.getEffectiveTime(),targetObservation.getEffectiveTime())) {
-//                errorExists = true;
-//            }
-//            //priorityCode
-//            if (!compareCode(sourceObservation.getPriorityCode(),targetObservation.getPriorityCode())) {
-//                errorExists = true;
-//            }
-//            //repeatNumber
-//            if (!compareRepeatNumber(sourceObservation.getRepeatNumber(),targetObservation.getRepeatNumber())) {
-//                errorExists = true;
-//            }
-//            //languageCode
-//            if (!compareLanguageCode(sourceObservation.getLanguageCode(),targetObservation.getLanguageCode())) {
-//                errorExists = true;
-//            }
-//            //value
-//            if (!compareValues(sourceObservation.getValues(),targetObservation.getValues())) {
-//                errorExists = true;
-//            }
-//            //interpretationCode
-//            if (!compareCodes(sourceObservation.getInterpretationCodes(),targetObservation.getInterpretationCodes())) {
-//                errorExists = true;
-//            }
-//            //methodCode
-//            if (!compareCodes(sourceObservation.getMethodCodes(),targetObservation.getMethodCodes())) {
-//                errorExists = true;
-//            }
-//            //targetSiteCode
-//            if (!compareTargetSiteCode(sourceObservation.getTargetSiteCodes(),targetObservation.getTargetSiteCodes())) {
-//                errorExists = true;
-//            }
-//            //subject
-//            if (!subjectComparison(sourceObservation.getSubject(),targetObservation.getSubject())) {
-//                errorExists = true;
-//            }
-//            //Specimen
-//            if (!specimenComparison(sourceObservation.getSpecimens(),targetObservation.getSpecimens())) {
-//                errorExists = true;
-//            }
-//            //performer - Performer2
-//            if (!performer2Comparison(sourceObservation.getPerformers(),targetObservation.getPerformers())) {
-//                errorExists = true;
-//            }
-//            //author - Author
-//            if (!authorsComparison(sourceObservation.getAuthors(),targetObservation.getAuthors())) {
-//                errorExists = true;
-//            }
-//            //informant - Informant12
-//            if (!informantsComparison(sourceObservation.getInformants(),targetObservation.getInformants())) {
-//                errorExists = true;
-//            }
-//            //participant - Participant2
-//            if (!participants2Comparison(sourceObservation.getParticipants(),targetObservation.getParticipants())) {
-//                errorExists = true;
-//            }
-//            //entryRelationship - EntryRelationship
-//            if (!entryRelationshipComparison(sourceObservation.getEntryRelationships(),targetObservation.getEntryRelationships())) {
-//                errorExists = true;
-//            }
-//            //reference - Reference
-//            if (!referenceComparison(sourceObservation.getReferences(),targetObservation.getReferences())) {
-//                errorExists = true;
-//            }
-//            //Precondition - Precondition
-//            if (!preconditionComparison(sourceObservation.getPreconditions(),targetObservation.getPreconditions())) {
-//                errorExists = true;
-//            }
-//            //referenceRange - ReferenceRange
-//            if (!referenceRangeComparison(sourceObservation.getReferenceRanges(),targetObservation.getReferenceRanges())) {
-//                errorExists = true;
-//            }
-//            //nullFlavor
-//            if (!compareNullFlavor(sourceObservation.getNullFlavor(),targetObservation.getNullFlavor())) {
-//                errorExists = true;
-//            }
-//            //ClassCode
-//            if (!compareClassCode(sourceObservation.getClassCode(),targetObservation.getClassCode())) {
-//                errorExists = true;
-//            }
-//            //negationInd
-//            if (sourceObservation.getNegationInd() != targetObservation.getNegationInd()) {
-//                errorExists = true;
-////                comparisonReport.addMessage("Negation Ind error in " + errorMessage + " -> Negation Ind");
-//            }
-//            return !errorExists;
-//        }
-//        return false;
-//    }
-//
-//    private boolean observationMediaComparison(ObservationMedia sourceObservationMedia, ObservationMedia targetObservationMedia) {
-//        boolean errorExists = false;
-//        if (sourceObservationMedia == null && targetObservationMedia == null) {
-//            return true;
-//        } else if (sourceObservationMedia != null && targetObservationMedia != null) {
-//            //realmCode
-//            if (!compareRealmCodes(sourceObservationMedia.getRealmCodes(),targetObservationMedia.getRealmCodes())) {
-//                errorExists = true;
-//            }
-//            //result Id
-//            if (!typeIDComparison(sourceObservationMedia.getTypeId(),targetObservationMedia.getTypeId())) {
-//                errorExists = true;
-//            }
-//            //templateID
-//            if (!compareTemplateID(sourceObservationMedia.getTemplateIds(),targetObservationMedia.getTemplateIds())) {
-//                errorExists = true;
-//            }
-//            //id
-//            if (!compareIDs(sourceObservationMedia.getIds(),targetObservationMedia.getIds())) {
-//                errorExists = true;
-//            }
-//            //language code
-//            if (!compareLanguageCode(sourceObservationMedia.getLanguageCode(),targetObservationMedia.getLanguageCode())) {
-//                errorExists = true;
-//            }
-//            //value
-//            if (!compareText(sourceObservationMedia.getValue(),targetObservationMedia.getValue())) {
-//                errorExists = true;
-//            }
-//            //subject - Subject
-//            if (!subjectComparison(sourceObservationMedia.getSubject(),targetObservationMedia.getSubject())) {
-//                errorExists = true;
-//            }
-//            //specimen - Specimen
-//            if (!specimenComparison(sourceObservationMedia.getSpecimens(),targetObservationMedia.getSpecimens())) {
-//                errorExists = true;
-//            }
-//            //performer - Performer2
-//            if (!performer2Comparison(sourceObservationMedia.getPerformers(),targetObservationMedia.getPerformers())) {
-//                errorExists = true;
-//            }
-//            //author - Author
-//            if (!authorsComparison(sourceObservationMedia.getAuthors(),targetObservationMedia.getAuthors())) {
-//                errorExists = true;
-//            }
-//            //informant - Informant12
-//            if (!informantsComparison(sourceObservationMedia.getInformants(),targetObservationMedia.getInformants())) {
-//                errorExists = true;
-//            }
-//            //participant - Participant2
-//            if (!participants2Comparison(sourceObservationMedia.getParticipants(),targetObservationMedia.getParticipants())) {
-//                errorExists = true;
-//            }
-//            //entryRelationship - EntryRelationship
-//            if (!entryRelationshipComparison(sourceObservationMedia.getEntryRelationships(),targetObservationMedia.getEntryRelationships())) {
-//                errorExists = true;
-//            }
-//            //reference - Reference
-//            if (!referenceComparison(sourceObservationMedia.getReferences(),targetObservationMedia.getReferences())) {
-//                errorExists = true;
-//            }
-//            //precondition - Precondition
-//            if (!preconditionComparison(sourceObservationMedia.getPreconditions(),targetObservationMedia.getPreconditions())) {
-//                errorExists = true;
-//            }
-//            //ID
-//            if (!compareIDAttribute(sourceObservationMedia.getObservationMediaId(),targetObservationMedia.getObservationMediaId())) {
-//                errorExists = true;
-//            }
-//            //nullFlavor
-//            if (!compareNullFlavor(sourceObservationMedia.getNullFlavor(),targetObservationMedia.getNullFlavor())) {
-//                errorExists = true;
-//            }
-//            //ClassCode
-//            if (!compareClassCode(sourceObservationMedia.getClassCode(),targetObservationMedia.getClassCode())) {
-//                errorExists = true;
-//            }
-//            //moodCode
-//            if (!compareMoodCode(sourceObservationMedia.getMoodCode(),targetObservationMedia.getMoodCode())) {
-//                errorExists = true;
-//            }
-//            return !errorExists;
-//        }
-//        return false;
-//    }
-//
-//    private boolean organizerComparison(Organizer sourceOrganizer, Organizer targetOrganizer) {
-//        boolean errorExists = false;
-//        if (sourceOrganizer == null && targetOrganizer == null) {
-//            return true;
-//        } else if (sourceOrganizer != null && targetOrganizer != null) {
-//            //realmCode
-//            if (!compareRealmCodes(sourceOrganizer.getRealmCodes(),targetOrganizer.getRealmCodes())) {
-//                errorExists = true;
-//            }
-//            //result Id
-//            if (!typeIDComparison(sourceOrganizer.getTypeId(),targetOrganizer.getTypeId())) {
-//                errorExists = true;
-//            }
-//            //templateID
-//            if (!compareTemplateID(sourceOrganizer.getTemplateIds(),targetOrganizer.getTemplateIds())) {
-//                errorExists = true;
-//            }
-//            //id
-//            if (!compareIDs(sourceOrganizer.getIds(),targetOrganizer.getIds())) {
-//                errorExists = true;
-//            }
-//            //code
-//            if (!compareCode(sourceOrganizer.getCode(),targetOrganizer.getCode())) {
-//                errorExists = true;
-//            }
-//            //statusCode
-//            if (!compareCode(sourceOrganizer.getStatusCode(),targetOrganizer.getStatusCode())) {
-//                errorExists = true;
-//            }
-//            //effectiveTime
-//            if (!compareEffectiveTime(sourceOrganizer.getEffectiveTime(),targetOrganizer.getEffectiveTime())) {
-//                errorExists = true;
-//            }
-//            //subject - Subject
-//            if (!subjectComparison(sourceOrganizer.getSubject(),targetOrganizer.getSubject())) {
-//                errorExists = true;
-//            }
-//            //specimen - Specimen
-//            if (!specimenComparison(sourceOrganizer.getSpecimens(),targetOrganizer.getSpecimens())) {
-//                errorExists = true;
-//            }
-//            //performer - Performer2
-//            if (!performer2Comparison(sourceOrganizer.getPerformers(),targetOrganizer.getPerformers())) {
-//                errorExists = true;
-//            }
-//            //author - Author
-//            if (!authorsComparison(sourceOrganizer.getAuthors(),targetOrganizer.getAuthors())) {
-//                errorExists = true;
-//            }
-//            //informant - Informant12
-//            if (!informantsComparison(sourceOrganizer.getInformants(),targetOrganizer.getInformants())) {
-//                errorExists = true;
-//            }
-//            //participant - Participant2
-//            if (!participants2Comparison(sourceOrganizer.getParticipants(),targetOrganizer.getParticipants())) {
-//                errorExists = true;
-//            }
-//            //reference - Reference
-//            if (!referenceComparison(sourceOrganizer.getReferences(),targetOrganizer.getReferences())) {
-//                errorExists = true;
-//            }
-//            //precondition - Precondition
-//            if (!preconditionComparison(sourceOrganizer.getPreconditions(),targetOrganizer.getPreconditions())) {
-//                errorExists = true;
-//            }
-//            //component - Component4
-//            if (!component4Comparison(sourceOrganizer.getComponents(),targetOrganizer.getComponents())) {
-//                errorExists = true;
-//            }
-//            //nullFlavor
-//            if (!compareNullFlavor(sourceOrganizer.getNullFlavor(),targetOrganizer.getNullFlavor())) {
-//                errorExists = true;
-//            }
-//            //ClassCode
-//            if (!compareClassCode(sourceOrganizer.getClassCode(),targetOrganizer.getClassCode())) {
-//                errorExists = true;
-//            }
-//            //moodCode
-//            if (!compareMoodCode(sourceOrganizer.getMoodCode(),targetOrganizer.getMoodCode())) {
-//                errorExists = true;
-//            }
-//            return !errorExists;
-//        }
-//        return false;
-//    }
-//
-//    private boolean procedureComparison(Procedure sourceProcedure, Procedure targetProcedure) {
-//        boolean errorExists = false;
-//        if (sourceProcedure == null && targetProcedure == null) {
-//            return true;
-//        } else if (sourceProcedure != null && targetProcedure != null) {
-//            //realmCode
-//            if (!compareRealmCodes(sourceProcedure.getRealmCodes(),targetProcedure.getRealmCodes())) {
-//                errorExists = true;
-//            }
-//            //result Id
-//            if (!typeIDComparison(sourceProcedure.getTypeId(),targetProcedure.getTypeId())) {
-//                errorExists = true;
-//            }
-//            //templateID
-//            if (!compareTemplateID(sourceProcedure.getTemplateIds(),targetProcedure.getTemplateIds())) {
-//                errorExists = true;
-//            }
-//            //id
-//            if (!compareIDs(sourceProcedure.getIds(),targetProcedure.getIds())) {
-//                errorExists = true;
-//            }
-//            //code
-//            if (!compareCode(sourceProcedure.getCode(),targetProcedure.getCode())) {
-//                errorExists = true;
-//            }
-//            //text
-//            if (!compareText(sourceProcedure.getText(),targetProcedure.getText())) {
-//                errorExists = true;
-//            }
-//            //statusCode
-//            if (!compareCode(sourceProcedure.getStatusCode(),targetProcedure.getStatusCode())) {
-//                errorExists = true;
-//            }
-//            //effectiveTime
-//            if (!compareEffectiveTime(sourceProcedure.getEffectiveTime(),targetProcedure.getEffectiveTime())) {
-//                errorExists = true;
-//            }
-//            //priorityCode
-//            if (!compareCode(sourceProcedure.getPriorityCode(),targetProcedure.getPriorityCode())) {
-//                errorExists = true;
-//            }
-//            //langaugeCode
-//            if (!compareCode(sourceProcedure.getLanguageCode(),targetProcedure.getLanguageCode())) {
-//                errorExists = true;
-//            }
-//            //methodCode
-//            if (!compareCodes(sourceProcedure.getMethodCodes(),targetProcedure.getMethodCodes())) {
-//                errorExists = true;
-//            }
-//            //approachSiteCode
-//            if (!compareCodesCD(sourceProcedure.getApproachSiteCodes(),targetProcedure.getApproachSiteCodes())) {
-//                errorExists = true;
-//            }
-//            //targetSiteCode
-//            if (!compareCodesCD(sourceProcedure.getTargetSiteCodes(),targetProcedure.getTargetSiteCodes())) {
-//                errorExists = true;
-//            }
-//            //subject - Subject
-//            if (!subjectComparison(sourceProcedure.getSubject(),targetProcedure.getSubject())) {
-//                errorExists = true;
-//            }
-//            //specimen - Specimen
-//            if (!specimenComparison(sourceProcedure.getSpecimens(),targetProcedure.getSpecimens())) {
-//                errorExists = true;
-//            }
-//            //performer - Performer2
-//            if (!performer2Comparison(sourceProcedure.getPerformers(),targetProcedure.getPerformers())) {
-//                errorExists = true;
-//            }
-//            //author - Author
-//            if (!authorsComparison(sourceProcedure.getAuthors(),targetProcedure.getAuthors())) {
-//                errorExists = true;
-//            }
-//            //informant - Informant12
-//            if (!informantsComparison(sourceProcedure.getInformants(),targetProcedure.getInformants())) {
-//                errorExists = true;
-//            }
-//            //participant - Participant2
-//            if (!participants2Comparison(sourceProcedure.getParticipants(),targetProcedure.getParticipants())) {
-//                errorExists = true;
-//            }
-//            //entryRelationship - EntryRelationship
-//            if (!entryRelationshipComparison(sourceProcedure.getEntryRelationships(),targetProcedure.getEntryRelationships())) {
-//                errorExists = true;
-//            }
-//            //reference - Reference
-//            if (!referenceComparison(sourceProcedure.getReferences(),targetProcedure.getReferences())) {
-//                errorExists = true;
-//            }
-//            //precondition - Precondition
-//            if (!preconditionComparison(sourceProcedure.getPreconditions(),targetProcedure.getPreconditions())) {
-//                errorExists = true;
-//            }
-//            //nullFlavor
-//            if (!compareNullFlavor(sourceProcedure.getNullFlavor(),targetProcedure.getNullFlavor())) {
-//                errorExists = true;
-//            }
-//            //ClassCode
-//            if (!compareClassCode(sourceProcedure.getClassCode(),targetProcedure.getClassCode())) {
-//                errorExists = true;
-//            }
-//            //moodCode
-//            if (!compareMoodCode(sourceProcedure.getMoodCode(),targetProcedure.getMoodCode())) {
-//                errorExists = true;
-//            }
-//            return !errorExists;
-//        }
-//        return false;
-//    }
-//
-//    private boolean regionOfInterestComparison(RegionOfInterest sourceRegionOfInterest, RegionOfInterest targetRegionOfInterest) {
-//        boolean errorExists = false;
-//        if (sourceRegionOfInterest == null && targetRegionOfInterest == null) {
-//            return true;
-//        } else if (sourceRegionOfInterest != null && targetRegionOfInterest != null) {
-//            //realmCode
-//            if (!compareRealmCodes(sourceRegionOfInterest.getRealmCodes(),targetRegionOfInterest.getRealmCodes())) {
-//                errorExists = true;
-//            }
-//            //result Id
-//            if (!typeIDComparison(sourceRegionOfInterest.getTypeId(),targetRegionOfInterest.getTypeId())) {
-//                errorExists = true;
-//            }
-//            //templateID
-//            if (!compareTemplateID(sourceRegionOfInterest.getTemplateIds(),targetRegionOfInterest.getTemplateIds())) {
-//                errorExists = true;
-//            }
-//            //id
-//            if (!compareIDs(sourceRegionOfInterest.getIds(),targetRegionOfInterest.getIds())) {
-//                errorExists = true;
-//            }
-//            //code
-//            if (!compareCode(sourceRegionOfInterest.getCode(),targetRegionOfInterest.getCode())) {
-//                errorExists = true;
-//            }
-//            //value
-//            if (!compareValuesROI(sourceRegionOfInterest.getValues(),targetRegionOfInterest.getValues())) {
-//                errorExists = true;
-//            }
-//            //subject - Subject
-//            if (!subjectComparison(sourceRegionOfInterest.getSubject(),targetRegionOfInterest.getSubject())) {
-//                errorExists = true;
-//            }
-//            //specimen - Specimen
-//            if (!specimenComparison(sourceRegionOfInterest.getSpecimens(),targetRegionOfInterest.getSpecimens())) {
-//                errorExists = true;
-//            }
-//            //performer - Performer2
-//            if (!performer2Comparison(sourceRegionOfInterest.getPerformers(),targetRegionOfInterest.getPerformers())) {
-//                errorExists = true;
-//            }
-//            //author - Author
-//            if (!authorsComparison(sourceRegionOfInterest.getAuthors(),targetRegionOfInterest.getAuthors())) {
-//                errorExists = true;
-//            }
-//            //informant - Informant12
-//            if (!informantsComparison(sourceRegionOfInterest.getInformants(),targetRegionOfInterest.getInformants())) {
-//                errorExists = true;
-//            }
-//            //participant - Participant2
-//            if (!participants2Comparison(sourceRegionOfInterest.getParticipants(),targetRegionOfInterest.getParticipants())) {
-//                errorExists = true;
-//            }
-//            //entryRelationship - EntryRelationship
-//            if (!entryRelationshipComparison(sourceRegionOfInterest.getEntryRelationships(),targetRegionOfInterest.getEntryRelationships())) {
-//                errorExists = true;
-//            }
-//            //reference - Reference
-//            if (!referenceComparison(sourceRegionOfInterest.getReferences(),targetRegionOfInterest.getReferences())) {
-//                errorExists = true;
-//            }
-//            //precondition - Precondition
-//            if (!preconditionComparison(sourceRegionOfInterest.getPreconditions(),targetRegionOfInterest.getPreconditions())) {
-//                errorExists = true;
-//            }
-//            //nullFlavor
-//            if (!compareNullFlavor(sourceRegionOfInterest.getNullFlavor(),targetRegionOfInterest.getNullFlavor())) {
-//                errorExists = true;
-//            }
-//            //ClassCode
-//            if (!compareClassCode(sourceRegionOfInterest.getClassCode(),targetRegionOfInterest.getClassCode())) {
-//                errorExists = true;
-//            }
-//            //moodCode
-//            if (!compareMoodCode(sourceRegionOfInterest.getMoodCode(),targetRegionOfInterest.getMoodCode())) {
-//                errorExists = true;
-//            }
-//            if (!compareIDAttribute(sourceRegionOfInterest.getRegionOfInterestId(),targetRegionOfInterest.getRegionOfInterestId())) {
-//                errorExists = true;
-//            }
-//            return !errorExists;
-//        }
-//        return false;
-//    }
-//
-//    private boolean substanceAdministrationComparison(SubstanceAdministration sourceSubstanceAdministration, SubstanceAdministration targetSubstanceAdminstration) {
-//        boolean errorExists = false;
-//        if (sourceSubstanceAdministration == null && targetSubstanceAdminstration == null) {
-//            return true;
-//        } else if (sourceSubstanceAdministration != null && targetSubstanceAdminstration != null) {
-//            //realmCode
-//            if (!compareRealmCodes(sourceSubstanceAdministration.getRealmCodes(),targetSubstanceAdminstration.getRealmCodes())) {
-//                errorExists = true;
-//            }
-//            //result Id
-//            if (!typeIDComparison(sourceSubstanceAdministration.getTypeId(),targetSubstanceAdminstration.getTypeId())) {
-//                errorExists = true;
-//            }
-//            //templateID
-//            if (!compareTemplateID(sourceSubstanceAdministration.getTemplateIds(),targetSubstanceAdminstration.getTemplateIds())) {
-//                errorExists = true;
-//            }
-//            //id
-//            if (!compareIDs(sourceSubstanceAdministration.getIds(),targetSubstanceAdminstration.getIds())) {
-//                errorExists = true;
-//            }
-//            //code
-//            if (!compareCode(sourceSubstanceAdministration.getCode(),targetSubstanceAdminstration.getCode())) {
-//                errorExists = true;
-//            }
-//            //text
-//            if (!compareText(sourceSubstanceAdministration.getText(),targetSubstanceAdminstration.getText())) {
-//                errorExists = true;
-//            }
-//            //statusCode
-//            if (!compareCode(sourceSubstanceAdministration.getStatusCode(),targetSubstanceAdminstration.getStatusCode())) {
-//                errorExists = true;
-//            }
-//            //effectiveTime
-//            if (!compareEffectiveTime(sourceSubstanceAdministration.getEffectiveTimes(),targetSubstanceAdminstration.getEffectiveTimes())) {
-//                errorExists = true;
-//            }
-//            //priorityCode
-//            if (!compareCode(sourceSubstanceAdministration.getPriorityCode(),targetSubstanceAdminstration.getPriorityCode())) {
-//                errorExists = true;
-//            }
-//            //repeatNumber
-//            if (!compareRepeatNumber(sourceSubstanceAdministration.getRepeatNumber(),targetSubstanceAdminstration.getRepeatNumber())) {
-//                errorExists = true;
-//            }
-//            //routeCode
-//            if (!compareCode(sourceSubstanceAdministration.getRouteCode(),targetSubstanceAdminstration.getRouteCode())) {
-//                errorExists = true;
-//            }
-//            //approachSiteCode
-//            if (!compareCodesCD(sourceSubstanceAdministration.getApproachSiteCodes(),targetSubstanceAdminstration.getApproachSiteCodes())) {
-//                errorExists = true;
-//            }
-//            //doseQuantity
-//            if (!compareDose(sourceSubstanceAdministration.getDoseQuantity(),targetSubstanceAdminstration.getDoseQuantity())) {
-//                errorExists = true;
-//            }
-//            //rateQuantity
-//            if (!compareDose(sourceSubstanceAdministration.getRateQuantity(),targetSubstanceAdminstration.getRateQuantity())) {
-//                errorExists = true;
-//            }
-//            //maxDoseQuantity
-//            if (!compareMaxDose(sourceSubstanceAdministration.getMaxDoseQuantity(),targetSubstanceAdminstration.getMaxDoseQuantity())) {
-//                errorExists = true;
-//            }
-//            //administrationUnitCode
-//            if (!compareCode(sourceSubstanceAdministration.getAdministrationUnitCode(),targetSubstanceAdminstration.getAdministrationUnitCode())) {
-//                errorExists = true;
-//            }
-//            //subject - Subject
-//            if (!subjectComparison(sourceSubstanceAdministration.getSubject(),targetSubstanceAdminstration.getSubject())) {
-//                errorExists = true;
-//            }
-//            //specimen - Specimen
-//            if (!specimenComparison(sourceSubstanceAdministration.getSpecimens(),targetSubstanceAdminstration.getSpecimens())) {
-//                errorExists = true;
-//            }
-//            //consumable
-//            if (!consumableComparison(sourceSubstanceAdministration.getConsumable(),targetSubstanceAdminstration.getConsumable())) {
-//                errorExists = true;
-//            }
-//            //performer - Performer2
-//            if (!performer2Comparison(sourceSubstanceAdministration.getPerformers(),targetSubstanceAdminstration.getPerformers())) {
-//                errorExists = true;
-//            }
-//            //author - Author
-//            if (!authorsComparison(sourceSubstanceAdministration.getAuthors(),targetSubstanceAdminstration.getAuthors())) {
-//                errorExists = true;
-//            }
-//            //informant - Informant12
-//            if (!informantsComparison(sourceSubstanceAdministration.getInformants(),targetSubstanceAdminstration.getInformants())) {
-//                errorExists = true;
-//            }
-//            //participant - Participant2
-//            if (!participants2Comparison(sourceSubstanceAdministration.getParticipants(),targetSubstanceAdminstration.getParticipants())) {
-//                errorExists = true;
-//            }
-//            //entryRelationship - EntryRelationship
-//            if (!entryRelationshipComparison(sourceSubstanceAdministration.getEntryRelationships(),targetSubstanceAdminstration.getEntryRelationships())) {
-//                errorExists = true;
-//            }
-//            //reference - Reference
-//            if (!referenceComparison(sourceSubstanceAdministration.getReferences(),targetSubstanceAdminstration.getReferences())) {
-//                errorExists = true;
-//            }
-//            //precondition - Precondition
-//            if (!preconditionComparison(sourceSubstanceAdministration.getPreconditions(),targetSubstanceAdminstration.getPreconditions())) {
-//                errorExists = true;
-//            }
-//            //nullFlavor
-//            if (!compareNullFlavor(sourceSubstanceAdministration.getNullFlavor(),targetSubstanceAdminstration.getNullFlavor())) {
-//                errorExists = true;
-//            }
-//            //ClassCode
-//            if (!compareClassCode(sourceSubstanceAdministration.getClassCode(),targetSubstanceAdminstration.getClassCode())) {
-//                errorExists = true;
-//            }
-//            //moodCode
-//            if (!compareMoodCode(sourceSubstanceAdministration.getMoodCode(),targetSubstanceAdminstration.getMoodCode())) {
-//                errorExists = true;
-//            }
-//            //negationInd
-//            if (sourceSubstanceAdministration.getNegationInd() == targetSubstanceAdminstration.getNegationInd()) {
-//                errorExists = true;
-////                comparisonReport.addMessage("Negation Ind error in " + errorMessage + " -> Negation Ind");
-//            }
-//            return !errorExists;
-//        }
-//        return false;
-//    }
-//
-//    private boolean supplyComparison(Supply sourceSupply, Supply targetSupply) {
-//        boolean errorExists = false;
-//        if (sourceSupply == null && targetSupply == null) {
-//            return true;
-//        } else if (sourceSupply != null && targetSupply != null) {
-//            //realmCode
-//            if (!compareRealmCodes(sourceSupply.getRealmCodes(),targetSupply.getRealmCodes())) {
-//                errorExists = true;
-//            }
-//            //result Id
-//            if (!typeIDComparison(sourceSupply.getTypeId(),targetSupply.getTypeId())) {
-//                errorExists = true;
-//            }
-//            //templateID
-//            if (!compareTemplateID(sourceSupply.getTemplateIds(),targetSupply.getTemplateIds())) {
-//                errorExists = true;
-//            }
-//            //id
-//            if (!compareIDs(sourceSupply.getIds(),targetSupply.getIds())) {
-//                errorExists = true;
-//            }
-//            //code
-//            if (!compareCode(sourceSupply.getCode(),targetSupply.getCode())) {
-//                errorExists = true;
-//            }
-//            //text
-//            if (!compareText(sourceSupply.getText(),targetSupply.getText())) {
-//                errorExists = true;
-//            }
-//            //statusCode
-//            if (!compareCode(sourceSupply.getStatusCode(),targetSupply.getStatusCode())) {
-//                errorExists = true;
-//            }
-//            //effectiveTime
-//            if (!compareEffectiveTime(sourceSupply.getEffectiveTimes(),targetSupply.getEffectiveTimes())) {
-//                errorExists = true;
-//            }
-//            //priorityCode
-//            if (!compareCodes(sourceSupply.getPriorityCodes(),targetSupply.getPriorityCodes())) {
-//                errorExists = true;
-//            }
-//            //repeatNumber
-//            if (!compareRepeatNumber(sourceSupply.getRepeatNumber(),targetSupply.getRepeatNumber())) {
-//                errorExists = true;
-//            }
-//            //independentInd
-//            if (!comparePreferenceInd(sourceSupply.getIndependentInd(),targetSupply.getIndependentInd())) {
-//                errorExists = true;
-//            }
-//            //quantity
-//            if (!compareQuantity(sourceSupply.getQuantity(),targetSupply.getQuantity())) {
-//                errorExists = true;
-//            }
-//            //expectedUseTime
-//            if (!compareExpectedUseTime(sourceSupply.getExpectedUseTime(),targetSupply.getExpectedUseTime())) {
-//                errorExists = true;
-//            }
-//            //subject - Subject
-//            if (!subjectComparison(sourceSupply.getSubject(),targetSupply.getSubject())) {
-//                errorExists = true;
-//            }
-//            //specimen - Specimen
-//            if (!specimenComparison(sourceSupply.getSpecimens(),targetSupply.getSpecimens())) {
-//                errorExists = true;
-//            }
-//            //product
-//            if (!productComparison(sourceSupply.getProduct(),targetSupply.getProduct())) {
-//                errorExists = true;
-//            }
-//            //author - Author
-//            if (!authorsComparison(sourceSupply.getAuthors(),targetSupply.getAuthors())) {
-//                errorExists = true;
-//            }
-//            //informant - Informant12
-//            if (!informantsComparison(sourceSupply.getInformants(),targetSupply.getInformants())) {
-//                errorExists = true;
-//            }
-//            //participant - Participant2
-//            if (!participants2Comparison(sourceSupply.getParticipants(),targetSupply.getParticipants())) {
-//                errorExists = true;
-//            }
-//            //entryRelationship - EntryRelationship
-//            if (!entryRelationshipComparison(sourceSupply.getEntryRelationships(),targetSupply.getEntryRelationships())) {
-//                errorExists = true;
-//            }
-//            //precondition - Precondition
-//            if (!preconditionComparison(sourceSupply.getPreconditions(),targetSupply.getPreconditions())) {
-//                errorExists = true;
-//            }
-//            //nullFlavor
-//            if (!compareNullFlavor(sourceSupply.getNullFlavor(),targetSupply.getNullFlavor())) {
-//                errorExists = true;
-//            }
-//            //ClassCode
-//            if (!compareClassCode(sourceSupply.getClassCode(),targetSupply.getClassCode())) {
-//                errorExists = true;
-//            }
-//            //moodCode
-//            if (!compareMoodCode(sourceSupply.getMoodCode(),targetSupply.getMoodCode())) {
-//                errorExists = true;
-//            }
-//            return !errorExists;
-//        }
-//        return false;
-//    }
-//
-//    private boolean subjectPersonComparison(SubjectPerson sourceSubjectPerson, SubjectPerson targetSubjectPerson) {
-//        boolean errorExists = false;
-//        if (sourceSubjectPerson == null && targetSubjectPerson == null) {
-//            return true;
-//        } else if (sourceSubjectPerson != null && targetSubjectPerson != null) {
-//            //realmCode
-//            if (!compareRealmCodes(sourceSubjectPerson.getRealmCodes(),targetSubjectPerson.getRealmCodes())) {
-//                errorExists = true;
-//            }
-//            //result Id
-//            if (!typeIDComparison(sourceSubjectPerson.getTypeId(),targetSubjectPerson.getTypeId())) {
-//                errorExists = true;
-//            }
-//            //templateID
-//            if (!compareTemplateID(sourceSubjectPerson.getTemplateIds(),targetSubjectPerson.getTemplateIds())) {
-//                errorExists = true;
-//            }
-//            //name
-//            if (!compareNamesPN(sourceSubjectPerson.getNames(),targetSubjectPerson.getNames())) {
-//                errorExists = true;
-//            }
-//            //administrativeGenderCode
-//            if (!compareCode(sourceSubjectPerson.getAdministrativeGenderCode(),targetSubjectPerson.getAdministrativeGenderCode())) {
-//                errorExists = true;
-//            }
-//            //birthTime
-//            if (!compareTime(sourceSubjectPerson.getBirthTime(),targetSubjectPerson.getBirthTime())) {
-//                errorExists = true;
-//            }
-//            //nullFlavor
-//            if (!compareNullFlavor(sourceSubjectPerson.getNullFlavor(),targetSubjectPerson.getNullFlavor())) {
-//                errorExists = true;
-//            }
-//            //ClassCode
-//            if (!compareClassCode(sourceSubjectPerson.getClassCode(),targetSubjectPerson.getClassCode())) {
-//                errorExists = true;
-//            }
-//            //DeterminerCode
-//            if (!compareDeterminerCode(sourceSubjectPerson.getDeterminerCode(),targetSubjectPerson.getDeterminerCode())) {
-//                errorExists = true;
-//            }
-//            return !errorExists;
-//        }
-//        return false;
-//    }
-//
-//    private boolean specimenComparison(EList<Specimen> sourceSpecimen, EList<Specimen> targetSpecimen) {
+        currentLocation.exit();
+    }
+
+    private void healthCareFacilityComparison(HealthCareFacility sourceHealthCareFacility, HealthCareFacility targetHealthCareFacility) {
+        currentLocation.enter("Health Care Facility");
+        if (sourceHealthCareFacility != null && targetHealthCareFacility != null) {
+            //realmCode
+            compareRealmCodes(sourceHealthCareFacility.getRealmCodes(),targetHealthCareFacility.getRealmCodes());
+            //result Id
+            typeIDComparison(sourceHealthCareFacility.getTypeId(),targetHealthCareFacility.getTypeId());
+            //templateID
+            compareTemplateID(sourceHealthCareFacility.getTemplateIds(),targetHealthCareFacility.getTemplateIds());
+            //id
+            compareIDs(sourceHealthCareFacility.getIds(),targetHealthCareFacility.getIds());
+            //code
+            compareCode(sourceHealthCareFacility.getCode(),targetHealthCareFacility.getCode());
+            //location - Place
+            placeComparison(sourceHealthCareFacility.getLocation(),targetHealthCareFacility.getLocation());
+            //serviceProviderOgranization - Organization
+            organizationComparison(sourceHealthCareFacility.getServiceProviderOrganization(),targetHealthCareFacility.getServiceProviderOrganization());
+            //nullFlavor
+            compareNullFlavor(sourceHealthCareFacility.getNullFlavor(),targetHealthCareFacility.getNullFlavor());
+            //ClassCode
+            compareClassCode(sourceHealthCareFacility.getClassCode(),targetHealthCareFacility.getClassCode());
+        }
+        currentLocation.exit();
+    }
+
+    private void relatedSubjectComparison(RelatedSubject sourceRelatedSubject, RelatedSubject targetRelatedSubject) {
+        currentLocation.enter("Related Subject");
+        if (sourceRelatedSubject != null && targetRelatedSubject != null) {
+            //realmCode
+            compareRealmCodes(sourceRelatedSubject.getRealmCodes(),targetRelatedSubject.getRealmCodes());
+            //result Id
+            typeIDComparison(sourceRelatedSubject.getTypeId(),targetRelatedSubject.getTypeId());
+            //templateID
+            compareTemplateID(sourceRelatedSubject.getTemplateIds(),targetRelatedSubject.getTemplateIds());
+            //code
+            compareCode(sourceRelatedSubject.getCode(),targetRelatedSubject.getCode());
+            //Addr
+            compareAddr(sourceRelatedSubject.getAddrs(),targetRelatedSubject.getAddrs());
+            //Telecom
+            compareTelcom(sourceRelatedSubject.getTelecoms(),targetRelatedSubject.getTelecoms());
+            //subject - SubjectPerson
+            subjectPersonComparison(sourceRelatedSubject.getSubject(),targetRelatedSubject.getSubject());
+            //nullFlavor
+            compareNullFlavor(sourceRelatedSubject.getNullFlavor(),targetRelatedSubject.getNullFlavor());
+            //ClassCode
+            compareClassCode(sourceRelatedSubject.getClassCode(),targetRelatedSubject.getClassCode());
+        }
+        currentLocation.exit();
+    }
+
+    private void actComparison(Act sourceAct, Act targetAct) {
+        currentLocation.enter("Act");
+        if (sourceAct != null && targetAct != null) {
+            //realmCode
+            compareRealmCodes(sourceAct.getRealmCodes(),targetAct.getRealmCodes());
+            //result Id
+            typeIDComparison(sourceAct.getTypeId(),targetAct.getTypeId());
+            //templateID
+            compareTemplateID(sourceAct.getTemplateIds(),targetAct.getTemplateIds());
+            //id
+            compareIDs(sourceAct.getIds(),targetAct.getIds());
+            //code
+            compareCode(sourceAct.getCode(),targetAct.getCode());
+            //text
+            compareText(sourceAct.getText(),targetAct.getText());
+            //statusCode
+            compareCode(sourceAct.getCode(),targetAct.getCode());
+            //effectiveTime
+            compareEffectiveTime(sourceAct.getEffectiveTime(),targetAct.getEffectiveTime());
+            //priorityCode
+            compareCode(sourceAct.getPriorityCode(),targetAct.getPriorityCode());
+            //languageCode
+            compareLanguageCode(sourceAct.getLanguageCode(),targetAct.getLanguageCode());
+            //subject
+            subjectComparison(sourceAct.getSubject(),targetAct.getSubject());
+            //Specimen
+            specimenComparison(sourceAct.getSpecimens(),targetAct.getSpecimens());
+            //performer - Performer2
+            performer2Comparison(sourceAct.getPerformers(),targetAct.getPerformers());
+            //author - Author
+            authorsComparison(sourceAct.getAuthors(),targetAct.getAuthors());
+            //informant - Informant12
+            informantsComparison(sourceAct.getInformants(),targetAct.getInformants());
+            //participant - Participant2
+            participants2Comparison(sourceAct.getParticipants(),targetAct.getParticipants());
+            //entryRelationship - EntryRelationship
+            entryRelationshipComparison(sourceAct.getEntryRelationships(),targetAct.getEntryRelationships());
+            //reference - Reference
+            referenceComparison(sourceAct.getReferences(),targetAct.getReferences());
+            //Precondition - Precondition
+            preconditionComparison(sourceAct.getPreconditions(),targetAct.getPreconditions());
+            //nullFlavor
+            compareNullFlavor(sourceAct.getNullFlavor(),targetAct.getNullFlavor());
+            //ClassCode
+            compareClassCode(sourceAct.getClassCode(),targetAct.getClassCode());
+            //moodCode
+            compareMoodCode(sourceAct.getMoodCode(),targetAct.getMoodCode());
+            //negationInd
+            compareNegationInd(sourceAct.getNegationInd(),targetAct.getNegationInd());
+        }
+        currentLocation.exit();
+    }
+
+    private void encounterComparison(Encounter sourceEncounter, Encounter targetEncounter) {
+        currentLocation.enter("Encounter");
+        if (sourceEncounter != null && targetEncounter != null) {
+            //realmCode
+            compareRealmCodes(sourceEncounter.getRealmCodes(),targetEncounter.getRealmCodes());
+            //result Id
+            typeIDComparison(sourceEncounter.getTypeId(),targetEncounter.getTypeId());
+            //templateID
+            compareTemplateID(sourceEncounter.getTemplateIds(),targetEncounter.getTemplateIds());
+            //id
+            compareIDs(sourceEncounter.getIds(),targetEncounter.getIds());
+            //code
+            compareCode(sourceEncounter.getCode(),targetEncounter.getCode());
+            //text
+            compareText(sourceEncounter.getText(),targetEncounter.getText());
+            //statusCode
+            compareCode(sourceEncounter.getCode(),targetEncounter.getCode());
+            //effectiveTime
+            compareEffectiveTime(sourceEncounter.getEffectiveTime(),targetEncounter.getEffectiveTime());
+            //priorityCode
+            compareCode(sourceEncounter.getPriorityCode(),targetEncounter.getPriorityCode());
+            //subject
+            subjectComparison(sourceEncounter.getSubject(),targetEncounter.getSubject());
+            //Specimen
+            specimenComparison(sourceEncounter.getSpecimens(),targetEncounter.getSpecimens());
+            //performer - Performer2
+            performer2Comparison(sourceEncounter.getPerformers(),targetEncounter.getPerformers());
+            //author - Author
+            authorsComparison(sourceEncounter.getAuthors(),targetEncounter.getAuthors());
+            //informant - Informant12
+            informantsComparison(sourceEncounter.getInformants(),targetEncounter.getInformants());
+            //participant - Participant2
+            participants2Comparison(sourceEncounter.getParticipants(),targetEncounter.getParticipants());
+            //entryRelationship - EntryRelationship
+            entryRelationshipComparison(sourceEncounter.getEntryRelationships(),targetEncounter.getEntryRelationships());
+            //reference - Reference
+            referenceComparison(sourceEncounter.getReferences(),targetEncounter.getReferences());
+            //Precondition - Precondition
+            preconditionComparison(sourceEncounter.getPreconditions(),targetEncounter.getPreconditions());
+            //nullFlavor
+            compareNullFlavor(sourceEncounter.getNullFlavor(),targetEncounter.getNullFlavor());
+            //ClassCode
+            compareClassCode(sourceEncounter.getClassCode(),targetEncounter.getClassCode());
+            //moodCode
+            compareMoodCode(sourceEncounter.getMoodCode(),targetEncounter.getMoodCode());
+        }
+        currentLocation.exit();
+    }
+
+    private void observationComparison(Observation sourceObservation, Observation targetObservation) {
+        currentLocation.enter("Observation");
+        if (sourceObservation != null && targetObservation != null) {
+            //realmCode
+            compareRealmCodes(sourceObservation.getRealmCodes(),targetObservation.getRealmCodes());
+            //result Id
+            typeIDComparison(sourceObservation.getTypeId(),targetObservation.getTypeId());
+            //templateID
+            compareTemplateID(sourceObservation.getTemplateIds(),targetObservation.getTemplateIds());
+            //id
+            compareIDs(sourceObservation.getIds(),targetObservation.getIds());
+            //code
+            compareCode(sourceObservation.getCode(),targetObservation.getCode());
+            //derivationExpr
+            compareDerivationExpr(sourceObservation.getDerivationExpr(),targetObservation.getDerivationExpr());
+            //text
+            compareText(sourceObservation.getText(),targetObservation.getText());
+            //statusCode
+            compareCode(sourceObservation.getCode(),targetObservation.getCode());
+            //effectiveTime
+            compareEffectiveTime(sourceObservation.getEffectiveTime(),targetObservation.getEffectiveTime());
+            //priorityCode
+            compareCode(sourceObservation.getPriorityCode(),targetObservation.getPriorityCode());
+            //repeatNumber
+            compareRepeatNumber(sourceObservation.getRepeatNumber(),targetObservation.getRepeatNumber());
+            //languageCode
+            compareLanguageCode(sourceObservation.getLanguageCode(),targetObservation.getLanguageCode());
+            //value
+            compareValues(sourceObservation.getValues(),targetObservation.getValues());
+            //interpretationCode
+            compareCodes(sourceObservation.getInterpretationCodes(),targetObservation.getInterpretationCodes());
+            //methodCode
+            compareCodes(sourceObservation.getMethodCodes(),targetObservation.getMethodCodes());
+            //targetSiteCode
+            compareTargetSiteCode(sourceObservation.getTargetSiteCodes(),targetObservation.getTargetSiteCodes());
+            //subject
+            subjectComparison(sourceObservation.getSubject(),targetObservation.getSubject());
+            //Specimen
+            specimenComparison(sourceObservation.getSpecimens(),targetObservation.getSpecimens());
+            //performer - Performer2
+            performer2Comparison(sourceObservation.getPerformers(),targetObservation.getPerformers());
+            //author - Author
+            authorsComparison(sourceObservation.getAuthors(),targetObservation.getAuthors());
+            //informant - Informant12
+            informantsComparison(sourceObservation.getInformants(),targetObservation.getInformants());
+            //participant - Participant2
+            participants2Comparison(sourceObservation.getParticipants(),targetObservation.getParticipants());
+            //entryRelationship - EntryRelationship
+            entryRelationshipComparison(sourceObservation.getEntryRelationships(),targetObservation.getEntryRelationships());
+            //reference - Reference
+            referenceComparison(sourceObservation.getReferences(),targetObservation.getReferences());
+            //Precondition - Precondition
+            preconditionComparison(sourceObservation.getPreconditions(),targetObservation.getPreconditions());
+            //referenceRange - ReferenceRange
+            referenceRangeComparison(sourceObservation.getReferenceRanges(),targetObservation.getReferenceRanges());
+            //nullFlavor
+            compareNullFlavor(sourceObservation.getNullFlavor(),targetObservation.getNullFlavor());
+            //ClassCode
+            compareClassCode(sourceObservation.getClassCode(),targetObservation.getClassCode());
+            //negationInd
+            compareNegationInd(sourceObservation.getNegationInd(),targetObservation.getNegationInd());
+        }
+        currentLocation.exit();
+    }
+
+    private void observationMediaComparison(ObservationMedia sourceObservationMedia, ObservationMedia targetObservationMedia) {
+        currentLocation.enter("Observation Media");
+        if (sourceObservationMedia != null && targetObservationMedia != null) {
+            //realmCode
+            compareRealmCodes(sourceObservationMedia.getRealmCodes(),targetObservationMedia.getRealmCodes());
+            //result Id
+            typeIDComparison(sourceObservationMedia.getTypeId(),targetObservationMedia.getTypeId());
+            //templateID
+            compareTemplateID(sourceObservationMedia.getTemplateIds(),targetObservationMedia.getTemplateIds());
+            //id
+            compareIDs(sourceObservationMedia.getIds(),targetObservationMedia.getIds());
+            //language code
+            compareLanguageCode(sourceObservationMedia.getLanguageCode(),targetObservationMedia.getLanguageCode());
+            //value
+            compareText(sourceObservationMedia.getValue(),targetObservationMedia.getValue());
+            //subject - Subject
+            subjectComparison(sourceObservationMedia.getSubject(),targetObservationMedia.getSubject());
+            //specimen - Specimen
+            specimenComparison(sourceObservationMedia.getSpecimens(),targetObservationMedia.getSpecimens());
+            //performer - Performer2
+            performer2Comparison(sourceObservationMedia.getPerformers(),targetObservationMedia.getPerformers());
+            //author - Author
+            authorsComparison(sourceObservationMedia.getAuthors(),targetObservationMedia.getAuthors());
+            //informant - Informant12
+            informantsComparison(sourceObservationMedia.getInformants(),targetObservationMedia.getInformants());
+            //participant - Participant2
+            participants2Comparison(sourceObservationMedia.getParticipants(),targetObservationMedia.getParticipants());
+            //entryRelationship - EntryRelationship
+            entryRelationshipComparison(sourceObservationMedia.getEntryRelationships(),targetObservationMedia.getEntryRelationships());
+            //reference - Reference
+            referenceComparison(sourceObservationMedia.getReferences(),targetObservationMedia.getReferences());
+            //precondition - Precondition
+            preconditionComparison(sourceObservationMedia.getPreconditions(),targetObservationMedia.getPreconditions());
+            //ID
+            compareIDAttribute(sourceObservationMedia.getObservationMediaId(),targetObservationMedia.getObservationMediaId());
+            //nullFlavor
+            compareNullFlavor(sourceObservationMedia.getNullFlavor(),targetObservationMedia.getNullFlavor());
+            //ClassCode
+            compareClassCode(sourceObservationMedia.getClassCode(),targetObservationMedia.getClassCode());
+            //moodCode
+            compareMoodCode(sourceObservationMedia.getMoodCode(),targetObservationMedia.getMoodCode());
+        }
+        currentLocation.exit();
+    }
+
+    private void organizerComparison(Organizer sourceOrganizer, Organizer targetOrganizer) {
+        currentLocation.enter("Organizer");
+        if (sourceOrganizer != null && targetOrganizer != null) {
+            //realmCode
+            compareRealmCodes(sourceOrganizer.getRealmCodes(),targetOrganizer.getRealmCodes());
+            //result Id
+            typeIDComparison(sourceOrganizer.getTypeId(),targetOrganizer.getTypeId());
+            //templateID
+            compareTemplateID(sourceOrganizer.getTemplateIds(),targetOrganizer.getTemplateIds());
+            //id
+            compareIDs(sourceOrganizer.getIds(),targetOrganizer.getIds());
+            //code
+            compareCode(sourceOrganizer.getCode(),targetOrganizer.getCode());
+            //statusCode
+            compareCode(sourceOrganizer.getStatusCode(),targetOrganizer.getStatusCode());
+            //effectiveTime
+            compareEffectiveTime(sourceOrganizer.getEffectiveTime(),targetOrganizer.getEffectiveTime());
+            //subject - Subject
+            subjectComparison(sourceOrganizer.getSubject(),targetOrganizer.getSubject());
+            //specimen - Specimen
+            specimenComparison(sourceOrganizer.getSpecimens(),targetOrganizer.getSpecimens());
+            //performer - Performer2
+            performer2Comparison(sourceOrganizer.getPerformers(),targetOrganizer.getPerformers());
+            //author - Author
+            authorsComparison(sourceOrganizer.getAuthors(),targetOrganizer.getAuthors());
+            //informant - Informant12
+            informantsComparison(sourceOrganizer.getInformants(),targetOrganizer.getInformants());
+            //participant - Participant2
+            participants2Comparison(sourceOrganizer.getParticipants(),targetOrganizer.getParticipants());
+            //reference - Reference
+            referenceComparison(sourceOrganizer.getReferences(),targetOrganizer.getReferences());
+            //precondition - Precondition
+            preconditionComparison(sourceOrganizer.getPreconditions(),targetOrganizer.getPreconditions());
+            //component - Component4
+            component4Comparison(sourceOrganizer.getComponents(),targetOrganizer.getComponents());
+            //nullFlavor
+            compareNullFlavor(sourceOrganizer.getNullFlavor(),targetOrganizer.getNullFlavor());
+            //ClassCode
+            compareClassCode(sourceOrganizer.getClassCode(),targetOrganizer.getClassCode());
+            //moodCode
+            compareMoodCode(sourceOrganizer.getMoodCode(),targetOrganizer.getMoodCode());
+        }
+        currentLocation.exit();
+    }
+
+    private void procedureComparison(Procedure sourceProcedure, Procedure targetProcedure) {
+        currentLocation.enter("Procedure");
+        if (sourceProcedure != null && targetProcedure != null) {
+            //realmCode
+            compareRealmCodes(sourceProcedure.getRealmCodes(),targetProcedure.getRealmCodes());
+            //result Id
+            typeIDComparison(sourceProcedure.getTypeId(),targetProcedure.getTypeId());
+            //templateID
+            compareTemplateID(sourceProcedure.getTemplateIds(),targetProcedure.getTemplateIds());
+            //id
+            compareIDs(sourceProcedure.getIds(),targetProcedure.getIds());
+            //code
+            compareCode(sourceProcedure.getCode(),targetProcedure.getCode());
+            //text
+            compareText(sourceProcedure.getText(),targetProcedure.getText());
+            //statusCode
+            compareCode(sourceProcedure.getStatusCode(),targetProcedure.getStatusCode());
+            //effectiveTime
+            compareEffectiveTime(sourceProcedure.getEffectiveTime(),targetProcedure.getEffectiveTime());
+            //priorityCode
+            compareCode(sourceProcedure.getPriorityCode(),targetProcedure.getPriorityCode());
+            //langaugeCode
+            compareCode(sourceProcedure.getLanguageCode(),targetProcedure.getLanguageCode());
+            //methodCode
+            compareCodes(sourceProcedure.getMethodCodes(),targetProcedure.getMethodCodes());
+            //approachSiteCode
+            compareCodesCD(sourceProcedure.getApproachSiteCodes(),targetProcedure.getApproachSiteCodes());
+            //targetSiteCode
+            compareCodesCD(sourceProcedure.getTargetSiteCodes(),targetProcedure.getTargetSiteCodes());
+            //subject - Subject
+            subjectComparison(sourceProcedure.getSubject(),targetProcedure.getSubject());
+            //specimen - Specimen
+            specimenComparison(sourceProcedure.getSpecimens(),targetProcedure.getSpecimens());
+            //performer - Performer2
+            performer2Comparison(sourceProcedure.getPerformers(),targetProcedure.getPerformers());
+            //author - Author
+            authorsComparison(sourceProcedure.getAuthors(),targetProcedure.getAuthors());
+            //informant - Informant12
+            informantsComparison(sourceProcedure.getInformants(),targetProcedure.getInformants());
+            //participant - Participant2
+            participants2Comparison(sourceProcedure.getParticipants(),targetProcedure.getParticipants());
+            //entryRelationship - EntryRelationship
+            entryRelationshipComparison(sourceProcedure.getEntryRelationships(),targetProcedure.getEntryRelationships());
+            //reference - Reference
+            referenceComparison(sourceProcedure.getReferences(),targetProcedure.getReferences());
+            //precondition - Precondition
+            preconditionComparison(sourceProcedure.getPreconditions(),targetProcedure.getPreconditions());
+            //nullFlavor
+            compareNullFlavor(sourceProcedure.getNullFlavor(),targetProcedure.getNullFlavor());
+            //ClassCode
+            compareClassCode(sourceProcedure.getClassCode(),targetProcedure.getClassCode());
+            //moodCode
+            compareMoodCode(sourceProcedure.getMoodCode(),targetProcedure.getMoodCode());
+        }
+        currentLocation.exit();
+    }
+
+    private void regionOfInterestComparison(RegionOfInterest sourceRegionOfInterest, RegionOfInterest targetRegionOfInterest) {
+        currentLocation.enter("Region Of Interest");
+        if (sourceRegionOfInterest != null && targetRegionOfInterest != null) {
+            //realmCode
+            compareRealmCodes(sourceRegionOfInterest.getRealmCodes(),targetRegionOfInterest.getRealmCodes());
+            //result Id
+            typeIDComparison(sourceRegionOfInterest.getTypeId(),targetRegionOfInterest.getTypeId());
+            //templateID
+            compareTemplateID(sourceRegionOfInterest.getTemplateIds(),targetRegionOfInterest.getTemplateIds());
+            //id
+            compareIDs(sourceRegionOfInterest.getIds(),targetRegionOfInterest.getIds());
+            //code
+            compareCode(sourceRegionOfInterest.getCode(),targetRegionOfInterest.getCode());
+            //value
+            compareValuesROI(sourceRegionOfInterest.getValues(),targetRegionOfInterest.getValues());
+            //subject - Subject
+            subjectComparison(sourceRegionOfInterest.getSubject(),targetRegionOfInterest.getSubject());
+            //specimen - Specimen
+            specimenComparison(sourceRegionOfInterest.getSpecimens(),targetRegionOfInterest.getSpecimens());
+            //performer - Performer2
+            performer2Comparison(sourceRegionOfInterest.getPerformers(),targetRegionOfInterest.getPerformers());
+            //author - Author
+            authorsComparison(sourceRegionOfInterest.getAuthors(),targetRegionOfInterest.getAuthors());
+            //informant - Informant12
+            informantsComparison(sourceRegionOfInterest.getInformants(),targetRegionOfInterest.getInformants());
+            //participant - Participant2
+            participants2Comparison(sourceRegionOfInterest.getParticipants(),targetRegionOfInterest.getParticipants());
+            //entryRelationship - EntryRelationship
+            entryRelationshipComparison(sourceRegionOfInterest.getEntryRelationships(),targetRegionOfInterest.getEntryRelationships());
+            //reference - Reference
+            referenceComparison(sourceRegionOfInterest.getReferences(),targetRegionOfInterest.getReferences());
+            //precondition - Precondition
+            preconditionComparison(sourceRegionOfInterest.getPreconditions(),targetRegionOfInterest.getPreconditions());
+            //nullFlavor
+            compareNullFlavor(sourceRegionOfInterest.getNullFlavor(),targetRegionOfInterest.getNullFlavor());
+            //ClassCode
+            compareClassCode(sourceRegionOfInterest.getClassCode(),targetRegionOfInterest.getClassCode());
+            //moodCode
+            compareMoodCode(sourceRegionOfInterest.getMoodCode(),targetRegionOfInterest.getMoodCode());
+            //ID Attribute
+            compareIDAttribute(sourceRegionOfInterest.getRegionOfInterestId(),targetRegionOfInterest.getRegionOfInterestId());
+        }
+        currentLocation.exit();
+    }
+
+    private void substanceAdministrationComparison(SubstanceAdministration sourceSubstanceAdministration, SubstanceAdministration targetSubstanceAdminstration) {
+        currentLocation.enter("Substance Administration");
+        if (sourceSubstanceAdministration != null && targetSubstanceAdminstration != null) {
+            //realmCode
+            compareRealmCodes(sourceSubstanceAdministration.getRealmCodes(),targetSubstanceAdminstration.getRealmCodes());
+            //result Id
+            typeIDComparison(sourceSubstanceAdministration.getTypeId(),targetSubstanceAdminstration.getTypeId());
+            //templateID
+            compareTemplateID(sourceSubstanceAdministration.getTemplateIds(),targetSubstanceAdminstration.getTemplateIds());
+            //id
+            compareIDs(sourceSubstanceAdministration.getIds(),targetSubstanceAdminstration.getIds());
+            //code
+            compareCode(sourceSubstanceAdministration.getCode(),targetSubstanceAdminstration.getCode());
+            //text
+            compareText(sourceSubstanceAdministration.getText(),targetSubstanceAdminstration.getText());
+            //statusCode
+            compareCode(sourceSubstanceAdministration.getStatusCode(),targetSubstanceAdminstration.getStatusCode());
+            //effectiveTime
+            compareEffectiveTime(sourceSubstanceAdministration.getEffectiveTimes(),targetSubstanceAdminstration.getEffectiveTimes());
+            //priorityCode
+            compareCode(sourceSubstanceAdministration.getPriorityCode(),targetSubstanceAdminstration.getPriorityCode());
+            //repeatNumber
+            compareRepeatNumber(sourceSubstanceAdministration.getRepeatNumber(),targetSubstanceAdminstration.getRepeatNumber());
+            //routeCode
+            compareCode(sourceSubstanceAdministration.getRouteCode(),targetSubstanceAdminstration.getRouteCode());
+            //approachSiteCode
+            compareCodesCD(sourceSubstanceAdministration.getApproachSiteCodes(),targetSubstanceAdminstration.getApproachSiteCodes());
+            //doseQuantity
+            compareDose(sourceSubstanceAdministration.getDoseQuantity(),targetSubstanceAdminstration.getDoseQuantity());
+            //rateQuantity
+            compareDose(sourceSubstanceAdministration.getRateQuantity(),targetSubstanceAdminstration.getRateQuantity());
+            //maxDoseQuantity
+            compareMaxDose(sourceSubstanceAdministration.getMaxDoseQuantity(),targetSubstanceAdminstration.getMaxDoseQuantity());
+            //administrationUnitCode
+            compareCode(sourceSubstanceAdministration.getAdministrationUnitCode(),targetSubstanceAdminstration.getAdministrationUnitCode());
+            //subject - Subject
+            subjectComparison(sourceSubstanceAdministration.getSubject(),targetSubstanceAdminstration.getSubject());
+            //specimen - Specimen
+            specimenComparison(sourceSubstanceAdministration.getSpecimens(),targetSubstanceAdminstration.getSpecimens());
+            //consumable
+            consumableComparison(sourceSubstanceAdministration.getConsumable(),targetSubstanceAdminstration.getConsumable());
+            //performer - Performer2
+            performer2Comparison(sourceSubstanceAdministration.getPerformers(),targetSubstanceAdminstration.getPerformers());
+            //author - Author
+            authorsComparison(sourceSubstanceAdministration.getAuthors(),targetSubstanceAdminstration.getAuthors());
+            //informant - Informant12
+            informantsComparison(sourceSubstanceAdministration.getInformants(),targetSubstanceAdminstration.getInformants());
+            //participant - Participant2
+            participants2Comparison(sourceSubstanceAdministration.getParticipants(),targetSubstanceAdminstration.getParticipants());
+            //entryRelationship - EntryRelationship
+            entryRelationshipComparison(sourceSubstanceAdministration.getEntryRelationships(),targetSubstanceAdminstration.getEntryRelationships());
+            //reference - Reference
+            referenceComparison(sourceSubstanceAdministration.getReferences(),targetSubstanceAdminstration.getReferences());
+            //precondition - Precondition
+            preconditionComparison(sourceSubstanceAdministration.getPreconditions(),targetSubstanceAdminstration.getPreconditions());
+            //nullFlavor
+            compareNullFlavor(sourceSubstanceAdministration.getNullFlavor(),targetSubstanceAdminstration.getNullFlavor());
+            //ClassCode
+            compareClassCode(sourceSubstanceAdministration.getClassCode(),targetSubstanceAdminstration.getClassCode());
+            //moodCode
+            compareMoodCode(sourceSubstanceAdministration.getMoodCode(),targetSubstanceAdminstration.getMoodCode());
+            //negationInd
+            compareNegationInd(sourceSubstanceAdministration.getNegationInd(),targetSubstanceAdminstration.getNegationInd());
+        }
+        currentLocation.exit();
+    }
+
+    private void supplyComparison(Supply sourceSupply, Supply targetSupply) {
+        currentLocation.enter("Supply");
+        if (sourceSupply != null && targetSupply != null) {
+            //realmCode
+            compareRealmCodes(sourceSupply.getRealmCodes(),targetSupply.getRealmCodes());
+            //result Id
+            typeIDComparison(sourceSupply.getTypeId(),targetSupply.getTypeId());
+            //templateID
+            compareTemplateID(sourceSupply.getTemplateIds(),targetSupply.getTemplateIds());
+            //id
+            compareIDs(sourceSupply.getIds(),targetSupply.getIds());
+            //code
+            compareCode(sourceSupply.getCode(),targetSupply.getCode());
+            //text
+            compareText(sourceSupply.getText(),targetSupply.getText());
+            //statusCode
+            compareCode(sourceSupply.getStatusCode(),targetSupply.getStatusCode());
+            //effectiveTime
+            compareEffectiveTime(sourceSupply.getEffectiveTimes(),targetSupply.getEffectiveTimes());
+            //priorityCode
+            compareCodes(sourceSupply.getPriorityCodes(),targetSupply.getPriorityCodes());
+            //repeatNumber
+            compareRepeatNumber(sourceSupply.getRepeatNumber(),targetSupply.getRepeatNumber());
+            //independentInd
+            comparePreferenceInd(sourceSupply.getIndependentInd(),targetSupply.getIndependentInd());
+            //quantity
+            compareQuantity(sourceSupply.getQuantity(),targetSupply.getQuantity());
+            //expectedUseTime
+            compareExpectedUseTime(sourceSupply.getExpectedUseTime(),targetSupply.getExpectedUseTime());
+            //subject - Subject
+            subjectComparison(sourceSupply.getSubject(),targetSupply.getSubject());
+            //specimen - Specimen
+            specimenComparison(sourceSupply.getSpecimens(),targetSupply.getSpecimens());
+            //product
+            productComparison(sourceSupply.getProduct(),targetSupply.getProduct());
+            //author - Author
+            authorsComparison(sourceSupply.getAuthors(),targetSupply.getAuthors());
+            //informant - Informant12
+            informantsComparison(sourceSupply.getInformants(),targetSupply.getInformants());
+            //participant - Participant2
+            participants2Comparison(sourceSupply.getParticipants(),targetSupply.getParticipants());
+            //entryRelationship - EntryRelationship
+            entryRelationshipComparison(sourceSupply.getEntryRelationships(),targetSupply.getEntryRelationships());
+            //precondition - Precondition
+            preconditionComparison(sourceSupply.getPreconditions(),targetSupply.getPreconditions());
+            //nullFlavor
+            compareNullFlavor(sourceSupply.getNullFlavor(),targetSupply.getNullFlavor());
+            //ClassCode
+            compareClassCode(sourceSupply.getClassCode(),targetSupply.getClassCode());
+            //moodCode
+            compareMoodCode(sourceSupply.getMoodCode(),targetSupply.getMoodCode());
+        }
+        currentLocation.exit();
+    }
+
+    private void subjectPersonComparison(SubjectPerson sourceSubjectPerson, SubjectPerson targetSubjectPerson) {
+        currentLocation.enter("Subject Person");
+        if (sourceSubjectPerson != null && targetSubjectPerson != null) {
+            //realmCode
+            compareRealmCodes(sourceSubjectPerson.getRealmCodes(),targetSubjectPerson.getRealmCodes());
+            //result Id
+            typeIDComparison(sourceSubjectPerson.getTypeId(),targetSubjectPerson.getTypeId());
+            //templateID
+            compareTemplateID(sourceSubjectPerson.getTemplateIds(),targetSubjectPerson.getTemplateIds());
+            //name
+            compareNamesPN(sourceSubjectPerson.getNames(),targetSubjectPerson.getNames());
+            //administrativeGenderCode
+            compareCode(sourceSubjectPerson.getAdministrativeGenderCode(),targetSubjectPerson.getAdministrativeGenderCode());
+            //birthTime
+            compareTime(sourceSubjectPerson.getBirthTime(),targetSubjectPerson.getBirthTime());
+            //nullFlavor
+            compareNullFlavor(sourceSubjectPerson.getNullFlavor(),targetSubjectPerson.getNullFlavor());
+            //ClassCode
+            compareClassCode(sourceSubjectPerson.getClassCode(),targetSubjectPerson.getClassCode());
+            //DeterminerCode
+            compareDeterminerCode(sourceSubjectPerson.getDeterminerCode(),targetSubjectPerson.getDeterminerCode());
+        }
+        currentLocation.exit();
+    }
+
+    private void specimenComparison(EList<Specimen> sourceSpecimen, EList<Specimen> targetSpecimen) {
+        currentLocation.enter("Specimen");
 //        boolean errorExists = false;
 //        for (int i=0;i<sourceSpecimen.size();i++) {
 //            int targetMatches = 0;
@@ -3483,9 +2592,11 @@ public class MDHTPreCompareService extends PreCompareService {
 //            }
 //        }
 //        return !errorExists;
-//    }
-//
-//    private boolean performer2Comparison(EList<Performer2> sourcePerformer, EList<Performer2> targetPerformer) {
+        currentLocation.exit();
+    }
+
+    private void performer2Comparison(EList<Performer2> sourcePerformer, EList<Performer2> targetPerformer) {
+        currentLocation.enter("Performer2");
 //        boolean errorExists = false;
 //        for (int i=0;i<sourcePerformer.size();i++) {
 //            int targetMatches = 0;
@@ -3538,9 +2649,11 @@ public class MDHTPreCompareService extends PreCompareService {
 //            }
 //        }
 //        return !errorExists;
-//    }
-//
-//    private boolean participants2Comparison(EList<Participant2> sourceParticipants, EList<Participant2> targetParticipants) {
+        currentLocation.exit();
+    }
+
+    private void participants2Comparison(EList<Participant2> sourceParticipants, EList<Participant2> targetParticipants) {
+        currentLocation.enter("Participants2");
 //        boolean errorExists = false;
 //        for (int i=0;i<sourceParticipants.size();i++) {
 //            int targetMatches = 0;
@@ -3597,9 +2710,11 @@ public class MDHTPreCompareService extends PreCompareService {
 //            }
 //        }
 //        return !errorExists;
-//    }
-//
-//    private boolean entryRelationshipComparison(EList<EntryRelationship> sourceEntryRelationships, EList<EntryRelationship> targetEntryRelationships) {
+        currentLocation.exit();
+    }
+
+    private void entryRelationshipComparison(EList<EntryRelationship> sourceEntryRelationships, EList<EntryRelationship> targetEntryRelationships) {
+        currentLocation.enter("Entry Relationship");
 //        boolean errorExists = false;
 //        for (int i=0;i<sourceEntryRelationships.size();i++) {
 //            int targetMatches = 0;
@@ -3683,9 +2798,11 @@ public class MDHTPreCompareService extends PreCompareService {
 //            }
 //        }
 //        return !errorExists;
-//    }
-//
-//    private boolean referenceComparison(EList<Reference> sourceReference, EList<Reference> targetReference) {
+        currentLocation.exit();
+    }
+
+    private void referenceComparison(EList<Reference> sourceReference, EList<Reference> targetReference) {
+        currentLocation.enter("Reference");
 //        boolean errorExists = false;
 //        for (int i=0;i<sourceReference.size();i++) {
 //            int targetMatches = 0;
@@ -3740,10 +2857,12 @@ public class MDHTPreCompareService extends PreCompareService {
 ////                comparisonReport.addMessage("Reference Comparison Warning source " + i + " in " + errorMessage + "\n");
 //            }
 //        }
-//        return !errorExists;
-//    }
-//
-//    private boolean preconditionComparison(EList<Precondition> sourcePrecondition, EList<Precondition> targetPrecondition) {
+//       return !errorExists;
+        currentLocation.exit();
+    }
+
+    private void preconditionComparison(EList<Precondition> sourcePrecondition, EList<Precondition> targetPrecondition) {
+        currentLocation.enter("Precondition");
 //        boolean errorExists = false;
 //        for (int i=0;i<sourcePrecondition.size();i++) {
 //            int targetMatches = 0;
@@ -3783,9 +2902,11 @@ public class MDHTPreCompareService extends PreCompareService {
 //            }
 //        }
 //        return !errorExists;
-//    }
-//
-//    private boolean referenceRangeComparison(EList<ReferenceRange> sourceReferenceRange, EList<ReferenceRange> targetReferenceRange) {
+        currentLocation.exit();
+    }
+
+    private void referenceRangeComparison(EList<ReferenceRange> sourceReferenceRange, EList<ReferenceRange> targetReferenceRange) {
+        currentLocation.enter("Reference Range");
 //        boolean errorExists = false;
 //        for (int i=0;i<sourceReferenceRange.size();i++) {
 //            int targetMatches = 0;
@@ -3829,9 +2950,11 @@ public class MDHTPreCompareService extends PreCompareService {
 //            }
 //        }
 //        return !errorExists;
-//    }
-//
-//    private boolean component4Comparison(EList<Component4> sourceComponent4, EList<Component4> targetComponent4) {
+        currentLocation.exit();
+    }
+
+    private void component4Comparison(EList<Component4> sourceComponent4, EList<Component4> targetComponent4) {
+        currentLocation.enter("Component4");
 //        boolean errorExists = false;
 //        for (int i=0;i<sourceComponent4.size();i++) {
 //            int targetMatches = 0;
@@ -3905,9 +3028,11 @@ public class MDHTPreCompareService extends PreCompareService {
 //            }
 //        }
 //        return !errorExists;
-//    }
-//
-//    private boolean compareValuesROI(EList<RegionOfInterestValue> sourceValue, EList<RegionOfInterestValue> targetValue) {
+        currentLocation.exit();
+    }
+
+    private void compareValuesROI(EList<RegionOfInterestValue> sourceValue, EList<RegionOfInterestValue> targetValue) {
+        currentLocation.enter("Region Of Interest Value");
 //        boolean errorExists = false;
 //        for (int i=0; i<sourceValue.size(); i++) {
 //            int targetMatches = 0;
@@ -3927,148 +3052,86 @@ public class MDHTPreCompareService extends PreCompareService {
 //            }
 //        }
 //        return !errorExists;
-//    }
-//
-//    private boolean consumableComparison(Consumable sourceConsumable, Consumable targetConsumable) {
-//        boolean errorExists = false;
-//        if (sourceConsumable == null && targetConsumable == null) {
-//            return true;
-//        } else if (sourceConsumable != null && targetConsumable != null) {
-//            //realmCode
-//            if (!compareRealmCodes(sourceConsumable.getRealmCodes(),targetConsumable.getRealmCodes())) {
-//                errorExists = true;
-//            }
-//            //result Id
-//            if (!typeIDComparison(sourceConsumable.getTypeId(),targetConsumable.getTypeId())) {
-//                errorExists = true;
-//            }
-//            //templateID
-//            if (!compareTemplateID(sourceConsumable.getTemplateIds(),targetConsumable.getTemplateIds())) {
-//                errorExists = true;
-//            }
-//            //manufacturedProduct
-//            if (!manufacturedProductComparison(sourceConsumable.getManufacturedProduct(),targetConsumable.getManufacturedProduct())) {
-//                errorExists = true;
-//            }
-//            //nullFlavor
-//            if (!compareNullFlavor(sourceConsumable.getNullFlavor(),targetConsumable.getNullFlavor())) {
-//                errorExists = true;
-//            }
-//            //Type Code
-//            if (!compareTypeCode(sourceConsumable.getTypeCode(),targetConsumable.getTypeCode())) {
-//                errorExists = true;
-//            }
-//            return !errorExists;
-//        }
-//        return false;
-//    }
-//
-//    private boolean productComparison(Product sourceProduct, Product targetProduct) {
-//        boolean errorExists = false;
-//        if (sourceProduct == null && targetProduct == null) {
-//            return true;
-//        } else if (sourceProduct != null && targetProduct != null) {
-//            //realmCode
-//            if (!compareRealmCodes(sourceProduct.getRealmCodes(),targetProduct.getRealmCodes())) {
-//                errorExists = true;
-//            }
-//            //result Id
-//            if (!typeIDComparison(sourceProduct.getTypeId(),targetProduct.getTypeId())) {
-//                errorExists = true;
-//            }
-//            //templateID
-//            if (!compareTemplateID(sourceProduct.getTemplateIds(),targetProduct.getTemplateIds())) {
-//                errorExists = true;
-//            }
-//            //manufacturedProduct
-//            if (!manufacturedProductComparison(sourceProduct.getManufacturedProduct(),targetProduct.getManufacturedProduct())) {
-//                errorExists = true;
-//            }
-//            //nullFlavor
-//            if (!compareNullFlavor(sourceProduct.getNullFlavor(),targetProduct.getNullFlavor())) {
-//                errorExists = true;
-//            }
-//            //Type Code
-//            if (!compareTypeCode(sourceProduct.getTypeCode(),targetProduct.getTypeCode())) {
-//                errorExists = true;
-//            }
-//            return !errorExists;
-//        }
-//        return false;
-//    }
-//
-//    private boolean specimenRoleComparison(SpecimenRole sourceSpecimenRole, SpecimenRole targetSpecimenRole) {
-//        boolean errorExists = false;
-//        if (sourceSpecimenRole == null && targetSpecimenRole == null) {
-//            return true;
-//        } else if (sourceSpecimenRole != null && targetSpecimenRole != null) {
-//            //realmCode
-//            if (!compareRealmCodes(sourceSpecimenRole.getRealmCodes(),targetSpecimenRole.getRealmCodes())) {
-//                errorExists = true;
-//            }
-//            //result Id
-//            if (!typeIDComparison(sourceSpecimenRole.getTypeId(),targetSpecimenRole.getTypeId())) {
-//                errorExists = true;
-//            }
-//            //templateID
-//            if (!compareTemplateID(sourceSpecimenRole.getTemplateIds(),targetSpecimenRole.getTemplateIds())) {
-//                errorExists = true;
-//            }
-//            //id
-//            if (!compareIDs(sourceSpecimenRole.getIds(),targetSpecimenRole.getIds())) {
-//                errorExists = true;
-//            }
-//            //specimenPlayingEntity - PlayingEntity
-//            if (!comparePlayingEntity(sourceSpecimenRole.getSpecimenPlayingEntity(),targetSpecimenRole.getSpecimenPlayingEntity())) {
-//                errorExists = true;
-//            }
-//            //nullFlavor
-//            if (!compareNullFlavor(sourceSpecimenRole.getNullFlavor(),targetSpecimenRole.getNullFlavor())) {
-//                errorExists = true;
-//            }
-//            //Class Code
-//            if (!compareClassCode(sourceSpecimenRole.getClassCode(),targetSpecimenRole.getClassCode())) {
-//                errorExists = true;
-//            }
-//            return !errorExists;
-//        }
-//        return false;
-//    }
-//
-//    private boolean participantRoleComparison(ParticipantRole sourceParticipantRole, ParticipantRole targetParticipantRole) {
-//        boolean errorExists = false;
-//        if (sourceParticipantRole == null && targetParticipantRole == null) {
-//            return true;
-//        } else if (sourceParticipantRole != null && targetParticipantRole != null) {
-//            //realmCode
-//            if (!compareRealmCodes(sourceParticipantRole.getRealmCodes(),targetParticipantRole.getRealmCodes())) {
-//                errorExists = true;
-//            }
-//            //result Id
-//            if (!typeIDComparison(sourceParticipantRole.getTypeId(),targetParticipantRole.getTypeId())) {
-//                errorExists = true;
-//            }
-//            //templateID
-//            if (!compareTemplateID(sourceParticipantRole.getTemplateIds(),targetParticipantRole.getTemplateIds())) {
-//                errorExists = true;
-//            }
-//            //id
-//            if (!compareIDs(sourceParticipantRole.getIds(),targetParticipantRole.getIds())) {
-//                errorExists = true;
-//            }
-//            //code
-//            if (!compareCode(sourceParticipantRole.getCode(),targetParticipantRole.getCode())) {
-//                errorExists = true;
-//            }
-//            //addr
-//            if (!compareAddr(sourceParticipantRole.getAddrs(),targetParticipantRole.getAddrs())) {
-//                errorExists = true;
-//            }
-//            //telecom
-//            if (!compareTelcom(sourceParticipantRole.getTelecoms(),targetParticipantRole.getTelecoms())) {
-//                errorExists = true;
-//            }
-//            //Choice - playingDevice (Device), playingEntity(PlayingEntity)
+        currentLocation.exit();
+    }
+
+    private void consumableComparison(Consumable sourceConsumable, Consumable targetConsumable) {
+        currentLocation.enter("Consumable");
+        if (sourceConsumable != null && targetConsumable != null) {
+            //realmCode
+            compareRealmCodes(sourceConsumable.getRealmCodes(),targetConsumable.getRealmCodes());
+            //result Id
+            typeIDComparison(sourceConsumable.getTypeId(),targetConsumable.getTypeId());
+            //templateID
+            compareTemplateID(sourceConsumable.getTemplateIds(),targetConsumable.getTemplateIds());
+            //manufacturedProduct
+            manufacturedProductComparison(sourceConsumable.getManufacturedProduct(),targetConsumable.getManufacturedProduct());
+            //nullFlavor
+            compareNullFlavor(sourceConsumable.getNullFlavor(),targetConsumable.getNullFlavor());
+            //Type Code
+            compareTypeCode(sourceConsumable.getTypeCode(),targetConsumable.getTypeCode());
+        }
+        currentLocation.exit();
+    }
+
+    private void productComparison(Product sourceProduct, Product targetProduct) {
+        currentLocation.enter("Product");
+        if (sourceProduct != null && targetProduct != null) {
+            //realmCode
+            compareRealmCodes(sourceProduct.getRealmCodes(),targetProduct.getRealmCodes());
+            //result Id
+            typeIDComparison(sourceProduct.getTypeId(),targetProduct.getTypeId());
+            //templateID
+            compareTemplateID(sourceProduct.getTemplateIds(),targetProduct.getTemplateIds());
+            //manufacturedProduct
+            manufacturedProductComparison(sourceProduct.getManufacturedProduct(),targetProduct.getManufacturedProduct());
+            //nullFlavor
+            compareNullFlavor(sourceProduct.getNullFlavor(),targetProduct.getNullFlavor());
+            //Type Code
+            compareTypeCode(sourceProduct.getTypeCode(),targetProduct.getTypeCode());
+        }
+        currentLocation.exit();
+    }
+
+    private void specimenRoleComparison(SpecimenRole sourceSpecimenRole, SpecimenRole targetSpecimenRole) {
+        currentLocation.enter("Specimen Role");
+        if (sourceSpecimenRole != null && targetSpecimenRole != null) {
+            //realmCode
+            compareRealmCodes(sourceSpecimenRole.getRealmCodes(),targetSpecimenRole.getRealmCodes());
+            //result Id
+            typeIDComparison(sourceSpecimenRole.getTypeId(),targetSpecimenRole.getTypeId());
+            //templateID
+            compareTemplateID(sourceSpecimenRole.getTemplateIds(),targetSpecimenRole.getTemplateIds());
+            //id
+            compareIDs(sourceSpecimenRole.getIds(),targetSpecimenRole.getIds());
+            //specimenPlayingEntity - PlayingEntity
+            comparePlayingEntity(sourceSpecimenRole.getSpecimenPlayingEntity(),targetSpecimenRole.getSpecimenPlayingEntity());
+            //nullFlavor
+            compareNullFlavor(sourceSpecimenRole.getNullFlavor(),targetSpecimenRole.getNullFlavor());
+            //Class Code
+            compareClassCode(sourceSpecimenRole.getClassCode(),targetSpecimenRole.getClassCode());
+        }
+        currentLocation.exit();
+    }
+
+    private void participantRoleComparison(ParticipantRole sourceParticipantRole, ParticipantRole targetParticipantRole) {
+        currentLocation.enter("Participant Role");
+        if (sourceParticipantRole != null && targetParticipantRole != null) {
+            //realmCode
+            compareRealmCodes(sourceParticipantRole.getRealmCodes(),targetParticipantRole.getRealmCodes());
+            //result Id
+            typeIDComparison(sourceParticipantRole.getTypeId(),targetParticipantRole.getTypeId());
+            //templateID
+            compareTemplateID(sourceParticipantRole.getTemplateIds(),targetParticipantRole.getTemplateIds());
+            //id
+            compareIDs(sourceParticipantRole.getIds(),targetParticipantRole.getIds());
+            //code
+            compareCode(sourceParticipantRole.getCode(),targetParticipantRole.getCode());
+            //addr
+            compareAddr(sourceParticipantRole.getAddrs(),targetParticipantRole.getAddrs());
+            //telecom
+            compareTelcom(sourceParticipantRole.getTelecoms(),targetParticipantRole.getTelecoms());
+            //Choice - playingDevice (Device), playingEntity(PlayingEntity)
 //            if (!(sourceParticipantRole.getPlayingDevice() == null && targetParticipantRole.getPlayingDevice() == null
 //                    && sourceParticipantRole.getPlayingEntity() == null && targetParticipantRole.getPlayingEntity() == null)) {
 //                if (!((deviceComparison(sourceParticipantRole.getPlayingDevice(), targetParticipantRole.getPlayingDevice()) && sourceParticipantRole.getPlayingDevice() != null)
@@ -4076,333 +3139,184 @@ public class MDHTPreCompareService extends PreCompareService {
 //                    errorExists = true;
 //                }
 //            }
-//            //scopingEntity - Entity
-//            if (!entityComparison(sourceParticipantRole.getScopingEntity(),targetParticipantRole.getScopingEntity())) {
-//                errorExists = true;
-//            }
-//            //nullFlavor
-//            if (!compareNullFlavor(sourceParticipantRole.getNullFlavor(),targetParticipantRole.getNullFlavor())) {
-//                errorExists = true;
-//            }
-//            //Class Code
-//            if (!compareClassCode(sourceParticipantRole.getClassCode(),targetParticipantRole.getClassCode())) {
-//                errorExists = true;
-//            }
-//            return !errorExists;
-//        }
-//        return false;
-//    }
-//
-//    private boolean externalActComparison(ExternalAct sourceExternalAct, ExternalAct targetExternalAct) {
-//        boolean errorExists = false;
-//        if (sourceExternalAct == null && targetExternalAct == null) {
-//            return true;
-//        } else if (sourceExternalAct != null && targetExternalAct != null) {
-//            //realmCode
-//            if (!compareRealmCodes(sourceExternalAct.getRealmCodes(),targetExternalAct.getRealmCodes())) {
-//                errorExists = true;
-//            }
-//            //result Id
-//            if (!typeIDComparison(sourceExternalAct.getTypeId(),targetExternalAct.getTypeId())) {
-//                errorExists = true;
-//            }
-//            //templateID
-//            if (!compareTemplateID(sourceExternalAct.getTemplateIds(),targetExternalAct.getTemplateIds())) {
-//                errorExists = true;
-//            }
-//            //id
-//            if (!compareIDs(sourceExternalAct.getIds(),targetExternalAct.getIds())) {
-//                errorExists = true;
-//            }
-//            //code
-//            if (!compareCode(sourceExternalAct.getCode(),targetExternalAct.getCode())) {
-//                errorExists = true;
-//            }
-//            //text
-//            if (!compareText(sourceExternalAct.getText(),targetExternalAct.getText())) {
-//                errorExists = true;
-//            }
-//            //nullFlavor
-//            if (!compareNullFlavor(sourceExternalAct.getNullFlavor(),targetExternalAct.getNullFlavor())) {
-//                errorExists = true;
-//            }
-//            //Class Code
-//            if (!compareClassCode(sourceExternalAct.getClassCode(),targetExternalAct.getClassCode())) {
-//                errorExists = true;
-//            }
-//            //Mood Code
-//            if (!compareMoodCode(sourceExternalAct.getMoodCode(),targetExternalAct.getMoodCode())) {
-//                errorExists = true;
-//            }
-//            return !errorExists;
-//        }
-//        return false;
-//    }
-//
-//    private boolean externalObservationComparison(ExternalObservation sourceExternalObservation, ExternalObservation targetExternalObservation) {
-//        boolean errorExists = false;
-//        if (sourceExternalObservation == null && targetExternalObservation == null) {
-//            return true;
-//        } else if (sourceExternalObservation != null && targetExternalObservation != null) {
-//            //realmCode
-//            if (!compareRealmCodes(sourceExternalObservation.getRealmCodes(),targetExternalObservation.getRealmCodes())) {
-//                errorExists = true;
-//            }
-//            //result Id
-//            if (!typeIDComparison(sourceExternalObservation.getTypeId(),targetExternalObservation.getTypeId())) {
-//                errorExists = true;
-//            }
-//            //templateID
-//            if (!compareTemplateID(sourceExternalObservation.getTemplateIds(),targetExternalObservation.getTemplateIds())) {
-//                errorExists = true;
-//            }
-//            //id
-//            if (!compareIDs(sourceExternalObservation.getIds(),targetExternalObservation.getIds())) {
-//                errorExists = true;
-//            }
-//            //code
-//            if (!compareCode(sourceExternalObservation.getCode(),targetExternalObservation.getCode())) {
-//                errorExists = true;
-//            }
-//            //text
-//            if (!compareText(sourceExternalObservation.getText(),targetExternalObservation.getText())) {
-//                errorExists = true;
-//            }
-//            //nullFlavor
-//            if (!compareNullFlavor(sourceExternalObservation.getNullFlavor(),targetExternalObservation.getNullFlavor())) {
-//                errorExists = true;
-//            }
-//            //Class Code
-//            if (!compareClassCode(sourceExternalObservation.getClassCode(),targetExternalObservation.getClassCode())) {
-//                errorExists = true;
-//            }
-//            //Mood Code
-//            if (!compareMoodCode(sourceExternalObservation.getMoodCode(),targetExternalObservation.getMoodCode())) {
-//                errorExists = true;
-//            }
-//            return !errorExists;
-//        }
-//        return false;
-//    }
-//
-//    private boolean externalProcedureComparison(ExternalProcedure sourceExternalProcedure, ExternalProcedure targetExternalProcedure) {
-//        boolean errorExists = false;
-//        if (sourceExternalProcedure == null && targetExternalProcedure == null) {
-//            return true;
-//        } else if (sourceExternalProcedure != null && targetExternalProcedure != null) {
-//            //realmCode
-//            if (!compareRealmCodes(sourceExternalProcedure.getRealmCodes(),targetExternalProcedure.getRealmCodes())) {
-//                errorExists = true;
-//            }
-//            //result Id
-//            if (!typeIDComparison(sourceExternalProcedure.getTypeId(),targetExternalProcedure.getTypeId())) {
-//                errorExists = true;
-//            }
-//            //templateID
-//            if (!compareTemplateID(sourceExternalProcedure.getTemplateIds(),targetExternalProcedure.getTemplateIds())) {
-//                errorExists = true;
-//            }
-//            //id
-//            if (!compareIDs(sourceExternalProcedure.getIds(),targetExternalProcedure.getIds())) {
-//                errorExists = true;
-//            }
-//            //code
-//            if (!compareCode(sourceExternalProcedure.getCode(),targetExternalProcedure.getCode())) {
-//                errorExists = true;
-//            }
-//            //text
-//            if (!compareText(sourceExternalProcedure.getText(),targetExternalProcedure.getText())) {
-//                errorExists = true;
-//            }
-//            //nullFlavor
-//            if (!compareNullFlavor(sourceExternalProcedure.getNullFlavor(),targetExternalProcedure.getNullFlavor())) {
-//                errorExists = true;
-//            }
-//            //Class Code
-//            if (!compareClassCode(sourceExternalProcedure.getClassCode(),targetExternalProcedure.getClassCode())) {
-//                errorExists = true;
-//            }
-//            //Mood Code
-//            if (!compareMoodCode(sourceExternalProcedure.getMoodCode(),targetExternalProcedure.getMoodCode())) {
-//                errorExists = true;
-//            }
-//            return !errorExists;
-//        }
-//        return false;
-//    }
-//
-//    private boolean externalDocumentComparison(ExternalDocument sourceExternalDocument, ExternalDocument targetExternalDocument) {
-//        boolean errorExists = false;
-//        if (sourceExternalDocument == null && targetExternalDocument == null) {
-//            return true;
-//        } else if (sourceExternalDocument != null && targetExternalDocument != null) {
-//            //realmCode
-//            if (!compareRealmCodes(sourceExternalDocument.getRealmCodes(),targetExternalDocument.getRealmCodes())) {
-//                errorExists = true;
-//            }
-//            //result Id
-//            if (!typeIDComparison(sourceExternalDocument.getTypeId(),targetExternalDocument.getTypeId())) {
-//                errorExists = true;
-//            }
-//            //templateID
-//            if (!compareTemplateID(sourceExternalDocument.getTemplateIds(),targetExternalDocument.getTemplateIds())) {
-//                errorExists = true;
-//            }
-//            //id
-//            if (!compareIDs(sourceExternalDocument.getIds(),targetExternalDocument.getIds())) {
-//                errorExists = true;
-//            }
-//            //code
-//            if (!compareCode(sourceExternalDocument.getCode(),targetExternalDocument.getCode())) {
-//                errorExists = true;
-//            }
-//            //text
-//            if (!compareText(sourceExternalDocument.getText(),targetExternalDocument.getText())) {
-//                errorExists = true;
-//            }
-//            //setID
-//            if (!compareSetID(sourceExternalDocument.getSetId(),targetExternalDocument.getSetId())) {
-//                errorExists = true;
-//            }
-//            //versionNumber
-//            if (!compareVersionNumber(sourceExternalDocument.getVersionNumber(),targetExternalDocument.getVersionNumber())) {
-//                errorExists = true;
-//            }
-//            //nullFlavor
-//            if (!compareNullFlavor(sourceExternalDocument.getNullFlavor(),targetExternalDocument.getNullFlavor())) {
-//                errorExists = true;
-//            }
-//            //Class Code
-//            if (!compareClassCode(sourceExternalDocument.getClassCode(),targetExternalDocument.getClassCode())) {
-//                errorExists = true;
-//            }
-//            //Mood Code
-//            if (!compareMoodCode(sourceExternalDocument.getMoodCode(),targetExternalDocument.getMoodCode())) {
-//                errorExists = true;
-//            }
-//            return !errorExists;
-//        }
-//        return false;
-//    }
-//
-//    private boolean criterionComparison(Criterion sourceCriterion, Criterion targetCriterion) {
-//        boolean errorExists = false;
-//        if (sourceCriterion == null && targetCriterion == null) {
-//            return true;
-//        } else if (sourceCriterion!= null && targetCriterion != null) {
-//            //realmCode
-//            if (!compareRealmCodes(sourceCriterion.getRealmCodes(),targetCriterion.getRealmCodes())) {
-//                errorExists = true;
-//            }
-//            //result Id
-//            if (!typeIDComparison(sourceCriterion.getTypeId(),targetCriterion.getTypeId())) {
-//                errorExists = true;
-//            }
-//            //templateID
-//            if (!compareTemplateID(sourceCriterion.getTemplateIds(),targetCriterion.getTemplateIds())) {
-//                errorExists = true;
-//            }
-//            //code
-//            if (!compareCode(sourceCriterion.getCode(),targetCriterion.getCode())) {
-//                errorExists = true;
-//            }
-//            //text
-//            if (!compareText(sourceCriterion.getText(),targetCriterion.getText())) {
-//                errorExists = true;
-//            }
-//            //value
-//            if (!compareValue(sourceCriterion.getValue(),targetCriterion.getValue())) {
-//                errorExists = true;
-//            }
-//            //nullFlavor
-//            if (!compareNullFlavor(sourceCriterion.getNullFlavor(),targetCriterion.getNullFlavor())) {
-//                errorExists = true;
-//            }
-//            //Class Code
-//            if (!compareClassCode(sourceCriterion.getClassCode(),targetCriterion.getClassCode())) {
-//                errorExists = true;
-//            }
-//            //Mood Code
-//            if (!compareMoodCode(sourceCriterion.getMoodCode(),targetCriterion.getMoodCode())) {
-//                errorExists = true;
-//            }
-//            return !errorExists;
-//        }
-//        return false;
-//    }
-//
-//    private boolean observationRangeComparison(ObservationRange sourceObservationRange, ObservationRange targetObservationRange) {
-//        boolean errorExists = false;
-//        if (sourceObservationRange == null && targetObservationRange == null) {
-//            return true;
-//        } else if (sourceObservationRange != null && targetObservationRange != null) {
-//            //realmCode
-//            if (!compareRealmCodes(sourceObservationRange.getRealmCodes(),targetObservationRange.getRealmCodes())) {
-//                errorExists = true;
-//            }
-//            //result Id
-//            if (!typeIDComparison(sourceObservationRange.getTypeId(),targetObservationRange.getTypeId())) {
-//                errorExists = true;
-//            }
-//            //templateID
-//            if (!compareTemplateID(sourceObservationRange.getTemplateIds(),targetObservationRange.getTemplateIds())) {
-//                errorExists = true;
-//            }
-//            //code
-//            if (!compareCode(sourceObservationRange.getCode(),targetObservationRange.getCode())) {
-//                errorExists = true;
-//            }
-//            //text
-//            if (!compareText(sourceObservationRange.getText(),targetObservationRange.getText())) {
-//                errorExists = true;
-//            }
-//            //value
-//            if (!compareValue(sourceObservationRange.getValue(),targetObservationRange.getValue())) {
-//                errorExists = true;
-//            }
-//            //interpretaionCode
-//            if (!compareCode(sourceObservationRange.getInterpretationCode(),targetObservationRange.getInterpretationCode())) {
-//                errorExists = true;
-//            }
-//            //nullFlavor
-//            if (!compareNullFlavor(sourceObservationRange.getNullFlavor(),targetObservationRange.getNullFlavor())) {
-//                errorExists = true;
-//            }
-//            //Class Code
-//            if (!compareClassCode(sourceObservationRange.getClassCode(),targetObservationRange.getClassCode())) {
-//                errorExists = true;
-//            }
-//            //Mood Code
-//            if (!compareMoodCode(sourceObservationRange.getMoodCode(),targetObservationRange.getMoodCode())) {
-//                errorExists = true;
-//            }
-//            return !errorExists;
-//        }
-//        return false;
-//    }
-//
-//    private boolean manufacturedProductComparison(ManufacturedProduct sourceManufacturedProduct, ManufacturedProduct targetManufacturedProduct) {
-//        boolean errorExists = false;
-//        if (sourceManufacturedProduct == null && targetManufacturedProduct == null) {
-//            return true;
-//        } else if (sourceManufacturedProduct != null && targetManufacturedProduct != null) {
-//            //realmCode
-//            if (!compareRealmCodes(sourceManufacturedProduct.getRealmCodes(), targetManufacturedProduct.getRealmCodes())) {
-//                errorExists = true;
-//            }
-//            //result Id
-//            if (!typeIDComparison(sourceManufacturedProduct.getTypeId(), targetManufacturedProduct.getTypeId())) {
-//                errorExists = true;
-//            }
-//            //templateID
-//            if (!compareTemplateID(sourceManufacturedProduct.getTemplateIds(), targetManufacturedProduct.getTemplateIds())) {
-//                errorExists = true;
-//            }
-//            //id
-//            if (!compareIDs(sourceManufacturedProduct.getIds(), targetManufacturedProduct.getIds())) {
-//                errorExists = true;
-//            }
-//            //Choice - manufacturedLabeled(LabeledDrug), manufacturedMaterial(Material)
+            //scopingEntity - Entity
+            entityComparison(sourceParticipantRole.getScopingEntity(),targetParticipantRole.getScopingEntity());
+            //nullFlavor
+            compareNullFlavor(sourceParticipantRole.getNullFlavor(),targetParticipantRole.getNullFlavor());
+            //Class Code
+            compareClassCode(sourceParticipantRole.getClassCode(),targetParticipantRole.getClassCode());
+        }
+        currentLocation.exit();
+    }
+
+    private void externalActComparison(ExternalAct sourceExternalAct, ExternalAct targetExternalAct) {
+        currentLocation.enter("External Act");
+        if (sourceExternalAct != null && targetExternalAct != null) {
+            //realmCode
+            compareRealmCodes(sourceExternalAct.getRealmCodes(),targetExternalAct.getRealmCodes());
+            //result Id
+            typeIDComparison(sourceExternalAct.getTypeId(),targetExternalAct.getTypeId());
+            //templateID
+            compareTemplateID(sourceExternalAct.getTemplateIds(),targetExternalAct.getTemplateIds());
+            //id
+            compareIDs(sourceExternalAct.getIds(),targetExternalAct.getIds());
+            //code
+            compareCode(sourceExternalAct.getCode(),targetExternalAct.getCode());
+            //text
+            compareText(sourceExternalAct.getText(),targetExternalAct.getText());
+            //nullFlavor
+            compareNullFlavor(sourceExternalAct.getNullFlavor(),targetExternalAct.getNullFlavor());
+            //Class Code
+            compareClassCode(sourceExternalAct.getClassCode(),targetExternalAct.getClassCode());
+            //Mood Code
+            compareMoodCode(sourceExternalAct.getMoodCode(),targetExternalAct.getMoodCode());
+        }
+        currentLocation.exit();
+    }
+
+    private void externalObservationComparison(ExternalObservation sourceExternalObservation, ExternalObservation targetExternalObservation) {
+        currentLocation.enter("External Observation");
+        if (sourceExternalObservation != null && targetExternalObservation != null) {
+            //realmCode
+            compareRealmCodes(sourceExternalObservation.getRealmCodes(),targetExternalObservation.getRealmCodes());
+            //result Id
+            typeIDComparison(sourceExternalObservation.getTypeId(),targetExternalObservation.getTypeId());
+            //templateID
+            compareTemplateID(sourceExternalObservation.getTemplateIds(),targetExternalObservation.getTemplateIds());
+            //id
+            compareIDs(sourceExternalObservation.getIds(),targetExternalObservation.getIds());
+            //code
+            compareCode(sourceExternalObservation.getCode(),targetExternalObservation.getCode());
+            //text
+            compareText(sourceExternalObservation.getText(),targetExternalObservation.getText());
+            //nullFlavor
+            compareNullFlavor(sourceExternalObservation.getNullFlavor(),targetExternalObservation.getNullFlavor());
+            //Class Code
+            compareClassCode(sourceExternalObservation.getClassCode(),targetExternalObservation.getClassCode());
+            //Mood Code
+            compareMoodCode(sourceExternalObservation.getMoodCode(),targetExternalObservation.getMoodCode());
+        }
+        currentLocation.exit();
+    }
+
+    private void externalProcedureComparison(ExternalProcedure sourceExternalProcedure, ExternalProcedure targetExternalProcedure) {
+        currentLocation.enter("External Procedure");
+        if (sourceExternalProcedure != null && targetExternalProcedure != null) {
+            //realmCode
+            compareRealmCodes(sourceExternalProcedure.getRealmCodes(),targetExternalProcedure.getRealmCodes());
+            //result Id
+            typeIDComparison(sourceExternalProcedure.getTypeId(),targetExternalProcedure.getTypeId());
+            //templateID
+            compareTemplateID(sourceExternalProcedure.getTemplateIds(),targetExternalProcedure.getTemplateIds());
+            //id
+            compareIDs(sourceExternalProcedure.getIds(),targetExternalProcedure.getIds());
+            //code
+            compareCode(sourceExternalProcedure.getCode(),targetExternalProcedure.getCode());
+            //text
+            compareText(sourceExternalProcedure.getText(),targetExternalProcedure.getText());
+            //nullFlavor
+            compareNullFlavor(sourceExternalProcedure.getNullFlavor(),targetExternalProcedure.getNullFlavor());
+            //Class Code
+            compareClassCode(sourceExternalProcedure.getClassCode(),targetExternalProcedure.getClassCode());
+            //Mood Code
+            compareMoodCode(sourceExternalProcedure.getMoodCode(),targetExternalProcedure.getMoodCode());
+        }
+        currentLocation.exit();
+    }
+
+    private void externalDocumentComparison(ExternalDocument sourceExternalDocument, ExternalDocument targetExternalDocument) {
+        currentLocation.enter("External Document");
+        if (sourceExternalDocument != null && targetExternalDocument != null) {
+            //realmCode
+            compareRealmCodes(sourceExternalDocument.getRealmCodes(),targetExternalDocument.getRealmCodes());
+            //result Id
+            typeIDComparison(sourceExternalDocument.getTypeId(),targetExternalDocument.getTypeId());
+            //templateID
+            compareTemplateID(sourceExternalDocument.getTemplateIds(),targetExternalDocument.getTemplateIds());
+            //id
+            compareIDs(sourceExternalDocument.getIds(),targetExternalDocument.getIds());
+            //code
+            compareCode(sourceExternalDocument.getCode(),targetExternalDocument.getCode());
+            //text
+            compareText(sourceExternalDocument.getText(),targetExternalDocument.getText());
+            //setID
+            compareSetID(sourceExternalDocument.getSetId(),targetExternalDocument.getSetId());
+            //versionNumber
+            compareVersionNumber(sourceExternalDocument.getVersionNumber(),targetExternalDocument.getVersionNumber());
+            //nullFlavor
+            compareNullFlavor(sourceExternalDocument.getNullFlavor(),targetExternalDocument.getNullFlavor());
+            //Class Code
+            compareClassCode(sourceExternalDocument.getClassCode(),targetExternalDocument.getClassCode());
+            //Mood Code
+            compareMoodCode(sourceExternalDocument.getMoodCode(),targetExternalDocument.getMoodCode());
+        }
+        currentLocation.exit();
+    }
+
+    private void criterionComparison(Criterion sourceCriterion, Criterion targetCriterion) {
+        currentLocation.enter("Criterion");
+        if (sourceCriterion!= null && targetCriterion != null) {
+            //realmCode
+            compareRealmCodes(sourceCriterion.getRealmCodes(),targetCriterion.getRealmCodes());
+            //result Id
+            typeIDComparison(sourceCriterion.getTypeId(),targetCriterion.getTypeId());
+            //templateID
+            compareTemplateID(sourceCriterion.getTemplateIds(),targetCriterion.getTemplateIds());
+            //code
+            compareCode(sourceCriterion.getCode(),targetCriterion.getCode());
+            //text
+            compareText(sourceCriterion.getText(),targetCriterion.getText());
+            //value
+            compareValue(sourceCriterion.getValue(),targetCriterion.getValue());
+            //nullFlavor
+            compareNullFlavor(sourceCriterion.getNullFlavor(),targetCriterion.getNullFlavor());
+            //Class Code
+            compareClassCode(sourceCriterion.getClassCode(),targetCriterion.getClassCode());
+            //Mood Code
+            compareMoodCode(sourceCriterion.getMoodCode(),targetCriterion.getMoodCode());
+        }
+        currentLocation.exit();
+    }
+
+    private void observationRangeComparison(ObservationRange sourceObservationRange, ObservationRange targetObservationRange) {
+        currentLocation.enter("Observation Range");
+        if (sourceObservationRange != null && targetObservationRange != null) {
+            //realmCode
+            compareRealmCodes(sourceObservationRange.getRealmCodes(),targetObservationRange.getRealmCodes());
+            //result Id
+            typeIDComparison(sourceObservationRange.getTypeId(),targetObservationRange.getTypeId());
+            //templateID
+            compareTemplateID(sourceObservationRange.getTemplateIds(),targetObservationRange.getTemplateIds());
+            //code
+            compareCode(sourceObservationRange.getCode(),targetObservationRange.getCode());
+            //text
+            compareText(sourceObservationRange.getText(),targetObservationRange.getText());
+            //value
+            compareValue(sourceObservationRange.getValue(),targetObservationRange.getValue());
+            //interpretaionCode
+            compareCode(sourceObservationRange.getInterpretationCode(),targetObservationRange.getInterpretationCode());
+            //nullFlavor
+            compareNullFlavor(sourceObservationRange.getNullFlavor(),targetObservationRange.getNullFlavor());
+            //Class Code
+            compareClassCode(sourceObservationRange.getClassCode(),targetObservationRange.getClassCode());
+            //Mood Code
+            compareMoodCode(sourceObservationRange.getMoodCode(),targetObservationRange.getMoodCode());
+        }
+        currentLocation.exit();
+    }
+
+    private void manufacturedProductComparison(ManufacturedProduct sourceManufacturedProduct, ManufacturedProduct targetManufacturedProduct) {
+        currentLocation.enter("Manufactured Product");
+        if (sourceManufacturedProduct != null && targetManufacturedProduct != null) {
+            //realmCode
+            compareRealmCodes(sourceManufacturedProduct.getRealmCodes(), targetManufacturedProduct.getRealmCodes());
+            //result Id
+            typeIDComparison(sourceManufacturedProduct.getTypeId(), targetManufacturedProduct.getTypeId());
+            //templateID
+            compareTemplateID(sourceManufacturedProduct.getTemplateIds(), targetManufacturedProduct.getTemplateIds());
+            //id
+            compareIDs(sourceManufacturedProduct.getIds(), targetManufacturedProduct.getIds());
+            //Choice - manufacturedLabeled(LabeledDrug), manufacturedMaterial(Material)
 //            if (!(sourceManufacturedProduct.getManufacturedLabeledDrug() == null && targetManufacturedProduct.getManufacturedLabeledDrug() == null
 //                    && sourceManufacturedProduct.getManufacturedMaterial() == null && targetManufacturedProduct.getManufacturedMaterial() == null)) {
 //                if (!((labeledDrugComparison(sourceManufacturedProduct.getManufacturedLabeledDrug(), targetManufacturedProduct.getManufacturedLabeledDrug()) && sourceManufacturedProduct.getManufacturedLabeledDrug() != null)
@@ -4410,590 +3324,345 @@ public class MDHTPreCompareService extends PreCompareService {
 //                    errorExists = true;
 //                }
 //            }
-//            //manufacturerOrganization - Organization
-//            if (!organizationComparison(sourceManufacturedProduct.getManufacturerOrganization(),targetManufacturedProduct.getManufacturerOrganization())) {
-//                errorExists = true;
-//            }
-//            //nullFlavor
-//            if (!compareNullFlavor(sourceManufacturedProduct.getNullFlavor(),targetManufacturedProduct.getNullFlavor())) {
-//                errorExists = true;
-//            }
-//            //Class Code
-//            if (!compareClassCode(sourceManufacturedProduct.getClassCode(),targetManufacturedProduct.getClassCode())) {
-//                errorExists = true;
-//            }
-//            return !errorExists;
-//        }
-//        return false;
-//    }
-//
-//    private boolean comparePlayingEntity(PlayingEntity sourcePlayingEntity, PlayingEntity targetPlayingIdentity) {
-//        boolean errorExists = false;
-//        if (sourcePlayingEntity == null && targetPlayingIdentity == null) {
-//            return true;
-//        } else if (sourcePlayingEntity != null && targetPlayingIdentity != null) {
-//            //realmCode
-//            if (!compareRealmCodes(sourcePlayingEntity.getRealmCodes(),targetPlayingIdentity.getRealmCodes())) {
-//                errorExists = true;
-//            }
-//            //result Id
-//            if (!typeIDComparison(sourcePlayingEntity.getTypeId(),targetPlayingIdentity.getTypeId())) {
-//                errorExists = true;
-//            }
-//            //templateID
-//            if (!compareTemplateID(sourcePlayingEntity.getTemplateIds(),targetPlayingIdentity.getTemplateIds())) {
-//                errorExists = true;
-//            }
-//            //code
-//            if (!compareCode(sourcePlayingEntity.getCode(),targetPlayingIdentity.getCode())) {
-//                errorExists = true;
-//            }
-//            //quantity
-//            if (!compareQuantities(sourcePlayingEntity.getQuantities(),targetPlayingIdentity.getQuantities())) {
-//                errorExists = true;
-//            }
-//            //name
-//            if (!compareNamesPN(sourcePlayingEntity.getNames(),targetPlayingIdentity.getNames())) {
-//                errorExists = true;
-//            }
-//            //desc
-//            if (!compareText(sourcePlayingEntity.getDesc(),targetPlayingIdentity.getDesc())) {
-//                errorExists = true;
-//            }
-//            //nullFlavor
-//            if (!compareNullFlavor(sourcePlayingEntity.getNullFlavor(),targetPlayingIdentity.getNullFlavor())) {
-//                errorExists = true;
-//            }
-//            //Class Code
-//            if (!compareClassCode(sourcePlayingEntity.getClassCode(),targetPlayingIdentity.getClassCode())) {
-//                errorExists = true;
-//            }
-//            //determinerCode
-//            if (!compareDeterminerCode(sourcePlayingEntity.getDeterminerCode(),targetPlayingIdentity.getDeterminerCode())) {
-//                errorExists = true;
-//            }
-//            return !errorExists;
-//        }
-//        return false;
-//    }
-//
-//    private boolean deviceComparison(Device sourceDevice, Device targetDevice) {
-//
-//        boolean errorExists = false;
-//        if (sourceDevice == null && targetDevice == null) {
-//            return true;
-//        } else if (sourceDevice != null && targetDevice != null) {
-//            //realmCode
-//            if (!compareRealmCodes(sourceDevice.getRealmCodes(),targetDevice.getRealmCodes())) {
-//                errorExists = true;
-//            }
-//            //result Id
-//            if (!typeIDComparison(sourceDevice.getTypeId(),targetDevice.getTypeId())) {
-//                errorExists = true;
-//            }
-//            //templateID
-//            if (!compareTemplateID(sourceDevice.getTemplateIds(),targetDevice.getTemplateIds())) {
-//                errorExists = true;
-//            }
-//            //code
-//            if (!compareCode(sourceDevice.getCode(),targetDevice.getCode())) {
-//                errorExists = true;
-//            }
-//            //ManufacturedModelName
-//            if (!compareSCName(sourceDevice.getManufacturerModelName(),targetDevice.getManufacturerModelName())) {
-//                errorExists = true;
-//            }
-//            //software Name
-//            if (!compareSCName(sourceDevice.getSoftwareName(),targetDevice.getSoftwareName())) {
-//                errorExists = true;
-//            }
-//            //nullFlavor
-//            if (!compareNullFlavor(sourceDevice.getNullFlavor(),targetDevice.getNullFlavor())) {
-//                errorExists = true;
-//            }
-//            //Class Code
-//            if (!compareClassCode(sourceDevice.getClassCode(),targetDevice.getClassCode())) {
-//                errorExists = true;
-//            }
-//            //determinerCode
-//            if (!compareDeterminerCode(sourceDevice.getDeterminerCode(),targetDevice.getDeterminerCode())) {
-//                errorExists = true;
-//            }
-//            return !errorExists;
-//        }
-//        return false;
-//    }
-//
-//    private boolean entityComparison(Entity sourceEntity, Entity targetEntity) {
-//        boolean errorExists = false;
-//        if (sourceEntity == null && targetEntity == null) {
-//            return true;
-//        } else if (sourceEntity != null && targetEntity != null) {
-//            //realmCode
-//            if (!compareRealmCodes(sourceEntity.getRealmCodes(),targetEntity.getRealmCodes())) {
-//                errorExists = true;
-//            }
-//            //result Id
-//            if (!typeIDComparison(sourceEntity.getTypeId(),targetEntity.getTypeId())) {
-//                errorExists = true;
-//            }
-//            //templateID
-//            if (!compareTemplateID(sourceEntity.getTemplateIds(),targetEntity.getTemplateIds())) {
-//                errorExists = true;
-//            }
-//            //id
-//            if (!compareIDs(sourceEntity.getIds(),targetEntity.getIds())) {
-//                errorExists = true;
-//            }
-//            //code
-//            if (!compareCode(sourceEntity.getCode(),targetEntity.getCode())) {
-//                errorExists = true;
-//            }
-//            //desc
-//            if (!compareText(sourceEntity.getDesc(),targetEntity.getDesc())) {
-//                errorExists = true;
-//            }
-//            //nullFlavor
-//            if (!compareNullFlavor(sourceEntity.getNullFlavor(),targetEntity.getNullFlavor())) {
-//                errorExists = true;
-//            }
-//            //Class Code
-//            if (!compareClassCode(sourceEntity.getClassCode(),targetEntity.getClassCode())) {
-//                errorExists = true;
-//            }
-//            //t
-//            if (!compareDeterminerCode(sourceEntity.getDeterminerCode(),targetEntity.getDeterminerCode())) {
-//                errorExists = true;
-//            }
-//            return !errorExists;
-//        }
-//        return false;
-//    }
-//
-//    private boolean labeledDrugComparison(LabeledDrug sourceLabeledDrug, LabeledDrug targetLabeledDrug) {
-//        boolean errorExists = false;
-//        if (sourceLabeledDrug == null && targetLabeledDrug == null) {
-//            return true;
-//        } else if (sourceLabeledDrug != null && targetLabeledDrug != null) {
-//            //realmCode
-//            if (!compareRealmCodes(sourceLabeledDrug.getRealmCodes(),targetLabeledDrug.getRealmCodes())) {
-//                errorExists = true;
-//            }
-//            //result Id
-//            if (!typeIDComparison(sourceLabeledDrug.getTypeId(),targetLabeledDrug.getTypeId())) {
-//                errorExists = true;
-//            }
-//            //templateID
-//            if (!compareTemplateID(sourceLabeledDrug.getTemplateIds(),targetLabeledDrug.getTemplateIds())) {
-//                errorExists = true;
-//            }
-//            //code
-//            if (!compareCode(sourceLabeledDrug.getCode(),targetLabeledDrug.getCode())) {
-//                errorExists = true;
-//            }
-//            //name
-//            if (!compareNameEN(sourceLabeledDrug.getName(),targetLabeledDrug.getName())) {
-//                errorExists = true;
-//            }
-//            //nullFlavor
-//            if (!compareNullFlavor(sourceLabeledDrug.getNullFlavor(),targetLabeledDrug.getNullFlavor())) {
-//                errorExists = true;
-//            }
-//            //Class Code
-//            if (!compareClassCode(sourceLabeledDrug.getClassCode(),targetLabeledDrug.getClassCode())) {
-//                errorExists = true;
-//            }
-//            //determinerCode
-//            if (!compareDeterminerCode(sourceLabeledDrug.getDeterminerCode(),targetLabeledDrug.getDeterminerCode())) {
-//                errorExists = true;
-//            }
-//            return !errorExists;
-//        }
-//        return false;
-//    }
-//
-//    private boolean materialComparison(Material sourceMaterial, Material targetMaterial) {
-//        boolean errorExists = false;
-//        if (sourceMaterial == null && targetMaterial == null) {
-//            return true;
-//        } else if (sourceMaterial != null && targetMaterial != null) {
-//            //realmCode
-//            if (!compareRealmCodes(sourceMaterial.getRealmCodes(),targetMaterial.getRealmCodes())) {
-//                errorExists = true;
-//            }
-//            //result Id
-//            if (!typeIDComparison(sourceMaterial.getTypeId(),targetMaterial.getTypeId())) {
-//                errorExists = true;
-//            }
-//            //templateID
-//            if (!compareTemplateID(sourceMaterial.getTemplateIds(),targetMaterial.getTemplateIds())) {
-//                errorExists = true;
-//            }
-//            //code
-//            if (!compareCode(sourceMaterial.getCode(),targetMaterial.getCode())) {
-//                errorExists = true;
-//            }
-//            //name
-//            if (!compareNameEN(sourceMaterial.getName(),targetMaterial.getName())) {
-//                errorExists = true;
-//            }
-//            //lotNumberTest
-//            if (!compareTitle(sourceMaterial.getLotNumberText(),targetMaterial.getLotNumberText())) {
-//                errorExists = true;
-//            }
-//            //nullFlavor
-//            if (!compareNullFlavor(sourceMaterial.getNullFlavor(),targetMaterial.getNullFlavor())) {
-//                errorExists = true;
-//            }
-//            //Class Code
-//            if (!compareClassCode(sourceMaterial.getClassCode(),targetMaterial.getClassCode())) {
-//                errorExists = true;
-//            }
-//            //determinerCode
-//            if (!compareDeterminerCode(sourceMaterial.getDeterminerCode(),targetMaterial.getDeterminerCode())) {
-//                errorExists = true;
-//            }
-//            return !errorExists;
-//        }
-//        return false;
-//    }
-//
-//
-//
-//
-//
-//
-//
-//
-//
+            //manufacturerOrganization - Organization
+            organizationComparison(sourceManufacturedProduct.getManufacturerOrganization(),targetManufacturedProduct.getManufacturerOrganization());
+            //nullFlavor
+            compareNullFlavor(sourceManufacturedProduct.getNullFlavor(),targetManufacturedProduct.getNullFlavor());
+            //Class Code
+            compareClassCode(sourceManufacturedProduct.getClassCode(),targetManufacturedProduct.getClassCode());
+        }
+        currentLocation.exit();
+    }
+
+    private void comparePlayingEntity(PlayingEntity sourcePlayingEntity, PlayingEntity targetPlayingIdentity) {
+        currentLocation.enter("Playing Entity");
+        if (sourcePlayingEntity != null && targetPlayingIdentity != null) {
+            //realmCode
+            compareRealmCodes(sourcePlayingEntity.getRealmCodes(),targetPlayingIdentity.getRealmCodes());
+            //result Id
+            typeIDComparison(sourcePlayingEntity.getTypeId(),targetPlayingIdentity.getTypeId());
+            //templateID
+            compareTemplateID(sourcePlayingEntity.getTemplateIds(),targetPlayingIdentity.getTemplateIds());
+            //code
+            compareCode(sourcePlayingEntity.getCode(),targetPlayingIdentity.getCode());
+            //quantity
+            compareQuantities(sourcePlayingEntity.getQuantities(),targetPlayingIdentity.getQuantities());
+            //name
+            compareNamesPN(sourcePlayingEntity.getNames(),targetPlayingIdentity.getNames());
+            //desc
+            compareText(sourcePlayingEntity.getDesc(),targetPlayingIdentity.getDesc());
+            //nullFlavor
+            compareNullFlavor(sourcePlayingEntity.getNullFlavor(),targetPlayingIdentity.getNullFlavor());
+            //Class Code
+            compareClassCode(sourcePlayingEntity.getClassCode(),targetPlayingIdentity.getClassCode());
+            //determinerCode
+            compareDeterminerCode(sourcePlayingEntity.getDeterminerCode(),targetPlayingIdentity.getDeterminerCode());
+        }
+        currentLocation.exit();
+    }
+
+    private void deviceComparison(Device sourceDevice, Device targetDevice) {
+        currentLocation.enter("Device");
+        if (sourceDevice != null && targetDevice != null) {
+            //realmCode
+            compareRealmCodes(sourceDevice.getRealmCodes(),targetDevice.getRealmCodes());
+            //result Id
+            typeIDComparison(sourceDevice.getTypeId(),targetDevice.getTypeId());
+            //templateID
+            compareTemplateID(sourceDevice.getTemplateIds(),targetDevice.getTemplateIds());
+            //code
+            compareCode(sourceDevice.getCode(),targetDevice.getCode());
+            //ManufacturedModelName
+            compareSCName(sourceDevice.getManufacturerModelName(),targetDevice.getManufacturerModelName());
+            //software Name
+            compareSCName(sourceDevice.getSoftwareName(),targetDevice.getSoftwareName());
+            //nullFlavor
+            compareNullFlavor(sourceDevice.getNullFlavor(),targetDevice.getNullFlavor());
+            //Class Code
+            compareClassCode(sourceDevice.getClassCode(),targetDevice.getClassCode());
+            //determinerCode
+            compareDeterminerCode(sourceDevice.getDeterminerCode(),targetDevice.getDeterminerCode());
+        }
+        currentLocation.exit();
+    }
+
+    private void entityComparison(Entity sourceEntity, Entity targetEntity) {
+        currentLocation.enter("Entity");
+        if (sourceEntity != null && targetEntity != null) {
+            //realmCode
+            compareRealmCodes(sourceEntity.getRealmCodes(),targetEntity.getRealmCodes());
+            //result Id
+            typeIDComparison(sourceEntity.getTypeId(),targetEntity.getTypeId());
+            //templateID
+            compareTemplateID(sourceEntity.getTemplateIds(),targetEntity.getTemplateIds());
+            //id
+            compareIDs(sourceEntity.getIds(),targetEntity.getIds());
+            //code
+            compareCode(sourceEntity.getCode(),targetEntity.getCode());
+            //desc
+            compareText(sourceEntity.getDesc(),targetEntity.getDesc());
+            //nullFlavor
+            compareNullFlavor(sourceEntity.getNullFlavor(),targetEntity.getNullFlavor());
+            //Class Code
+            compareClassCode(sourceEntity.getClassCode(),targetEntity.getClassCode());
+            //Determiner Code
+            compareDeterminerCode(sourceEntity.getDeterminerCode(),targetEntity.getDeterminerCode());
+        }
+        currentLocation.exit();
+    }
+
+    private void labeledDrugComparison(LabeledDrug sourceLabeledDrug, LabeledDrug targetLabeledDrug) {
+        currentLocation.enter("Labeled Drug");
+        if (sourceLabeledDrug != null && targetLabeledDrug != null) {
+            //realmCode
+            compareRealmCodes(sourceLabeledDrug.getRealmCodes(),targetLabeledDrug.getRealmCodes());
+            //result Id
+            typeIDComparison(sourceLabeledDrug.getTypeId(),targetLabeledDrug.getTypeId());
+            //templateID
+            compareTemplateID(sourceLabeledDrug.getTemplateIds(),targetLabeledDrug.getTemplateIds());
+            //code
+            compareCode(sourceLabeledDrug.getCode(),targetLabeledDrug.getCode());
+            //name
+            compareNameEN(sourceLabeledDrug.getName(),targetLabeledDrug.getName());
+            //nullFlavor
+            compareNullFlavor(sourceLabeledDrug.getNullFlavor(),targetLabeledDrug.getNullFlavor());
+            //Class Code
+            compareClassCode(sourceLabeledDrug.getClassCode(),targetLabeledDrug.getClassCode());
+            //determinerCode
+            compareDeterminerCode(sourceLabeledDrug.getDeterminerCode(),targetLabeledDrug.getDeterminerCode());
+        }
+        currentLocation.exit();
+    }
+
+    private void materialComparison(Material sourceMaterial, Material targetMaterial) {
+        currentLocation.enter("Material");
+        if (sourceMaterial != null && targetMaterial != null) {
+            //realmCode
+            compareRealmCodes(sourceMaterial.getRealmCodes(),targetMaterial.getRealmCodes());
+            //result Id
+            typeIDComparison(sourceMaterial.getTypeId(),targetMaterial.getTypeId());
+            //templateID
+            compareTemplateID(sourceMaterial.getTemplateIds(),targetMaterial.getTemplateIds());
+            //code
+            compareCode(sourceMaterial.getCode(),targetMaterial.getCode());
+            //name
+            compareNameEN(sourceMaterial.getName(),targetMaterial.getName());
+            //lotNumberTest
+            compareTitle(sourceMaterial.getLotNumberText(),targetMaterial.getLotNumberText());
+            //nullFlavor
+            compareNullFlavor(sourceMaterial.getNullFlavor(),targetMaterial.getNullFlavor());
+            //Class Code
+            compareClassCode(sourceMaterial.getClassCode(),targetMaterial.getClassCode());
+            //determinerCode
+            compareDeterminerCode(sourceMaterial.getDeterminerCode(),targetMaterial.getDeterminerCode());
+        }
+        currentLocation.exit();
+    }
+
+
+
+
+
+
+
+
+
 //    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //    //non complex result comparison Methods
 //    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-//    private boolean compareRealmCodes(EList<CS> source, EList<CS> target) {
-//        boolean errorExists = false;
-//        for (int i=0; i<source.size(); i++) {
-//            int targetMatches = 0;
-//            for (int j=0; j<target.size(); j++) {
-//                boolean sourceTargetMismatch = false;
-//                if (source.get(i).getCode() != null && target.get(j).getCode() != null) {
-//                    if (!source.get(i).getCode().equals(target.get(j).getCode())) {
-//                        sourceTargetMismatch = true;
-////                        comparisonReport.addMessage("Code error source " + i + " in " + errorMessage + "\n");
-//                        comparisonReport.addMismatch(new Mismatch(" Realm Codes: Code",source.get(i).getCode(),target.get(j).getCode()));
-//
-//                    }
-//                }
-//                if (source.get(i).getNullFlavor().getLiteral() != null && target.get(j).getNullFlavor().getLiteral() != null) {
-//                    if (!source.get(i).getNullFlavor().getLiteral().equals(target.get(j).getNullFlavor().getLiteral())) {
-//                        sourceTargetMismatch = true;
-////                        comparisonReport.addMessage("Null Flavor error source " + i + " in " + errorMessage + "\n");
-//                        comparisonReport.addMismatch(new Mismatch(" Realm Codes: Null Flavor Literal",source.get(i).getNullFlavor().getLiteral(),target.get(j).getNullFlavor().getLiteral()));
-//
-//                    }
-//                }
-//                if (source.get(i).getCodeSystemName() != null && target.get(j).getCodeSystemName() != null) {
-//                    if (!source.get(i).getCodeSystemName().equals(target.get(j).getCodeSystemName())) {
-//                        sourceTargetMismatch = true;
-////                        comparisonReport.addMessage("Code System Name error source " + i + " in " + errorMessage + "\n");
-//                        comparisonReport.addMismatch(new Mismatch(" Realm Codes: Code System Name",source.get(i).getCodeSystemName(),target.get(j).getCodeSystemName()));
-//
-//                    }
-//                }
-//                if (source.get(i).getCodeSystem() != null && target.get(j).getCodeSystem() != null) {
-//                    if (!source.get(i).getCodeSystem().equals(target.get(j).getCodeSystem())) {
-//                        sourceTargetMismatch = true;
-////                        comparisonReport.addMessage("Code System error source " + i + " in " + errorMessage + "\n");
-//                        comparisonReport.addMismatch(new Mismatch(" Realm Codes: Code System",source.get(i).getCodeSystem(),target.get(j).getCodeSystem()));
-//
-//                    }
-//                }
-//                if (source.get(i).getCodeSystemVersion() != null && target.get(j).getCodeSystemVersion() != null) {
-//                    if (!source.get(i).getCodeSystemVersion().equals(target.get(j).getCodeSystemVersion())) {
-//                        sourceTargetMismatch = true;
-////                        comparisonReport.addMessage("Code System Version error source " + i + " in " + errorMessage + "\n");
-//                        comparisonReport.addMismatch(new Mismatch(" Realm Codes: Code System Version",source.get(i).getCodeSystemVersion(),target.get(j).getCodeSystemVersion()));
-//
-//                    }
-//                }
-//                if (source.get(i).getDisplayName() != null && target.get(j).getDisplayName() != null) {
-//                    if (!source.get(i).getDisplayName().equals(target.get(j).getDisplayName())) {
-//                        sourceTargetMismatch = true;
-////                        comparisonReport.addMessage("Display Name error source " + i + " in " + errorMessage + "\n");
-//                        comparisonReport.addMismatch(new Mismatch(" Realm Codes: Display Name",source.get(i).getDisplayName(),target.get(j).getDisplayName()));
-//
-//                    }
-//                }
-//
-//                if (!sourceTargetMismatch){
-//                    targetMatches++;
-//                }
-//            }
-//            if (targetMatches==0) {
-//                errorExists = true;
-////                comparisonReport.addMessage("Realm Codes Error source " + i + " in " + errorMessage + "\n");
-//            } else if (targetMatches>1) {
-////                comparisonReport.addMessage("Real Codes Warning source " + i + " has " + targetMatches + " in target in " + errorMessage + "\n");
-//                comparisonReport.addWarning(new Warning(" Realm Codes: ",source.get(i).toString(),""));
-//
-//            }
-//        }
-//        return !errorExists;
-//    }
-//
-//    private boolean compareTemplateID(EList<II> source, EList<II> target) {
-//        boolean errorExists = false;
-//        for (int i = 0; i < source.size(); i++) {
-//            int targetMatches = 0;
-//            for (int j = 0; j < target.size(); j++) {
-//                boolean sourceTargetMismatch = false;
-//                if (source.get(i).getRoot() != null && target.get(j).getRoot() != null) {
-//                    if (!source.get(i).getRoot().equals(target.get(j).getRoot())) {
-////                        comparisonReport.addMessage("Get Root error in " + errorMessage + "\n");
-//                        sourceTargetMismatch = true;
-//                    }
-//                }
-//                if (source.get(i).getAssigningAuthorityName() != null && target.get(j).getAssigningAuthorityName() != null) {
-//                    if (!source.get(i).getAssigningAuthorityName().equals(target.get(j).getAssigningAuthorityName())) {
-////                        comparisonReport.addMessage("Assigning Authority Name error in " + errorMessage + "\n");
-//                        sourceTargetMismatch = true;
-//                    }
-//                }
-//                if (source.get(i).getExtension() != null && target.get(j).getExtension() != null) {
-//                    if (!source.get(i).getExtension().equals(target.get(j).getExtension())) {
-////                        comparisonReport.addMessage("Extension error in " + errorMessage + "\n");
-//                        sourceTargetMismatch = true;
-//                    }
-//                }
-//                if (source.get(i).getNullFlavor().getLiteral() != null && target.get(j).getNullFlavor().getLiteral() != null) {
-//                    if (!source.get(i).getNullFlavor().getLiteral().equals(target.get(j).getNullFlavor().getLiteral())) {
-////                        comparisonReport.addMessage("Null Flavor ror in " + errorMessage + "\n");
-//                        sourceTargetMismatch = true;
-//                    }
-//                }
-//                if (!sourceTargetMismatch) {
-//                    targetMatches++;
-//                }
-//            }
-//            if (targetMatches==0) {
-//                errorExists = true;
-////                comparisonReport.addMessage("Template IDs Error source " + i + " in " + errorMessage + "\n");
-//            } else if (targetMatches>1) {
-////                comparisonReport.addMessage("Template IDs Warning source " + i + " has " + targetMatches + " in target in " + errorMessage + "\n");
-//            }
-//        }
-//        return !errorExists;
-//    }
-//
-//    private boolean compareIDs(EList<II> source, EList<II> target) {
-//        boolean errorExists = false;
-//        for (int i = 0; i < source.size(); i++) {
-//            int targetMatches = 0;
-//            for (int j = 0; j < target.size(); j++) {
-//                boolean sourceTargetMismatch = false;
-//                if (source.get(i) != null && target.get(j) != null) {
-//                    if (source.get(i).getRoot() != null && target.get(j).getRoot() != null) {
-//                        if (!source.get(i).getRoot().equals(target.get(j).getRoot())) {
-////                            comparisonReport.addMessage("Get Root error in " + errorMessage + "\n");
-//                            sourceTargetMismatch = true;
-//                        }
-//                    }
-//                    if (source.get(i).getAssigningAuthorityName() != null && target.get(j).getAssigningAuthorityName() != null) {
-//                        if (!source.get(i).getAssigningAuthorityName().equals(target.get(j).getAssigningAuthorityName())) {
-////                            comparisonReport.addMessage("Assigning Authority Name error in " + errorMessage + "\n");
-//                            sourceTargetMismatch = true;
-//                        }
-//                    }
-//                    if (source.get(i).getExtension() != null && target.get(j).getExtension() != null) {
-//                        if (!source.get(i).getExtension().equals(target.get(j).getExtension())) {
-////                            comparisonReport.addMessage("Extension error in " + errorMessage + "\n");
-//                            sourceTargetMismatch = true;
-//                        }
-//                    }
-//                    if (source.get(i).getNullFlavor().getLiteral() != null && target.get(j).getNullFlavor().getLiteral() != null) {
-//                        if (!source.get(i).getNullFlavor().getLiteral().equals(target.get(j).getNullFlavor().getLiteral())) {
-////                            comparisonReport.addMessage("Null Flavor ror in " + errorMessage + "\n");
-//                            sourceTargetMismatch = true;
-//                        }
-//                    }
-//                    if (!sourceTargetMismatch) {
-//                        targetMatches++;
-//                    }
-//                } else {
-//                    targetMatches = 1;
-//                }
-//            }
-//            if (targetMatches==0) {
-//                errorExists = true;
-////                comparisonReport.addMessage("IDs Error source " + i + " in " + errorMessage + "\n");
-//            } else if (targetMatches>1) {
-////                comparisonReport.addMessage("IDs Warning source " + i + " has " + targetMatches + " in target in " + errorMessage + "\n");
-//            }
-//        }
-//        return !errorExists;
-//    }
-//
-//    private boolean compareAddr(EList<AD> source, EList<AD> target) {
-//        boolean errorExists = false;
-//        for (int i = 0; i < source.size(); i++) {
-//            int targetMatches = 0;
-//            for (int j = 0; j < target.size(); j++) {
-//                boolean sourceTargetMismatch = false;
-//                if (source.get(i).getText() != null && target.get(j).getText() != null) {
-//                    if (!source.get(i).getText().equals(target.get(j).getText())) {
-////                        comparisonReport.addMessage("Text error in " + errorMessage + "\n");
-//                        sourceTargetMismatch = true;
-//                    }
-//                }
-//                if (source.get(i).getNullFlavor().getLiteral() != null && target.get(j).getNullFlavor().getLiteral() != null) {
-//                    if (!source.get(i).getNullFlavor().getLiteral().equals(target.get(j).getNullFlavor().getLiteral())) {
-////                        comparisonReport.addMessage("Null Flavor ror in " + errorMessage + "\n");
-//                        sourceTargetMismatch = true;
-//                    }
-//                }
-//                if (!sourceTargetMismatch) {
-//                    targetMatches++;
-//                }
-//            }
-//            if (targetMatches==0) {
-//                errorExists = true;
-////                comparisonReport.addMessage("Addr Error source " + i + " in " + errorMessage + "\n");
-//            } else if (targetMatches>1) {
-////                comparisonReport.addMessage("Addr Warning source " + i + " has " + targetMatches + " in target in " + errorMessage + "\n");
-//            }
-//        }
-//        return !errorExists;
-//    }
-//
-//    private boolean compareTelcom(EList<TEL> source, EList<TEL> target) {
-//        boolean errorExists = false;
-//        for (int i = 0; i < source.size(); i++) {
-//            int targetMatches = 0;
-//            for (int j = 0; j < target.size(); j++) {
-//                boolean sourceTargetMismatch = false;
-//                if (source.get(i).getValue() != null && target.get(j).getValue() != null) {
-//                    if (!source.get(i).getValue().equals(target.get(j).getValue())) {
-////                        comparisonReport.addMessage("Value error in " + errorMessage + "\n");
-//                        sourceTargetMismatch = true;
-//                    }
-//                }
-//                if (source.get(i).getNullFlavor().getLiteral() != null && target.get(j).getNullFlavor().getLiteral() != null) {
-//                    if (!source.get(i).getNullFlavor().getLiteral().equals(target.get(j).getNullFlavor().getLiteral())) {
-////                        comparisonReport.addMessage("Null Flavor ror in " + errorMessage + "\n");
-//                        sourceTargetMismatch = true;
-//                    }
-//                }
-//                if (!sourceTargetMismatch) {
-//                    targetMatches++;
-//                }
-//            }
-//            if (targetMatches==0) {
-//                errorExists = true;
-////                comparisonReport.addMessage("Telecom Error source " + i + " in " + errorMessage + "\n");
-//            } else if (targetMatches>1) {
-////                comparisonReport.addMessage("Telecom Warning source " + i + " has " + targetMatches + " in target in " + errorMessage + "\n");
-//            }
-//        }
-//        return !errorExists;
-//    }
-//
-//    private boolean compareNamesPN(EList<PN> source, EList<PN> target) {
-//        boolean errorExists = false;
-//        for (int i = 0; i < source.size(); i++) {
-//            int targetMatches = 0;
-//            for (int j = 0; j < target.size(); j++) {
-//                boolean sourceTargetMismatch = false;
-//                if (source.get(i).getText() != null && target.get(j).getText() != null) {
-//                    if (!source.get(i).getText().equals(target.get(j).getText())) {
-////                        comparisonReport.addMessage("Text error in " + errorMessage + "\n");
-//                        sourceTargetMismatch = true;
-//                    }
-//                }
-//                if (source.get(i).getNullFlavor().getLiteral() != null && target.get(j).getNullFlavor().getLiteral() != null) {
-//                    if (!source.get(i).getNullFlavor().getLiteral().equals(target.get(j).getNullFlavor().getLiteral())) {
-////                        comparisonReport.addMessage("Null Flavor ror in " + errorMessage + "\n");
-//                        sourceTargetMismatch = true;
-//                    }
-//                }
-//                if (!sourceTargetMismatch) {
-//                    targetMatches++;
-//                }
-//            }
-//            if (targetMatches == 0) {
-//                errorExists = true;
-////                comparisonReport.addMessage("Names Error source " + i + " in " + errorMessage + "\n");
-//            } else if (targetMatches > 1) {
-////                comparisonReport.addMessage("Names Warning source " + i + " has " + targetMatches + " in target in " + errorMessage + "\n");
-//            }
-//        }
-//        return !errorExists;
-//    }
-//
-//    private boolean compareNamesEN(EList<EN> source, EList<EN> target) {
-//        boolean errorExists = false;
-//        for (int i = 0; i < source.size(); i++) {
-//            int targetMatches = 0;
-//            for (int j = 0; j < target.size(); j++) {
-//                boolean sourceTargetMismatch = false;
-//                if (source.get(i).getText() != null && target.get(j).getText() != null) {
-//                    if (!source.get(i).getText().equals(target.get(j).getText())) {
-////                        comparisonReport.addMessage("Text error in " + errorMessage + "\n");
-//                        sourceTargetMismatch = true;
-//                    }
-//                }
-//                if (source.get(i).getNullFlavor().getLiteral() != null && target.get(j).getNullFlavor().getLiteral() != null) {
-//                    if (!source.get(i).getNullFlavor().getLiteral().equals(target.get(j).getNullFlavor().getLiteral())) {
-////                        comparisonReport.addMessage("Null Flavor ror in " + errorMessage + "\n");
-//                        sourceTargetMismatch = true;
-//                    }
-//                }
-//                if (!sourceTargetMismatch) {
-//                    targetMatches++;
-//                }
-//            }
-//            if (targetMatches == 0) {
-//                errorExists = true;
-////                comparisonReport.addMessage("Names Error source " + i + " in " + errorMessage + "\n");
-//            } else if (targetMatches > 1) {
-////                comparisonReport.addMessage("Names Warning source " + i + " has " + targetMatches + " in target in " + errorMessage + "\n");
-//            }
-//        }
-//        return !errorExists;
-//    }
-//
-//    private boolean compareNamesON(EList<ON> source, EList<ON> target) {
-//
-//        boolean errorExists = false;
-//        for (int i = 0; i < source.size(); i++) {
-//            int targetMatches = 0;
-//            for (int j = 0; j < target.size(); j++) {
-//                boolean sourceTargetMismatch = false;
-//                if (source.get(i).getText() != null && target.get(j).getText() != null) {
-//                    if (!source.get(i).getText().equals(target.get(j).getText())) {
-////                        comparisonReport.addMessage("Text error in " + errorMessage + "\n");
-//                        sourceTargetMismatch = true;
-//                    }
-//                }
-//                if (source.get(i).getNullFlavor().getLiteral() != null && target.get(j).getNullFlavor().getLiteral() != null) {
-//                    if (!source.get(i).getNullFlavor().getLiteral().equals(target.get(j).getNullFlavor().getLiteral())) {
-////                        comparisonReport.addMessage("Null Flavor ror in " + errorMessage + "\n");
-//                        sourceTargetMismatch = true;
-//                    }
-//                }
-//                if (!sourceTargetMismatch) {
-//                    targetMatches++;
-//                }
-//            }
-//            if (targetMatches == 0) {
-//                errorExists = true;
-////                comparisonReport.addMessage("Names Error source " + i + " in " + errorMessage + "\n");
-//            } else if (targetMatches > 1) {
-////                comparisonReport.addMessage("Names Warning source " + i + " has " + targetMatches + " in target in " + errorMessage + "\n");
-//            }
-//        }
-//        return !errorExists;
-//    }
-//
-//    private boolean compareEffectiveTime(EList<SXCM_TS> source, EList<SXCM_TS> target) {
+    private void compareRealmCodes(EList<CS> source, EList<CS> target) {
+        currentLocation.enter("Realm Codes");
+
+        //initialize targetListString
+        List<List<String>> targetListStrings = new ArrayList<>();
+        for (CS targetCS : target) {
+            List<String> subList = new ArrayList<>();
+            subList.add(targetCS.getCode());
+            subList.add(targetCS.getNullFlavor().getLiteral());
+            subList.add(targetCS.getCodeSystemName());
+            subList.add(targetCS.getCodeSystemVersion());
+            subList.add(targetCS.getCodeSystem());
+            subList.add(targetCS.getDisplayName());
+            targetListStrings.add(subList);
+        }
+
+        List<String> sourceStrings = new ArrayList<>();
+        for (CS sourceCS : source) {
+            sourceStrings.add(sourceCS.getCode());
+            sourceStrings.add(sourceCS.getNullFlavor().getLiteral());
+            sourceStrings.add(sourceCS.getCodeSystemName());
+            sourceStrings.add(sourceCS.getCodeSystemVersion());
+            sourceStrings.add(sourceCS.getCodeSystem());
+            sourceStrings.add(sourceCS.getDisplayName());
+            comparisons.add(new Comparison(new ComparisonLocation(currentLocation), ComparisonUtility.StringListComparison(), sourceStrings,targetListStrings));
+        }
+
+        currentLocation.exit();
+    }
+
+    private void compareTemplateID(EList<II> source, EList<II> target) {
+        currentLocation.enter("Template IDs");
+
+        //initialize targetListString
+        List<List<String>> targetListStrings = new ArrayList<>();
+        for (II targetII : target) {
+            List<String> subList = new ArrayList<>();
+            subList.add(targetII.getRoot());
+            subList.add(targetII.getNullFlavor().getLiteral());
+            subList.add(targetII.getAssigningAuthorityName());
+            subList.add(targetII.getExtension());
+            targetListStrings.add(subList);
+        }
+
+        List<String> sourceStrings = new ArrayList<>();
+        for (II sourceII : source) {
+            sourceStrings.add(sourceII.getRoot());
+            sourceStrings.add(sourceII.getNullFlavor().getLiteral());
+            sourceStrings.add(sourceII.getAssigningAuthorityName());
+            sourceStrings.add(sourceII.getExtension());
+            comparisons.add(new Comparison(new ComparisonLocation(currentLocation), ComparisonUtility.StringListComparison(), sourceStrings,targetListStrings));
+        }
+
+        currentLocation.exit();
+    }
+
+    private void compareIDs(EList<II> source, EList<II> target) {
+        currentLocation.enter("IDs");
+
+        //initialize targetListString
+        List<List<String>> targetListStrings = new ArrayList<>();
+        for (II targetII : target) {
+            List<String> subList = new ArrayList<>();
+            subList.add(targetII.getRoot());
+            subList.add(targetII.getNullFlavor().getLiteral());
+            subList.add(targetII.getAssigningAuthorityName());
+            subList.add(targetII.getExtension());
+            targetListStrings.add(subList);
+        }
+
+        List<String> sourceStrings = new ArrayList<>();
+        for (II sourceII : source) {
+            sourceStrings.add(sourceII.getRoot());
+            sourceStrings.add(sourceII.getNullFlavor().getLiteral());
+            sourceStrings.add(sourceII.getAssigningAuthorityName());
+            sourceStrings.add(sourceII.getExtension());
+            comparisons.add(new Comparison(new ComparisonLocation(currentLocation), ComparisonUtility.StringListComparison(), sourceStrings,targetListStrings));
+        }
+
+        currentLocation.exit();
+    }
+
+    private void compareAddr(EList<AD> source, EList<AD> target) {
+        currentLocation.enter("Addr");
+
+        //initialize targetListString
+        List<List<String>> targetListStrings = new ArrayList<>();
+        for (AD targetAD : target) {
+            List<String> subList = new ArrayList<>();
+            subList.add(targetAD.getText());
+            subList.add(targetAD.getNullFlavor().getLiteral());
+            targetListStrings.add(subList);
+        }
+
+        List<String> sourceStrings = new ArrayList<>();
+        for (AD sourceAD : source) {
+            sourceStrings.add(sourceAD.getText());
+            sourceStrings.add(sourceAD.getNullFlavor().getLiteral());
+            comparisons.add(new Comparison(new ComparisonLocation(currentLocation), ComparisonUtility.StringListComparison(), sourceStrings,targetListStrings));
+        }
+        currentLocation.exit();
+    }
+
+    private void compareTelcom(EList<TEL> source, EList<TEL> target) {
+        currentLocation.enter("Telecom");
+
+        //initialize targetListString
+        List<List<String>> targetListStrings = new ArrayList<>();
+        for (TEL targetTEL : target) {
+            List<String> subList = new ArrayList<>();
+            subList.add(targetTEL.getValue());
+            subList.add(targetTEL.getNullFlavor().getLiteral());
+            targetListStrings.add(subList);
+        }
+
+        List<String> sourceStrings = new ArrayList<>();
+        for (TEL sourceTEL : source) {
+            sourceStrings.add(sourceTEL.getValue());
+            sourceStrings.add(sourceTEL.getNullFlavor().getLiteral());
+            comparisons.add(new Comparison(new ComparisonLocation(currentLocation), ComparisonUtility.StringListComparison(), sourceStrings,targetListStrings));
+        }
+
+        currentLocation.exit();
+    }
+
+    private void compareNamesPN(EList<PN> source, EList<PN> target) {
+        currentLocation.enter("Names");
+
+        //initialize targetListString
+        List<List<String>> targetListStrings = new ArrayList<>();
+        for (PN targetPN : target) {
+            List<String> subList = new ArrayList<>();
+            subList.add(targetPN.getText());
+            subList.add(targetPN.getNullFlavor().getLiteral());
+            targetListStrings.add(subList);
+        }
+
+        List<String> sourceStrings = new ArrayList<>();
+        for (PN sourcePN : source) {
+            sourceStrings.add(sourcePN.getText());
+            sourceStrings.add(sourcePN.getNullFlavor().getLiteral());
+            comparisons.add(new Comparison(new ComparisonLocation(currentLocation), ComparisonUtility.StringListComparison(), sourceStrings,targetListStrings));
+        }
+
+        currentLocation.exit();
+    }
+
+    private void compareNamesEN(EList<EN> source, EList<EN> target) {
+        currentLocation.enter("Names");
+
+        //initialize targetListString
+        List<List<String>> targetListStrings = new ArrayList<>();
+        for (EN targetEN : target) {
+            List<String> subList = new ArrayList<>();
+            subList.add(targetEN.getText());
+            subList.add(targetEN.getNullFlavor().getLiteral());
+            targetListStrings.add(subList);
+        }
+
+        List<String> sourceStrings = new ArrayList<>();
+        for (EN sourceEN : source) {
+            sourceStrings.add(sourceEN.getText());
+            sourceStrings.add(sourceEN.getNullFlavor().getLiteral());
+            comparisons.add(new Comparison(new ComparisonLocation(currentLocation), ComparisonUtility.StringListComparison(), sourceStrings,targetListStrings));
+        }
+
+        currentLocation.exit();
+    }
+
+    private void compareNamesON(EList<ON> source, EList<ON> target) {
+        currentLocation.enter("Names");
+
+        //initialize targetListString
+        List<List<String>> targetListStrings = new ArrayList<>();
+        for (ON targetON : target) {
+            List<String> subList = new ArrayList<>();
+            subList.add(targetON.getText());
+            subList.add(targetON.getNullFlavor().getLiteral());
+            targetListStrings.add(subList);
+        }
+
+        List<String> sourceStrings = new ArrayList<>();
+        for (ON sourceON : source) {
+            sourceStrings.add(sourceON.getText());
+            sourceStrings.add(sourceON.getNullFlavor().getLiteral());
+            comparisons.add(new Comparison(new ComparisonLocation(currentLocation), ComparisonUtility.StringListComparison(), sourceStrings,targetListStrings));
+        }
+
+        currentLocation.exit();
+    }
+
+    private void compareEffectiveTime(EList<SXCM_TS> source, EList<SXCM_TS> target) {
+        currentLocation.enter("Effective Time");
 //        boolean errorExists = false;
 //
 //
@@ -5015,10 +3684,10 @@ public class MDHTPreCompareService extends PreCompareService {
 //
 //
 //
-//        List<String> targetValues = target.stream()
-//                .map(sxcm_ts -> sxcm_ts.getValue())
-//                .filter(o -> o != null)
-//                .collect(Collectors.toList());
+        List<String> targetValues = target.stream()
+                .map(sxcm_ts -> sxcm_ts.getValue())
+                .filter(o -> o != null)
+                .collect(Collectors.toList());
 //
 //        List<String> targetNullFlavors = target.stream()
 //                .map(sxcm_ts -> sxcm_ts.getNullFlavor().getLiteral())
@@ -5065,2102 +3734,782 @@ public class MDHTPreCompareService extends PreCompareService {
 //            }
 //        }
 //        return !errorExists;
-//    }
-//
-//    private boolean compareID(II source, II target) {
-//        boolean matched = true;
-//        if (source != null && target != null) {
-//            if (source.getRoot() != null && target.getRoot() != null) {
-//                if (!source.getRoot().equals(target.getRoot())) {
-////                    comparisonReport.addMessage("Get Root error in " + errorMessage + "\n");
-//                    matched = false;
-//                }
-//            }
-//            if (source.getAssigningAuthorityName() != null && target.getAssigningAuthorityName() != null) {
-//                if (!source.getAssigningAuthorityName().equals(target.getAssigningAuthorityName())) {
-////                    comparisonReport.addMessage("Assigning Authority Name error in " + errorMessage + "\n");
-//                    matched = false;
-//                }
-//            }
-//            if (source.getExtension() != null && target.getExtension() != null) {
-//                if (!source.getExtension().equals(target.getExtension())) {
-////                    comparisonReport.addMessage("Extension error in " + errorMessage + "\n");
-//                    matched = false;
-//                }
-//            }
-//            if (source.getNullFlavor().getLiteral() != null && target.getNullFlavor().getLiteral() != null) {
-//                if (!source.getNullFlavor().getLiteral().equals(target.getNullFlavor().getLiteral())) {
-////                    comparisonReport.addMessage("Null Flavor ror in " + errorMessage + "\n");
-//                    matched = false;
-//                }
-//            }
-//        }  else if ((source != null && target == null) || (source == null && target != null)) {
-////            comparisonReport.addMessage("IDs Comparison error in " + errorMessage + "\n");
-//            return false;
-//        }
-//        return matched;
-//    }
-//
-//    private boolean compareNullFlavor(NullFlavor source, NullFlavor target) {
-//        boolean matched = true;
-//        if (source != null && target != null) {
-//            if (source.getLiteral() != null && target.getLiteral() != null) {
-//                if (!source.getLiteral().equals(target.getLiteral())) {
-////                    comparisonReport.addMessage("Literal error in + " + errorMessage + "\n");
-//                    matched = false;
-//                }
-//            }
-//        }  else if ((source != null && target == null) || (source == null && target != null)) {
-////            comparisonReport.addMessage("Null Flavor error in " + errorMessage + "\n");
-//            return false;
-//        }
-//        return matched;
-//    }
-//
-//    private boolean compareClassCode(RoleClass source, RoleClass target) {
-//        boolean matched = true;
-//        if (source != null && target != null) {
-//            if (source.getLiteral() != null && target.getLiteral() != null) {
-//                if (!source.getLiteral().equals(target.getLiteral())) {
-//                    matched = false;
-////                    comparisonReport.addMessage(" Literal error in " + errorMessage + "\n");
-//                }
-//            }
-//            if (source.getName() != null && target.getName() != null) {
-//                if (!source.getName().equals(target.getName())) {
-//                    matched = false;
-////                    comparisonReport.addMessage("Name error in " + errorMessage + "\n");
-//                }
-//            }
-//            if (source.getValue() != target.getValue()) {
-//                matched = false;
-////                comparisonReport.addMessage("Value error in " + errorMessage + "\n");
-//            }
-//        } else if ((source != null && target == null) || (source == null && target != null)) {
-////            comparisonReport.addMessage("Class Code error in " + errorMessage + "\n");
-//            return false;
-//        }
-//        return matched;
-//    }
-//
-//    private boolean compareClassCode(EntityClassManufacturedMaterial source, EntityClassManufacturedMaterial target) {
-//        boolean matched = true;
-//        if (source != null && target != null) {
-//            if (source.getLiteral() != null && target.getLiteral() != null) {
-//                if (!source.getLiteral().equals(target.getLiteral())) {
-//                    matched = false;
-////                    comparisonReport.addMessage(" Literal error in " + errorMessage + "\n");
-//                }
-//            }
-//            if (source.getName() != null && target.getName() != null) {
-//                if (!source.getName().equals(target.getName())) {
-//                    matched = false;
-////                    comparisonReport.addMessage("Name error in " + errorMessage + "\n");
-//                }
-//            }
-//            if (source.getValue() != target.getValue()) {
-//                matched = false;
-////                comparisonReport.addMessage("Value error in " + errorMessage + "\n");
-//            }
-//        }  else if ((source != null && target == null) || (source == null && target != null)) {
-////            comparisonReport.addMessage("Class Code error in " + errorMessage + "\n");
-//            return false;
-//        }
-//        return matched;
-//    }
-//
-//    private boolean compareClassCode(EntityClassRoot source, EntityClassRoot target) {
-//        boolean matched = true;
-//        if (source != null && target != null) {
-//            if (source.getLiteral() != null && target.getLiteral() != null) {
-//                if (!source.getLiteral().equals(target.getLiteral())) {
-//                    matched = false;
-////                    comparisonReport.addMessage("Literal error in " + errorMessage + "\n");
-//                }
-//            }
-//            if (source.getName() != null && target.getName() != null) {
-//                if (!source.getName().equals(target.getName())) {
-//                    matched = false;
-////                    comparisonReport.addMessage("Name error in " + errorMessage + "\n");
-//                }
-//            }
-//            if (source.getValue() != target.getValue()) {
-//                matched = false;
-////                comparisonReport.addMessage(" Value error in " + errorMessage + "\n");
-//            }
-//        }  else if ((source != null && target == null) || (source == null && target != null)) {
-////            comparisonReport.addMessage("Class Code error in " + errorMessage + "\n");
-//            return false;
-//        }
-//        return matched;
-//    }
-//
-//    private boolean compareClassCode(RoleClassManufacturedProduct source, RoleClassManufacturedProduct target) {
-//        boolean matched = true;
-//        if (source != null && target != null) {
-//            if (source.getLiteral() != null && target.getLiteral() != null) {
-//                if (!source.getLiteral().equals(target.getLiteral())) {
-//                    matched = false;
-////                    comparisonReport.addMessage(" Literal error in " + errorMessage + "\n");
-//                }
-//            }
-//            if (source.getName() != null && target.getName() != null) {
-//                if (!source.getName().equals(target.getName())) {
-//                    matched = false;
-////                    comparisonReport.addMessage("Name error in " + errorMessage + "\n");
-//                }
-//            }
-//            if (source.getValue() != target.getValue()) {
-//                matched = false;
-////                comparisonReport.addMessage("Value error in " + errorMessage + "\n");
-//            }
-//        }  else if ((source != null && target == null) || (source == null && target != null)) {
-////            comparisonReport.addMessage("Class Code error in " + errorMessage + "\n");
-//            return false;
-//        }
-//        return matched;
-//    }
-//
-//    private boolean compareClassCode(ActClassDocument source, ActClassDocument target) {
-//        boolean matched = true;
-//        if (source != null && target != null) {
-//            if (source.getLiteral() != null && target.getLiteral() != null) {
-//                if (!source.getLiteral().equals(target.getLiteral())) {
-//                    matched = false;
-////                    comparisonReport.addMessage(" Literal error in " + errorMessage + "\n");
-//                }
-//            }
-//            if (source.getName() != null && target.getName() != null) {
-//                if (!source.getName().equals(target.getName())) {
-//                    matched = false;
-////                    comparisonReport.addMessage("Name error in " + errorMessage + "\n");
-//                }
-//            }
-//            if (source.getValue() != target.getValue()) {
-//                matched = false;
-////                comparisonReport.addMessage("Value error in " + errorMessage + "\n");
-//            }
-//        }  else if ((source != null && target == null) || (source == null && target != null)) {
-////            comparisonReport.addMessage("Class Code error in " + errorMessage + "\n");
-//            return false;
-//        }
-//        return matched;
-//    }
-//
-//    private boolean compareClassCode(RoleClassRoot source, RoleClassRoot target) {
-//        boolean matched = true;
-//        if (source != null && target != null) {
-//            if (source.getLiteral() != null && target.getLiteral() != null) {
-//                if (!source.getLiteral().equals(target.getLiteral())) {
-//                    matched = false;
-////                    comparisonReport.addMessage(" Literal error in " + errorMessage + "\n");
-//                }
-//            }
-//            if (source.getName() != null && target.getName() != null) {
-//                if (!source.getName().equals(target.getName())) {
-//                    matched = false;
-////                    comparisonReport.addMessage("Name error in " + errorMessage + "\n");
-//                }
-//            }
-//            if (source.getValue() != target.getValue()) {
-//                matched = false;
-////                comparisonReport.addMessage("Value error in " + errorMessage + "\n");
-//            }
-//        }  else if ((source != null && target == null) || (source == null && target != null)) {
-////            comparisonReport.addMessage("Class Code error in " + errorMessage + "\n");
-//            return false;
-//        }
-//        return matched;
-//    }
-//
-//    private boolean compareClassCode(x_ActClassDocumentEntryAct source, x_ActClassDocumentEntryAct target) {
-//        boolean matched = true;
-//        if (source != null && target != null) {
-//            if (source.getLiteral() != null && target.getLiteral() != null) {
-//                if (!source.getLiteral().equals(target.getLiteral())) {
-//                    matched = false;
-////                    comparisonReport.addMessage(" Literal error in " + errorMessage + "\n");
-//                }
-//            }
-//            if (source.getName() != null && target.getName() != null) {
-//                if (!source.getName().equals(target.getName())) {
-//                    matched = false;
-////                    comparisonReport.addMessage("Name error in " + errorMessage + "\n");
-//                }
-//            }
-//            if (source.getValue() != target.getValue()) {
-//                matched = false;
-////                comparisonReport.addMessage("Value error in " + errorMessage + "\n");
-//            }
-//        }  else if ((source != null && target == null) || (source == null && target != null)) {
-////            comparisonReport.addMessage("Class Code error in " + errorMessage + "\n");
-//            return false;
-//        }
-//        return matched;
-//    }
-//
-//    private boolean compareClassCode(RoleClassSpecimen source, RoleClassSpecimen target) {
-//        boolean matched = true;
-//        if (source != null && target != null) {
-//            if (source.getLiteral() != null && target.getLiteral() != null) {
-//                if (!source.getLiteral().equals(target.getLiteral())) {
-//                    matched = false;
-//                    this.comparisonReport.addMismatch(new Mismatch("Literal", source.getLiteral(), target.getLiteral()));
-//                }
-//            }
-//            if (source.getName() != null && target.getName() != null) {
-//                if (!source.getName().equals(target.getName())) {
-//                    matched = false;
-////                    comparisonReport.addMessage("Name error in " + errorMessage + "\n");
-//                }
-//            }
-//            if (source.getValue() != target.getValue()) {
-//                matched = false;
-////                comparisonReport.addMessage("Value error in " + errorMessage + "\n");
-//            }
-//        }  else if ((source != null && target == null) || (source == null && target != null)) {
-////            comparisonReport.addMessage("Class Code error in " + errorMessage + "\n");
-//            return false;
-//        }
-//        return matched;
-//    }
-//
-//    private boolean compareClassCode(ActClassSupply source, ActClassSupply target) {
-//        boolean matched = true;
-//        if (source != null && target != null) {
-//            if (source.getLiteral() != null && target.getLiteral() != null) {
-//                if (!source.getLiteral().equals(target.getLiteral())) {
-//                    matched = false;
-////                    comparisonReport.addMessage(" Literal error in " + errorMessage + "\n");
-//                }
-//            }
-//            if (source.getName() != null && target.getName() != null) {
-//                if (!source.getName().equals(target.getName())) {
-//                    matched = false;
-////                    comparisonReport.addMessage("Name error in " + errorMessage + "\n");
-//                }
-//            }
-//            if (source.getValue() != target.getValue()) {
-//                matched = false;
-////                comparisonReport.addMessage("Value error in " + errorMessage + "\n");
-//            }
-//        }  else if ((source != null && target == null) || (source == null && target != null)) {
-////            comparisonReport.addMessage("Class Code error in " + errorMessage + "\n");
-//            return false;
-//        }
-//        return matched;
-//    }
-//
-//    private boolean compareClassCode(x_ActClassDocumentEntryOrganizer source, x_ActClassDocumentEntryOrganizer target) {
-//        boolean matched = true;
-//        if (source != null && target != null) {
-//            if (source.getLiteral() != null && target.getLiteral() != null) {
-//                if (!source.getLiteral().equals(target.getLiteral())) {
-//                    matched = false;
-////                    comparisonReport.addMessage(" Literal error in " + errorMessage + "\n");
-//                }
-//            }
-//            if (source.getName() != null && target.getName() != null) {
-//                if (!source.getName().equals(target.getName())) {
-//                    matched = false;
-////                    comparisonReport.addMessage("Name error in " + errorMessage + "\n");
-//                }
-//            }
-//            if (source.getValue() != target.getValue()) {
-//                matched = false;
-////                comparisonReport.addMessage("Value error in " + errorMessage + "\n");
-//            }
-//        }  else if ((source != null && target == null) || (source == null && target != null)) {
-////            comparisonReport.addMessage("Class Code error in " + errorMessage + "\n");
-//            return false;
-//        }
-//        return matched;
-//    }
-//
-//    private boolean compareClassCode(ActClassObservation source, ActClassObservation target) {
-//        boolean matched = true;
-//        if (source != null && target != null) {
-//            if (source.getLiteral() != null && target.getLiteral() != null) {
-//                if (!source.getLiteral().equals(target.getLiteral())) {
-//                    matched = false;
-////                    comparisonReport.addMessage(" Literal error in " + errorMessage + "\n");
-//                }
-//            }
-//            if (source.getName() != null && target.getName() != null) {
-//                if (!source.getName().equals(target.getName())) {
-//                    matched = false;
-////                    comparisonReport.addMessage("Name error in " + errorMessage + "\n");
-//                }
-//            }
-//            if (source.getValue() != target.getValue()) {
-//                matched = false;
-////                comparisonReport.addMessage("Value error in " + errorMessage + "\n");
-//            }
-//        }  else if ((source != null && target == null) || (source == null && target != null)) {
-////            comparisonReport.addMessage("Class Code error in " + errorMessage + "\n");
-//            return false;
-//        }
-//        return matched;
-//    }
-//
-//    private boolean compareClassCode(RoleClassServiceDeliveryLocation source, RoleClassServiceDeliveryLocation target) {
-//        boolean matched = true;
-//        if (source != null && target != null) {
-//            if (source.getLiteral() != null && target.getLiteral() != null) {
-//                if (!source.getLiteral().equals(target.getLiteral())) {
-//                    matched = false;
-////                    comparisonReport.addMessage(" Literal error in " + errorMessage + "\n");
-//                }
-//            }
-//            if (source.getName() != null && target.getName() != null) {
-//                if (!source.getName().equals(target.getName())) {
-//                    matched = false;
-////                    comparisonReport.addMessage("Name error in " + errorMessage + "\n");
-//                }
-//            }
-//            if (source.getValue() != target.getValue()) {
-//                matched = false;
-////                comparisonReport.addMessage("Value error in " + errorMessage + "\n");
-//            }
-//        }  else if ((source != null && target == null) || (source == null && target != null)) {
-////            comparisonReport.addMessage("Class Code error in " + errorMessage + "\n");
-//            return false;
-//        }
-//        return matched;
-//    }
-//
-//    private boolean compareClassCode(EntityClassPlace source, EntityClassPlace target) {
-//        boolean matched = true;
-//        if (source != null && target != null) {
-//            if (source.getLiteral() != null && target.getLiteral() != null) {
-//                if (!source.getLiteral().equals(target.getLiteral())) {
-//                    matched = false;
-////                    comparisonReport.addMessage(" Literal error in " + errorMessage + "\n");
-//                }
-//            }
-//            if (source.getName() != null && target.getName() != null) {
-//                if (!source.getName().equals(target.getName())) {
-//                    matched = false;
-////                    comparisonReport.addMessage("Name error in " + errorMessage + "\n");
-//                }
-//            }
-//            if (source.getValue() != target.getValue()) {
-//                matched = false;
-////                comparisonReport.addMessage("Value error in " + errorMessage + "\n");
-//            }
-//        }  else if ((source != null && target == null) || (source == null && target != null)) {
-////            comparisonReport.addMessage("Class Code error in " + errorMessage + "\n");
-//            return false;
-//        }
-//        return matched;
-//    }
-//
-//    private boolean compareClassCode(x_DocumentSubject source, x_DocumentSubject target) {
-//        boolean matched = true;
-//        if (source != null && target != null) {
-//            if (source.getLiteral() != null && target.getLiteral() != null) {
-//                if (!source.getLiteral().equals(target.getLiteral())) {
-//                    matched = false;
-////                    comparisonReport.addMessage(" Literal error in " + errorMessage + "\n");
-//                }
-//            }
-//            if (source.getName() != null && target.getName() != null) {
-//                if (!source.getName().equals(target.getName())) {
-//                    matched = false;
-////                    comparisonReport.addMessage("Name error in " + errorMessage + "\n");
-//                }
-//            }
-//            if (source.getValue() != target.getValue()) {
-//                matched = false;
-////                comparisonReport.addMessage("Value error in " + errorMessage + "\n");
-//            }
-//        }  else if ((source != null && target == null) || (source == null && target != null)) {
-////            comparisonReport.addMessage("Class Code error in " + errorMessage + "\n");
-//            return false;
-//        }
-//        return matched;
-//    }
-//
-//    private boolean compareClassCode(x_InformationRecipientRole source, x_InformationRecipientRole target) {
-//        boolean matched = true;
-//        if (source != null && target != null) {
-//            if (source.getLiteral() != null && target.getLiteral() != null) {
-//                if (!source.getLiteral().equals(target.getLiteral())) {
-//                    matched = false;
-////                    comparisonReport.addMessage(" Literal error in " + errorMessage + "\n");
-//                }
-//            }
-//            if (source.getName() != null && target.getName() != null) {
-//                if (!source.getName().equals(target.getName())) {
-//                    matched = false;
-////                    comparisonReport.addMessage("Name error in " + errorMessage + "\n");
-//                }
-//            }
-//            if (source.getValue() != target.getValue()) {
-//                matched = false;
-////                comparisonReport.addMessage("Value error in " + errorMessage + "\n");
-//            }
-//        }  else if ((source != null && target == null) || (source == null && target != null)) {
-////            comparisonReport.addMessage("Class Code error in " + errorMessage + "\n");
-//            return false;
-//        }
-//        return matched;
-//    }
-//
-//    private boolean compareClassCode(EntityClassOrganization source, EntityClassOrganization target) {
-//        boolean matched = true;
-//        if (source != null && target != null) {
-//            if (source.getLiteral() != null && target.getLiteral() != null) {
-//                if (!source.getLiteral().equals(target.getLiteral())) {
-//                    matched = false;
-////                    comparisonReport.addMessage(" Literal error in " + errorMessage + "\n");
-//                }
-//            }
-//            if (source.getName() != null && target.getName() != null) {
-//                if (!source.getName().equals(target.getName())) {
-//                    matched = false;
-////                    comparisonReport.addMessage("Name error in " + errorMessage + "\n");
-//                }
-//            }
-//            if (source.getValue() != target.getValue()) {
-//                matched = false;
-////                comparisonReport.addMessage("Value error in " + errorMessage + "\n");
-//            }
-//        }  else if ((source != null && target == null) || (source == null && target != null)) {
-////            comparisonReport.addMessage("Class Code error in " + errorMessage + "\n");
-//            return false;
-//        }
-//        return matched;
-//    }
-//
-//    private boolean compareClassCode(ActClassRoot source, ActClassRoot target) {
-//        boolean matched = true;
-//        if (source != null && target != null) {
-//            if (source.getLiteral() != null && target.getLiteral() != null) {
-//                if (!source.getLiteral().equals(target.getLiteral())) {
-//                    matched = false;
-////                    comparisonReport.addMessage(" Literal error in " + errorMessage + "\n");
-//                }
-//            }
-//            if (source.getName() != null && target.getName() != null) {
-//                if (!source.getName().equals(target.getName())) {
-//                    matched = false;
-////                    comparisonReport.addMessage("Name error in " + errorMessage + "\n");
-//                }
-//            }
-//            if (source.getValue() != target.getValue()) {
-//                matched = false;
-////                comparisonReport.addMessage("Value error in " + errorMessage + "\n");
-//            }
-//        }  else if ((source != null && target == null) || (source == null && target != null)) {
-////            comparisonReport.addMessage("Class Code error in " + errorMessage + "\n");
-//            return false;
-//        }
-//        return matched;
-//    }
-//
-//
-//    private boolean compareClassCode(RoleClassAssociative source, RoleClassAssociative target) {
-//        boolean matched = true;
-//        if (source != null && target != null) {
-//            if (source.getLiteral() != null && target.getLiteral() != null) {
-//                if (!source.getLiteral().equals(target.getLiteral())) {
-//                    matched = false;
-////                    comparisonReport.addMessage(" Literal error in " + errorMessage + "\n");
-//                }
-//            }
-//            if (source.getName() != null && target.getName() != null) {
-//                if (!source.getName().equals(target.getName())) {
-//                    matched = false;
-////                    comparisonReport.addMessage("Name error in " + errorMessage + "\n");
-//                }
-//            }
-//            if (source.getValue() != target.getValue()) {
-//                matched = false;
-////                comparisonReport.addMessage("Value error in " + errorMessage + "\n");
-//            }
-//        }  else if ((source != null && target == null) || (source == null && target != null)) {
-////            comparisonReport.addMessage("Class Code error in " + errorMessage + "\n");
-//            return false;
-//        }
-//        return matched;
-//    }
-//
-//
-//    private boolean compareClassCode(ActClinicalDocument source, ActClinicalDocument target) {
-//        boolean matched = true;
-//        if (source != null && target != null) {
-//            if (source.getLiteral() != null && target.getLiteral() != null) {
-//                if (!source.getLiteral().equals(target.getLiteral())) {
-//                    matched = false;
-////                    comparisonReport.addMessage(" Literal error in " + errorMessage + "\n");
-//                }
-//            }
-//            if (source.getName() != null && target.getName() != null) {
-//                if (!source.getName().equals(target.getName())) {
-//                    matched = false;
-////                    comparisonReport.addMessage("Name error in " + errorMessage + "\n");
-//                }
-//            }
-//            if (source.getValue() != target.getValue()) {
-//                matched = false;
-////                comparisonReport.addMessage("Value error in " + errorMessage + "\n");
-//            }
-//        }  else if ((source != null && target == null) || (source == null && target != null)) {
-////            comparisonReport.addMessage("Class Code error in " + errorMessage + "\n");
-//            return false;
-//        }
-//        return matched;
-//    }
-//
-//    private boolean compareClassCode(RoleClassAssignedEntity source, RoleClassAssignedEntity target) {
-//        boolean matched = true;
-//        if (source != null && target != null) {
-//            if (source.getLiteral() != null && target.getLiteral() != null) {
-//                if (!source.getLiteral().equals(target.getLiteral())) {
-//                    matched = false;
-////                    comparisonReport.addMessage(" Literal error in " + errorMessage + "\n");
-//                }
-//            }
-//            if (source.getName() != null && target.getName() != null) {
-//                if (!source.getName().equals(target.getName())) {
-//                    matched = false;
-////                    comparisonReport.addMessage("Name error in " + errorMessage + "\n");
-//                }
-//            }
-//            if (source.getValue() != target.getValue()) {
-//                matched = false;
-////                comparisonReport.addMessage("Value error in " + errorMessage + "\n");
-//            }
-//        }  else if ((source != null && target == null) || (source == null && target != null)) {
-////            comparisonReport.addMessage("Class Code error in " + errorMessage + "\n");
-//            return false;
-//        }
-//        return matched;
-//    }
-//
-//    private boolean compareClassCode(EntityClassDevice source, EntityClassDevice target) {
-//        boolean matched = true;
-//        if (source != null && target != null) {
-//            if (source.getLiteral() != null && target.getLiteral() != null) {
-//                if (!source.getLiteral().equals(target.getLiteral())) {
-//                    matched = false;
-////                    comparisonReport.addMessage(" Literal error in " + errorMessage + "\n");
-//                }
-//            }
-//            if (source.getName() != null && target.getName() != null) {
-//                if (!source.getName().equals(target.getName())) {
-//                    matched = false;
-////                    comparisonReport.addMessage("Name error in " + errorMessage + "\n");
-//                }
-//            }
-//            if (source.getValue() != target.getValue()) {
-//                matched = false;
-////                comparisonReport.addMessage("Value error in " + errorMessage + "\n");
-//            }
-//        }  else if ((source != null && target == null) || (source == null && target != null)) {
-////            comparisonReport.addMessage("Class Code error in " + errorMessage + "\n");
-//            return false;
-//        }
-//        return matched;
-//    }
-//
-//    private boolean compareClassCode(EntityClass source, EntityClass target) {
-//        boolean matched = true;
-//        if (source != null && target != null) {
-//            if (source.getLiteral() != null && target.getLiteral() != null) {
-//                if (!source.getLiteral().equals(target.getLiteral())) {
-//                    matched = false;
-////                    comparisonReport.addMessage(" Literal error in " + errorMessage + "\n");
-//                }
-//            }
-//            if (source.getName() != null && target.getName() != null) {
-//                if (!source.getName().equals(target.getName())) {
-//                    matched = false;
-////                    comparisonReport.addMessage("Name error in " + errorMessage + "\n");
-//                }
-//            }
-//            if (source.getValue() != target.getValue()) {
-//                matched = false;
-////                comparisonReport.addMessage("Value error in " + errorMessage + "\n");
-//            }
-//        }  else if ((source != null && target == null) || (source == null && target != null)) {
-////            comparisonReport.addMessage("Class Code error in " + errorMessage + "\n");
-//            return false;
-//        }
-//        return matched;
-//    }
-//    private boolean compareClassCode(ActClass source, ActClass target) {
-//        boolean matched = true;
-//        if (source != null && target != null) {
-//            if (source.getLiteral() != null && target.getLiteral() != null) {
-//                if (!source.getLiteral().equals(target.getLiteral())) {
-//                    matched = false;
-////                    comparisonReport.addMessage(" Literal error in " + errorMessage + "\n");
-//                }
-//            }
-//            if (source.getName() != null && target.getName() != null) {
-//                if (!source.getName().equals(target.getName())) {
-//                    matched = false;
-////                    comparisonReport.addMessage("Name error in " + errorMessage + "\n");
-//                }
-//            }
-//            if (source.getValue() != target.getValue()) {
-//                matched = false;
-////                comparisonReport.addMessage("Value error in " + errorMessage + "\n");
-//            }
-//        }  else if ((source != null && target == null) || (source == null && target != null)) {
-////            comparisonReport.addMessage("Class Code error in " + errorMessage + "\n");
-//            return false;
-//        }
-//        return matched;
-//    }
-//    private boolean compareClassCode(RoleClassMutualRelationship source, RoleClassMutualRelationship target) {
-//        boolean matched = true;
-//        if (source != null && target != null) {
-//            if (source.getLiteral() != null && target.getLiteral() != null) {
-//                if (!source.getLiteral().equals(target.getLiteral())) {
-//                    matched = false;
-////                    comparisonReport.addMessage(" Literal error in " + errorMessage + "\n");
-//                }
-//            }
-//            if (source.getName() != null && target.getName() != null) {
-//                if (!source.getName().equals(target.getName())) {
-//                    matched = false;
-////                    comparisonReport.addMessage("Name error in " + errorMessage + "\n");
-//                }
-//            }
-//            if (source.getValue() != target.getValue()) {
-//                matched = false;
-////                comparisonReport.addMessage("Value error in " + errorMessage + "\n");
-//            }
-//        }  else if ((source != null && target == null) || (source == null && target != null)) {
-////            comparisonReport.addMessage("Class Code error in " + errorMessage + "\n");
-//            return false;
-//        }
-//        return matched;
-//    }
-//
-//    private boolean compareCode(CE source, CE target) {
-//        boolean matched = true;
-//        if (source != null && target != null) {
-//            if (source.getCode() != null && target.getCode() != null) {
-//                if (!source.getCode().equals(target.getCode())) {
-//                    matched = false;
-////                    comparisonReport.addMessage("Code error in " + errorMessage + "\n");
-//                }
-//            }
-//            if (source.getNullFlavor().getLiteral() != null && target.getNullFlavor().getLiteral() != null) {
-//                if (!source.getNullFlavor().getLiteral().equals(target.getNullFlavor().getLiteral())) {
-//                    matched = false;
-////                    comparisonReport.addMessage("Null Flavor error in " + errorMessage + "\n");
-//                }
-//            }
-//            if (source.getCodeSystem() != null && target.getCodeSystem() != null) {
-//                if (!source.getCodeSystem().equals(target.getCodeSystem())) {
-//                    matched = false;
-////                    comparisonReport.addMessage("Code System error in " + errorMessage + "\n");
-//                }
-//            }
-//            if (source.getCodeSystemName() != null && target.getCodeSystemName() != null) {
-//                if (!source.getCodeSystemName().equals(target.getCodeSystemName())) {
-//                    matched = false;
-////                    comparisonReport.addMessage("Code System Name error in " + errorMessage + "\n");
-//                }
-//            }
-//            if (source.getCodeSystemVersion() != null && target.getCodeSystemVersion() != null) {
-//                if (!source.getCodeSystemVersion().equals(target.getCodeSystemVersion())) {
-//                    matched = false;
-////                    comparisonReport.addMessage("Code System Version error in " + errorMessage + "\n");
-//                }
-//            }
-//            if (source.getDisplayName() != null && target.getDisplayName() != null) {
-//                if (!source.getDisplayName().equals(target.getDisplayName())) {
-//                    matched = false;
-////                    comparisonReport.addMessage("Display Name error in " + errorMessage + "\n");
-//                }
-//            }
-//        }  else if ((source != null && target == null) || (source == null && target != null)) {
-////            comparisonReport.addMessage("Code Comparison error in " + errorMessage + "\n");
-//            return false;
-//        }
-//        return matched;
-//    }
-//
-//    private boolean compareCode(CD source, CD target) {
-//        boolean matched = true;
-//        if (source != null && target != null) {
-//            if (source.getCode() != null && target.getCode() != null) {
-//                if (!source.getCode().equals(target.getCode())) {
-//                    matched = false;
-////                    comparisonReport.addMessage("Code error in " + errorMessage + "\n");
-//                }
-//            }
-//            if (source.getNullFlavor().getLiteral() != null && target.getNullFlavor().getLiteral() != null) {
-//                if (!source.getNullFlavor().getLiteral().equals(target.getNullFlavor().getLiteral())) {
-//                    matched = false;
-////                    comparisonReport.addMessage("Null Flavor error in " + errorMessage + "\n");
-//                }
-//            }
-//            if (source.getCodeSystem() != null && target.getCodeSystem() != null) {
-//                if (!source.getCodeSystem().equals(target.getCodeSystem())) {
-//                    matched = false;
-////                    comparisonReport.addMessage("Code System error in " + errorMessage + "\n");
-//                }
-//            }
-//            if (source.getCodeSystemName() != null && target.getCodeSystemName() != null) {
-//                if (!source.getCodeSystemName().equals(target.getCodeSystemName())) {
-//                    matched = false;
-////                    comparisonReport.addMessage("Code System Name error in " + errorMessage + "\n");
-//                }
-//            }
-//            if (source.getCodeSystemVersion() != null && target.getCodeSystemVersion() != null) {
-//                if (!source.getCodeSystemVersion().equals(target.getCodeSystemVersion())) {
-//                    matched = false;
-////                    comparisonReport.addMessage("Code System Version error in " + errorMessage + "\n");
-//                }
-//            }
-//            if (source.getDisplayName() != null && target.getDisplayName() != null) {
-//                if (!source.getDisplayName().equals(target.getDisplayName())) {
-//                    matched = false;
-////                    comparisonReport.addMessage("Display Name error in " + errorMessage + "\n");
-//                }
-//            }
-//        }  else if ((source != null && target == null) || (source == null && target != null)) {
-////            comparisonReport.addMessage("Code Comparison error in " + errorMessage + "\n");
-//            return false;
-//        }
-//        return matched;
-//    }
-//
-//    private boolean compareConfidentialityCode(CE source, CE target) {
-//        boolean matched = true;
-//        if (source != null && target != null) {
-//            if (source.getCode() != null && target.getCode() != null) {
-//                if (!source.getCode().equals(target.getCode())) {
-//                    matched = false;
-////                    comparisonReport.addMessage("Code error in " + errorMessage + "\n");
-//                }
-//            }
-//            if (source.getNullFlavor().getLiteral() != null && target.getNullFlavor().getLiteral() != null) {
-//                if (!source.getNullFlavor().getLiteral().equals(target.getNullFlavor().getLiteral())) {
-//                    matched = false;
-////                    comparisonReport.addMessage("Null Flavor error in " + errorMessage + "\n");
-//                }
-//            }
-//            if (source.getCodeSystem() != null && target.getCodeSystem() != null) {
-//                if (!source.getCodeSystem().equals(target.getCodeSystem())) {
-//                    matched = false;
-////                    comparisonReport.addMessage("Code System error in " + errorMessage + "\n");
-//                }
-//            }
-//            if (source.getCodeSystemName() != null && target.getCodeSystemName() != null) {
-//                if (!source.getCodeSystemName().equals(target.getCodeSystemName())) {
-//                    matched = false;
-////                    comparisonReport.addMessage("Code System Name error in " + errorMessage + "\n");
-//                }
-//            }
-//            if (source.getCodeSystemVersion() != null && target.getCodeSystemVersion() != null) {
-//                if (!source.getCodeSystemVersion().equals(target.getCodeSystemVersion())) {
-//                    matched = false;
-////                    comparisonReport.addMessage("Code System Version error in " + errorMessage + "\n");
-//                }
-//            }
-//            if (source.getDisplayName() != null && target.getDisplayName() != null) {
-//                if (!source.getDisplayName().equals(target.getDisplayName())) {
-//                    matched = false;
-////                    comparisonReport.addMessage("Display Name error in " + errorMessage + "\n");
-//                }
-//            }
-//        }  else if ((source != null && target == null) || (source == null && target != null)) {
-////            comparisonReport.addMessage("Confidentiality Code Comparison error in " + errorMessage + "\n");
-//            return false;
-//        }
-//        return matched;
-//    }
-//
-//    private boolean compareLanguageCode(CE source, CE target) {
-//        boolean matched = true;
-//        if (source != null && target != null) {
-//            if (source.getCode() != null && target.getCode() != null) {
-//                if (!source.getCode().equals(target.getCode())) {
-//                    matched = false;
-////                    comparisonReport.addMessage("Code error in " + errorMessage + "\n");
-//                }
-//            }
-//            if (source.getNullFlavor().getLiteral() != null && target.getNullFlavor().getLiteral() != null) {
-//                if (!source.getNullFlavor().getLiteral().equals(target.getNullFlavor().getLiteral())) {
-//                    matched = false;
-////                    comparisonReport.addMessage("Null Flavor error in " + errorMessage + "\n");
-//                }
-//            }
-//            if (source.getCodeSystem() != null && target.getCodeSystem() != null) {
-//                if (!source.getCodeSystem().equals(target.getCodeSystem())) {
-//                    matched = false;
-////                    comparisonReport.addMessage("Code System error in " + errorMessage + "\n");
-//                }
-//            }
-//            if (source.getCodeSystemName() != null && target.getCodeSystemName() != null) {
-//                if (!source.getCodeSystemName().equals(target.getCodeSystemName())) {
-//                    matched = false;
-////                    comparisonReport.addMessage("Code System Name error in " + errorMessage + "\n");
-//                }
-//            }
-//            if (source.getCodeSystemVersion() != null && target.getCodeSystemVersion() != null) {
-//                if (!source.getCodeSystemVersion().equals(target.getCodeSystemVersion())) {
-//                    matched = false;
-////                    comparisonReport.addMessage("Code System Version error in " + errorMessage + "\n");
-//                }
-//            }
-//            if (source.getDisplayName() != null && target.getDisplayName() != null) {
-//                if (!source.getDisplayName().equals(target.getDisplayName())) {
-//                    matched = false;
-////                    comparisonReport.addMessage("Display Name error in " + errorMessage + "\n");
-//                }
-//            }
-//        }  else if ((source != null && target == null) || (source == null && target != null)) {
-////            comparisonReport.addMessage("Language Code Comparison error in " + errorMessage + "\n");
-//            return false;
-//        }
-//        return matched;
-//    }
-//
-//    private boolean compareTitle(ST source, ST target) {
-//        boolean matched = true;
-//        if (source != null && target != null) {
-//            if (source.getText() != null && target.getText() != null) {
-//                if (!source.getText().equals(target.getText())) {
-//                    matched = false;
-////                    comparisonReport.addMessage("Text error in " + errorMessage + "\n");
-//                    comparisonReport.addMismatch(new Mismatch(" Title: Text",source.getText(),target.getText()));
-//
-//                }
-//            }
-//        }  else if ((source != null && target == null) || (source == null && target != null)) {
-////            comparisonReport.addMessage("Title Comparison error in " + errorMessage + "\n");
-//            comparisonReport.addMismatch(new Mismatch("Title",source.getText(),target.getText()));
-//
-//            return false;
-//        }
-//        return matched;
-//    }
-//
-//    private boolean compareEffectiveTime(TS source, TS target) {
-//        boolean matched = true;
-//        if (source != null && target != null) {
-//            if (source.getValue() != target.getValue()) {
-//                matched = false;
-////                comparisonReport.addMessage("Value error in " + errorMessage + "\n");
-//            }
-//            if (source.getNullFlavor().getLiteral() != null && target.getNullFlavor().getLiteral() != null) {
-//                if (!source.getNullFlavor().getLiteral().equals(target.getNullFlavor().getLiteral())) {
-//                    matched = false;
-////                    comparisonReport.addMessage("Literal in " + errorMessage + "\n");
-//                }
-//            }
-//        }  else if ((source != null && target == null) || (source == null && target != null)) {
-////            comparisonReport.addMessage("Effective Time error in " + errorMessage + "\n");
-//            return false;
-//        }
-//        return matched;
-//    }
-//
-//    private boolean compareTypeCode(ParticipationType source, ParticipationType target) {
-//        boolean matched = true;
-//        if (source != null && target != null) {
-//            if (source.getLiteral() != null && target.getLiteral() != null) {
-//                if (!source.getLiteral().equals(target.getLiteral())) {
-//                    matched = false;
-////                    comparisonReport.addMessage("Literal error in " + errorMessage + "\n");
-//                }
-//            }
-//            if (source.getName() != null && target.getName() != null) {
-//                if (!source.getName().equals(target.getName())) {
-//                    matched = false;
-////                    comparisonReport.addMessage("Name error in " + errorMessage + "\n");
-//                }
-//            }
-//            if (source.getValue() != target.getValue()) {
-//                matched = false;
-////                comparisonReport.addMessage("Value error in " + errorMessage + "\n");
-//            }
-//        }  else if ((source != null && target == null) || (source == null && target != null)) {
-////            comparisonReport.addMessage("Type Code error in " + errorMessage + "\n");
-//            return false;
-//        }
-//        return matched;
-//    }
-//
-//    private boolean compareTypeCode(ParticipationTargetSubject source, ParticipationTargetSubject target) {
-//        boolean matched = true;
-//        if (source != null && target != null) {
-//            if (source.getLiteral() != null && target.getLiteral() != null) {
-//                if (!source.getLiteral().equals(target.getLiteral())) {
-//                    matched = false;
-////                    comparisonReport.addMessage("Literal error in " + errorMessage + "\n");
-//                }
-//            }
-//            if (source.getName() != null && target.getName() != null) {
-//                if (!source.getName().equals(target.getName())) {
-//                    matched = false;
-////                    comparisonReport.addMessage("Name error in " + errorMessage + "\n");
-//                }
-//            }
-//            if (source.getValue() != target.getValue()) {
-//                matched = false;
-////                comparisonReport.addMessage("Value error in " + errorMessage + "\n");
-//            }
-//        }  else if ((source != null && target == null) || (source == null && target != null)) {
-////            comparisonReport.addMessage("Type Code error in " + errorMessage + "\n");
-//            return false;
-//        }
-//        return matched;
-//    }
-//
-//    private boolean compareTypeCode(ParticipationPhysicalPerformer source, ParticipationPhysicalPerformer target) {
-//        boolean matched = true;
-//        if (source != null && target != null) {
-//            if (source.getLiteral() != null && target.getLiteral() != null) {
-//                if (!source.getLiteral().equals(target.getLiteral())) {
-//                    matched = false;
-////                    comparisonReport.addMessage("Literal error in " + errorMessage + "\n");
-//                }
-//            }
-//            if (source.getName() != null && target.getName() != null) {
-//                if (!source.getName().equals(target.getName())) {
-//                    matched = false;
-////                    comparisonReport.addMessage("Name error in " + errorMessage + "\n");
-//                }
-//            }
-//            if (source.getValue() != target.getValue()) {
-//                matched = false;
-////                comparisonReport.addMessage("Value error in " + errorMessage + "\n");
-//            }
-//        }  else if ((source != null && target == null) || (source == null && target != null)) {
-////            comparisonReport.addMessage("Type Code error in " + errorMessage + "\n");
-//            return false;
-//        }
-//        return matched;
-//    }
-//
-//    private boolean compareTypeCode(x_ActRelationshipExternalReference source, x_ActRelationshipExternalReference target) {
-//        boolean matched = true;
-//        if (source != null && target != null) {
-//            if (source.getLiteral() != null && target.getLiteral() != null) {
-//                if (!source.getLiteral().equals(target.getLiteral())) {
-//                    matched = false;
-////                    comparisonReport.addMessage("Literal error in " + errorMessage + "\n");
-//                }
-//            }
-//            if (source.getName() != null && target.getName() != null) {
-//                if (!source.getName().equals(target.getName())) {
-//                    matched = false;
-////                    comparisonReport.addMessage("Name error in " + errorMessage + "\n");
-//                }
-//            }
-//            if (source.getValue() != target.getValue()) {
-//                matched = false;
-////                comparisonReport.addMessage("Value error in " + errorMessage + "\n");
-//            }
-//        }  else if ((source != null && target == null) || (source == null && target != null)) {
-////            comparisonReport.addMessage("Type Code error in " + errorMessage + "\n");
-//            return false;
-//        }
-//        return matched;
-//    }
-//
-//    private boolean compareTypeCode(x_ActRelationshipEntryRelationship source, x_ActRelationshipEntryRelationship target) {
-//        boolean matched = true;
-//        if (source != null && target != null) {
-//            if (source.getLiteral() != null && target.getLiteral() != null) {
-//                if (!source.getLiteral().equals(target.getLiteral())) {
-//                    matched = false;
-////                    comparisonReport.addMessage("Literal error in " + errorMessage + "\n");
-//                }
-//            }
-//            if (source.getName() != null && target.getName() != null) {
-//                if (!source.getName().equals(target.getName())) {
-//                    matched = false;
-////                    comparisonReport.addMessage("Name error in " + errorMessage + "\n");
-//                }
-//            }
-//            if (source.getValue() != target.getValue()) {
-//                matched = false;
-////                comparisonReport.addMessage("Value error in " + errorMessage + "\n");
-//            }
-//        }  else if ((source != null && target == null) || (source == null && target != null)) {
-////            comparisonReport.addMessage("Type Code error in " + errorMessage + "\n");
-//            return false;
-//        }
-//        return matched;
-//    }
-//
-//    private boolean compareTypeCode(ParticipationTargetLocation source, ParticipationTargetLocation target) {
-//        boolean matched = true;
-//        if (source != null && target != null) {
-//            if (source.getLiteral() != null && target.getLiteral() != null) {
-//                if (!source.getLiteral().equals(target.getLiteral())) {
-//                    matched = false;
-////                    comparisonReport.addMessage("Literal error in " + errorMessage + "\n");
-//                }
-//            }
-//            if (source.getName() != null && target.getName() != null) {
-//                if (!source.getName().equals(target.getName())) {
-//                    matched = false;
-////                    comparisonReport.addMessage("Name error in " + errorMessage + "\n");
-//                }
-//            }
-//            if (source.getValue() != target.getValue()) {
-//                matched = false;
-////                comparisonReport.addMessage("Value error in " + errorMessage + "\n");
-//            }
-//        }  else if ((source != null && target == null) || (source == null && target != null)) {
-////            comparisonReport.addMessage("Type Code error in " + errorMessage + "\n");
-//            return false;
-//        }
-//        return matched;
-//    }
-//
-//    private boolean compareTypeCode(x_ActRelationshipEntry source, x_ActRelationshipEntry target) {
-//        boolean matched = true;
-//        if (source != null && target != null) {
-//            if (source.getLiteral() != null && target.getLiteral() != null) {
-//                if (!source.getLiteral().equals(target.getLiteral())) {
-//                    matched = false;
-////                    comparisonReport.addMessage("Literal error in " + errorMessage + "\n");
-//                }
-//            }
-//            if (source.getName() != null && target.getName() != null) {
-//                if (!source.getName().equals(target.getName())) {
-//                    matched = false;
-////                    comparisonReport.addMessage("Name error in " + errorMessage + "\n");
-//                }
-//            }
-//            if (source.getValue() != target.getValue()) {
-//                matched = false;
-////                comparisonReport.addMessage("Value error in " + errorMessage + "\n");
-//            }
-//        }  else if ((source != null && target == null) || (source == null && target != null)) {
-////            comparisonReport.addMessage("Type Code error in " + errorMessage + "\n");
-//            return false;
-//        }
-//        return matched;
-//    }
-//
-//    private boolean compareTypeCode(ActRelationshipFulfills source, ActRelationshipFulfills target) {
-//        boolean matched = true;
-//        if (source != null && target != null) {
-//            if (source.getLiteral() != null && target.getLiteral() != null) {
-//                if (!source.getLiteral().equals(target.getLiteral())) {
-//                    matched = false;
-////                    comparisonReport.addMessage("Literal error in " + errorMessage + "\n");
-//                }
-//            }
-//            if (source.getName() != null && target.getName() != null) {
-//                if (!source.getName().equals(target.getName())) {
-//                    matched = false;
-////                    comparisonReport.addMessage("Name error in " + errorMessage + "\n");
-//                }
-//            }
-//            if (source.getValue() != target.getValue()) {
-//                matched = false;
-////                comparisonReport.addMessage("Value error in " + errorMessage + "\n");
-//            }
-//        }  else if ((source != null && target == null) || (source == null && target != null)) {
-////            comparisonReport.addMessage("Type Code error in " + errorMessage + "\n");
-//            return false;
-//        }
-//        return matched;
-//    }
-//
-//    private boolean compareTypeCode(x_ServiceEventPerformer source, x_ServiceEventPerformer target) {
-//        boolean matched = true;
-//        if (source != null && target != null) {
-//            if (source.getLiteral() != null && target.getLiteral() != null) {
-//                if (!source.getLiteral().equals(target.getLiteral())) {
-//                    matched = false;
-////                    comparisonReport.addMessage("Literal error in " + errorMessage + "\n");
-//                }
-//            }
-//            if (source.getName() != null && target.getName() != null) {
-//                if (!source.getName().equals(target.getName())) {
-//                    matched = false;
-////                    comparisonReport.addMessage("Name error in " + errorMessage + "\n");
-//                }
-//            }
-//            if (source.getValue() != target.getValue()) {
-//                matched = false;
-////                comparisonReport.addMessage("Value error in " + errorMessage + "\n");
-//            }
-//        }  else if ((source != null && target == null) || (source == null && target != null)) {
-////            comparisonReport.addMessage("Type Code error in " + errorMessage + "\n");
-//            return false;
-//        }
-//        return matched;
-//    }
-//
-//    private boolean compareTypeCode(x_ActRelationshipDocument source, x_ActRelationshipDocument target) {
-//        boolean matched = true;
-//        if (source != null && target != null) {
-//            if (source.getLiteral() != null && target.getLiteral() != null) {
-//                if (!source.getLiteral().equals(target.getLiteral())) {
-//                    matched = false;
-////                    comparisonReport.addMessage("Literal error in " + errorMessage + "\n");
-//                }
-//            }
-//            if (source.getName() != null && target.getName() != null) {
-//                if (!source.getName().equals(target.getName())) {
-//                    matched = false;
-////                    comparisonReport.addMessage("Name error in " + errorMessage + "\n");
-//                }
-//            }
-//            if (source.getValue() != target.getValue()) {
-//                matched = false;
-////                comparisonReport.addMessage("Value error in " + errorMessage + "\n");
-//            }
-//        }  else if ((source != null && target == null) || (source == null && target != null)) {
-////            comparisonReport.addMessage("Type Code error in " + errorMessage + "\n");
-//            return false;
-//        }
-//        return matched;
-//    }
-//
-//    private boolean compareTypeCode(x_EncounterParticipant source, x_EncounterParticipant target) {
-//        boolean matched = true;
-//        if (source != null && target != null) {
-//            if (source.getLiteral() != null && target.getLiteral() != null) {
-//                if (!source.getLiteral().equals(target.getLiteral())) {
-//                    matched = false;
-////                    comparisonReport.addMessage("Literal error in " + errorMessage + "\n");
-//                }
-//            }
-//            if (source.getName() != null && target.getName() != null) {
-//                if (!source.getName().equals(target.getName())) {
-//                    matched = false;
-////                    comparisonReport.addMessage("Name error in " + errorMessage + "\n");
-//                }
-//            }
-//            if (source.getValue() != target.getValue()) {
-//                matched = false;
-////                comparisonReport.addMessage("Value error in " + errorMessage + "\n");
-//            }
-//        }  else if ((source != null && target == null) || (source == null && target != null)) {
-////            comparisonReport.addMessage("Type Code error in " + errorMessage + "\n");
-//            return false;
-//        }
-//        return matched;
-//    }
-//
-//    private boolean compareTypeCode(x_InformationRecipient source, x_InformationRecipient target) {
-//        boolean matched = true;
-//        if (source != null && target != null) {
-//            if (source.getLiteral() != null && target.getLiteral() != null) {
-//                if (!source.getLiteral().equals(target.getLiteral())) {
-//                    matched = false;
-////                    comparisonReport.addMessage("Literal error in " + errorMessage + "\n");
-//                }
-//            }
-//            if (source.getName() != null && target.getName() != null) {
-//                if (!source.getName().equals(target.getName())) {
-//                    matched = false;
-////                    comparisonReport.addMessage("Name error in " + errorMessage + "\n");
-//                }
-//            }
-//            if (source.getValue() != target.getValue()) {
-//                matched = false;
-////                comparisonReport.addMessage("Value error in " + errorMessage + "\n");
-//            }
-//        }  else if ((source != null && target == null) || (source == null && target != null)) {
-////            comparisonReport.addMessage("Type Code error in " + errorMessage + "\n");
-//            return false;
-//        }
-//        return matched;
-//    }
-//
-//    private boolean compareTypeCode(ActRelationshipHasComponent source, ActRelationshipHasComponent target) {
-//        boolean matched = true;
-//        if (source != null && target != null) {
-//            if (source.getLiteral() != null && target.getLiteral() != null) {
-//                if (!source.getLiteral().equals(target.getLiteral())) {
-//                    matched = false;
-////                    comparisonReport.addMessage("Literal error in " + errorMessage + "\n");
-//                }
-//            }
-//            if (source.getName() != null && target.getName() != null) {
-//                if (!source.getName().equals(target.getName())) {
-//                    matched = false;
-////                    comparisonReport.addMessage("Name error in " + errorMessage + "\n");
-//                }
-//            }
-//            if (source.getValue() != target.getValue()) {
-//                matched = false;
-////                comparisonReport.addMessage("Value error in " + errorMessage + "\n");
-//            }
-//        }  else if ((source != null && target == null) || (source == null && target != null)) {
-////            comparisonReport.addMessage("Type Code error in " + errorMessage + "\n");
-//            return false;
-//        }
-//        return matched;
-//    }
-//
-//    private boolean compareTypeCode(ActRelationshipType source, ActRelationshipType target) {
-//        boolean matched = true;
-//        if (source != null && target != null) {
-//            if (source.getLiteral() != null && target.getLiteral() != null) {
-//                if (!source.getLiteral().equals(target.getLiteral())) {
-//                    matched = false;
-////                    comparisonReport.addMessage("Literal error in " + errorMessage + "\n");
-//                }
-//            }
-//            if (source.getName() != null && target.getName() != null) {
-//                if (!source.getName().equals(target.getName())) {
-//                    matched = false;
-////                    comparisonReport.addMessage("Name error in " + errorMessage + "\n");
-//                }
-//            }
-//            if (source.getValue() != target.getValue()) {
-//                matched = false;
-////                comparisonReport.addMessage("Value error in " + errorMessage + "\n");
-//            }
-//        }  else if ((source != null && target == null) || (source == null && target != null)) {
-////            comparisonReport.addMessage("Type Code error in " + errorMessage + "\n");
-//            return false;
-//        }
-//        return matched;
-//    }
-//
-//    private boolean compareContextControlCode(ContextControl source, ContextControl target) {
-//        boolean matched = true;
-//        if (source != null && target != null) {
-//            if (source.getLiteral() != null && target.getLiteral() != null) {
-//                if (!source.getLiteral().equals(target.getLiteral())) {
-//                    matched = false;
-////                    comparisonReport.addMessage("Literal error in " + errorMessage + "\n");
-//                }
-//            }
-//            if (source.getName() != null && target.getName() != null) {
-//                if (!source.getName().equals(target.getName())) {
-//                    matched = false;
-////                    comparisonReport.addMessage("Name error in " + errorMessage + "\n");
-//                }
-//            }
-//            if (source.getValue() != target.getValue()) {
-//                matched = false;
-////                comparisonReport.addMessage("Value error in " + errorMessage + "\n");
-//            }
-//        }  else if ((source != null && target == null) || (source == null && target != null)) {
-////            comparisonReport.addMessage("Type Code error in " + errorMessage + "\n");
-//            return false;
-//        }
-//        return matched;
-//    }
-//
-//    private boolean compareTime(TS source, TS target) {
-//        boolean matched = true;
-//        if (source != null && target != null) {
-//            if (source.getNullFlavor().getLiteral() != null && target.getNullFlavor().getLiteral() != null) {
-//                if (!source.getNullFlavor().getLiteral().equals(target.getNullFlavor().getLiteral())) {
-//                    matched = false;
-////                    comparisonReport.addMessage("Name error in " + errorMessage + "\n");
-//                }
-//            }
-//            if (source.getValue() != target.getValue()) {
-//                matched = false;
-////                comparisonReport.addMessage("Value error in " + errorMessage + "\n");
-//            }
-//        }  else if ((source != null && target == null) || (source == null && target != null)) {
-////            comparisonReport.addMessage("Time error in " + errorMessage + "\n");
-//            return false;
-//        }
-//        return matched;
-//    }
-//
-//    private boolean compareSignatureCode(CS source, CS target) {
-//        boolean matched = true;
-//        if (source != null && target != null) {
-//            if (source.getCode() != null && target.getCode() != null) {
-//                if (!source.getCode().equals(target.getCode())) {
-//                    matched = false;
-////                    comparisonReport.addMessage("Code error in " + errorMessage + "\n");
-//                }
-//            }
-//            if (source.getNullFlavor().getLiteral() != null && target.getNullFlavor().getLiteral() != null) {
-//                if (!source.getNullFlavor().getLiteral().equals(target.getNullFlavor().getLiteral())) {
-//                    matched = false;
-////                    comparisonReport.addMessage("Null Flavor error in " + errorMessage + "\n");
-//                }
-//            }
-//            if (source.getCodeSystem() != null && target.getCodeSystem() != null) {
-//                if (!source.getCodeSystem().equals(target.getCodeSystem())) {
-//                    matched = false;
-////                    comparisonReport.addMessage("Code System error in " + errorMessage + "\n");
-//                }
-//            }
-//            if (source.getCodeSystemName() != null && target.getCodeSystemName() != null) {
-//                if (!source.getCodeSystemName().equals(target.getCodeSystemName())) {
-//                    matched = false;
-////                    comparisonReport.addMessage("Code System Name error in " + errorMessage + "\n");
-//                }
-//            }
-//            if (source.getCodeSystemVersion() != null && target.getCodeSystemVersion() != null) {
-//                if (!source.getCodeSystemVersion().equals(target.getCodeSystemVersion())) {
-//                    matched = false;
-////                    comparisonReport.addMessage("Code System Version error in " + errorMessage + "\n");
-//                }
-//            }
-//            if (source.getDisplayName() != null && target.getDisplayName() != null) {
-//                if (!source.getDisplayName().equals(target.getDisplayName())) {
-//                    matched = false;
-////                    comparisonReport.addMessage("Display Name error in " + errorMessage + "\n");
-//                }
-//            }
-//        }  else if ((source != null && target == null) || (source == null && target != null)) {
-////            comparisonReport.addMessage("Signature Code Comparison Error in" + errorMessage + "\n");
-//            return false;
-//        }
-//        return matched;
-//    }
-//
-//    private boolean compareFunctionCode(CE source, CE target) {
-//        boolean matched = true;
-//        if (source != null && target != null) {
-//            if (source.getCode() != null && target.getCode() != null) {
-//                if (!source.getCode().equals(target.getCode())) {
-//                    matched = false;
-////                    comparisonReport.addMessage("Code error in " + errorMessage + "\n");
-//                }
-//            }
-//            if (source.getNullFlavor().getLiteral() != null && target.getNullFlavor().getLiteral() != null) {
-//                if (!source.getNullFlavor().getLiteral().equals(target.getNullFlavor().getLiteral())) {
-//                    matched = false;
-////                    comparisonReport.addMessage("Null Flavor error in " + errorMessage + "\n");
-//                }
-//            }
-//            if (source.getCodeSystem() != null && target.getCodeSystem() != null) {
-//                if (!source.getCodeSystem().equals(target.getCodeSystem())) {
-//                    matched = false;
-////                    comparisonReport.addMessage("Code System error in " + errorMessage + "\n");
-//                }
-//            }
-//            if (source.getCodeSystemName() != null && target.getCodeSystemName() != null) {
-//                if (!source.getCodeSystemName().equals(target.getCodeSystemName())) {
-//                    matched = false;
-////                    comparisonReport.addMessage("Code System Name error in " + errorMessage + "\n");
-//                }
-//            }
-//            if (source.getCodeSystemVersion() != null && target.getCodeSystemVersion() != null) {
-//                if (!source.getCodeSystemVersion().equals(target.getCodeSystemVersion())) {
-//                    matched = false;
-////                    comparisonReport.addMessage("Code System Version error in " + errorMessage + "\n");
-//                }
-//            }
-//            if (source.getDisplayName() != null && target.getDisplayName() != null) {
-//                if (!source.getDisplayName().equals(target.getDisplayName())) {
-//                    matched = false;
-////                    comparisonReport.addMessage("Display Name error in " + errorMessage + "\n");
-//                }
-//            }
-//        }  else if ((source != null && target == null) || (source == null && target != null)) {
-////            comparisonReport.addMessage("Function Code Comparison error in " + errorMessage + "\n");
-//            return false;
-//        }
-//        return matched;
-//    }
-//
-//    private boolean compareSetID(II source, II target) {
-//        boolean matched = true;
-//        if (source != null && target != null) {
-//            if (source.getRoot() != null && target.getRoot() != null) {
-//                if (!source.getRoot().equals(target.getRoot())) {
-////                    comparisonReport.addMessage("Get Root error in " + errorMessage + "\n");
-//                    matched = false;
-//                }
-//            }
-//            if (source.getAssigningAuthorityName() != null && target.getAssigningAuthorityName() != null) {
-//                if (!source.getAssigningAuthorityName().equals(target.getAssigningAuthorityName())) {
-////                    comparisonReport.addMessage("Assigning Authority Name error in " + errorMessage + "\n");
-//                    matched = false;
-//                }
-//            }
-//            if (source.getExtension() != null && target.getExtension() != null) {
-//                if (!source.getExtension().equals(target.getExtension())) {
-////                    comparisonReport.addMessage("Extension error in " + errorMessage + "\n");
-//                    matched = false;
-//                }
-//            }
-//            if (source.getNullFlavor().getLiteral() != null && target.getNullFlavor().getLiteral() != null) {
-//                if (!source.getNullFlavor().getLiteral().equals(target.getNullFlavor().getLiteral())) {
-////                    comparisonReport.addMessage("Null Flavor ror in " + errorMessage + "\n");
-//                    matched = false;
-//                }
-//            }
-//        }  else if ((source != null && target == null) || (source == null && target != null)) {
-////            comparisonReport.addMessage("Set ID error in " + errorMessage + "\n");
-//            return false;
-//        }
-//        return matched;
-//    }
-//
-//    private boolean compareVersionNumber(INT source, INT target) {
-//        boolean matched = true;
-//        if (source != null && target != null) {
-//            if (source.getValue() != null && target.getValue() != null) {
-//                if (source.getValue().equals(target.getValue())) {
-//                    matched = false;
-////                    comparisonReport.addMessage("Value error in " + errorMessage + "\n");
-//                }
-//            }
-//        } else if ((source != null && target == null) || (source == null && target != null)) {
-////            comparisonReport.addMessage("Version Number error in " + errorMessage + "\n");
-//            return false;
-//        }
-//        return matched;
-//    }
-//
-//    private boolean compareCopyTime(TS source, TS target) {
-//        boolean matched = true;
-//        if (source != null && target != null) {
-//            if (source.getNullFlavor().getLiteral() != null && target.getNullFlavor().getLiteral() != null) {
-//                if (!source.getNullFlavor().getLiteral().equals(target.getNullFlavor().getLiteral())) {
-////                    comparisonReport.addMessage("Null Flavor ror in " + errorMessage + "\n");
-//                    matched = false;
-//                }
-//            }
-//            if (source.getValue() != null && target.getValue() != null) {
-//                if (source.getValue().equals(target.getValue())) {
-//                    matched = false;
-////                    comparisonReport.addMessage("Value error in " + errorMessage + "\n");
-//                }
-//            }
-//        }  else if ((source != null && target == null) || (source == null && target != null)) {
-////            comparisonReport.addMessage("Copy Time error in " + errorMessage + "\n");
-//            return false;
-//        }
-//        return matched;
-//    }
-//
-//    private boolean compareAdministrativeGenderCode(CE source, CE target) {
-//        boolean matched = true;
-//        if (source != null && target != null) {
-//            if (source.getNullFlavor().getLiteral() != null && target.getNullFlavor().getLiteral() != null) {
-//                if (!source.getNullFlavor().getLiteral().equals(target.getNullFlavor().getLiteral())) {
-////                    comparisonReport.addMessage("Null Flavor ror in " + errorMessage + "\n");
-//                    matched = false;
-//                }
-//            }
-//            if (source.getCode() != null && target.getCode() != null) {
-//                if (!source.getCode().equals(target.getCode())) {
-////                    comparisonReport.addMessage("Null Flavor ror in " + errorMessage + "\n");
-//                    matched = false;
-//                }
-//            }
-//        }  else if ((source != null && target == null) || (source == null && target != null)) {
-////            comparisonReport.addMessage("Administrative Gender Code error in " + errorMessage + "\n");
-//            return false;
-//        }
-//        return matched;
-//    }
-//
-//    private boolean compareBirthTime(TS source, TS target) {
-//        boolean matched = true;
-//        if (source != null && target != null) {
-//            if (source.getNullFlavor().getLiteral() != null && target.getNullFlavor().getLiteral() != null) {
-//                if (!source.getNullFlavor().getLiteral().equals(target.getNullFlavor().getLiteral())) {
-////                    comparisonReport.addMessage("Null Flavor ror in " + errorMessage + "\n");
-//                    matched = false;
-//                }
-//            }
-//            if (source.getValue() != null && target.getValue() != null) {
-//                if (source.getValue().equals(target.getValue())) {
-//                    matched = false;
-////                    comparisonReport.addMessage("Value Number error in " + errorMessage + "\n");
-//                }
-//            }
-//        }  else if ((source != null && target == null) || (source == null && target != null)) {
-////            comparisonReport.addMessage("Birth Time error in " + errorMessage + "\n");
-//            return false;
-//        }
-//        return matched;
-//    }
-//
-//    private boolean compareMaritalStatusCode(CE source, CE target) {
-//        boolean matched = true;
-//        if (source != null && target != null) {
-//            if (source.getNullFlavor().getLiteral() != null && target.getNullFlavor().getLiteral() != null) {
-//                if (!source.getNullFlavor().getLiteral().equals(target.getNullFlavor().getLiteral())) {
-////                    comparisonReport.addMessage("Null Flavor ror in " + errorMessage + "\n");
-//                    matched = false;
-//                }
-//            }
-//            if (source.getCode() != null && target.getCode() != null) {
-//                if (!source.getCode().equals(target.getCode())) {
-////                    comparisonReport.addMessage("Null Flavor ror in " + errorMessage + "\n");
-//                    matched = false;
-//                }
-//            }
-//        }  else if ((source != null && target == null) || (source == null && target != null)) {
-////            comparisonReport.addMessage("Marital Status Code error in " + errorMessage + "\n");
-//            return false;
-//        }
-//        return matched;
-//    }
-//
-//    private boolean compareReligiosAffiliationCode(CE source, CE target) {
-//        boolean matched = true;
-//        if (source != null && target != null) {
-//            if (source.getCode() != null && target.getCode() != null) {
-//                if (!source.getCode().equals(target.getCode())) {
-//                    matched = false;
-////                    comparisonReport.addMessage("Code error in " + errorMessage + "\n");
-//                }
-//            }
-//            if (source.getNullFlavor().getLiteral() != null && target.getNullFlavor().getLiteral() != null) {
-//                if (!source.getNullFlavor().getLiteral().equals(target.getNullFlavor().getLiteral())) {
-//                    matched = false;
-////                    comparisonReport.addMessage("Null Flavor error in " + errorMessage + "\n");
-//                }
-//            }
-//            if (source.getCodeSystem() != null && target.getCodeSystem() != null) {
-//                if (!source.getCodeSystem().equals(target.getCodeSystem())) {
-//                    matched = false;
-////                    comparisonReport.addMessage("Code System error in " + errorMessage + "\n");
-//                }
-//            }
-//            if (source.getCodeSystemName() != null && target.getCodeSystemName() != null) {
-//                if (!source.getCodeSystemName().equals(target.getCodeSystemName())) {
-//                    matched = false;
-////                    comparisonReport.addMessage("Code System Name error in " + errorMessage + "\n");
-//                }
-//            }
-//            if (source.getCodeSystemVersion() != null && target.getCodeSystemVersion() != null) {
-//                if (!source.getCodeSystemVersion().equals(target.getCodeSystemVersion())) {
-//                    matched = false;
-////                    comparisonReport.addMessage("Code System Version error in " + errorMessage + "\n");
-//                }
-//            }
-//            if (source.getDisplayName() != null && target.getDisplayName() != null) {
-//                if (!source.getDisplayName().equals(target.getDisplayName())) {
-//                    matched = false;
-////                    comparisonReport.addMessage("Display Name error in " + errorMessage + "\n");
-//                }
-//            }
-//        }  else if ((source != null && target == null) || (source == null && target != null)) {
-////            comparisonReport.addMessage("Religious Affiliation Code error in " + errorMessage + "\n");
-//            return false;
-//        }
-//        return matched;
-//    }
-//
-//    private boolean compareRaceCode(CE source, CE target) {
-//        boolean matched = true;
-//        if (source != null && target != null) {
-//            if (source.getCode() != null && target.getCode() != null) {
-//                if (!source.getCode().equals(target.getCode())) {
-//                    matched = false;
-////                    comparisonReport.addMessage("Code error in " + errorMessage + "\n");
-//                }
-//            }
-//            if (source.getNullFlavor().getLiteral() != null && target.getNullFlavor().getLiteral() != null) {
-//                if (!source.getNullFlavor().getLiteral().equals(target.getNullFlavor().getLiteral())) {
-//                    matched = false;
-////                    comparisonReport.addMessage("Null Flavor error in " + errorMessage + "\n");
-//                }
-//            }
-//            if (source.getCodeSystem() != null && target.getCodeSystem() != null) {
-//                if (!source.getCodeSystem().equals(target.getCodeSystem())) {
-//                    matched = false;
-////                    comparisonReport.addMessage("Code System error in " + errorMessage + "\n");
-//                }
-//            }
-//            if (source.getCodeSystemName() != null && target.getCodeSystemName() != null) {
-//                if (!source.getCodeSystemName().equals(target.getCodeSystemName())) {
-//                    matched = false;
-////                    comparisonReport.addMessage("Code System Name error in " + errorMessage + "\n");
-//                }
-//            }
-//            if (source.getCodeSystemVersion() != null && target.getCodeSystemVersion() != null) {
-//                if (!source.getCodeSystemVersion().equals(target.getCodeSystemVersion())) {
-//                    matched = false;
-////                    comparisonReport.addMessage("Code System Version error in " + errorMessage + "\n");
-//                }
-//            }
-//            if (source.getDisplayName() != null && target.getDisplayName() != null) {
-//                if (!source.getDisplayName().equals(target.getDisplayName())) {
-//                    matched = false;
-////                    comparisonReport.addMessage("Display Name error in " + errorMessage + "\n");
-//                }
-//            }
-//        }  else if ((source != null && target == null) || (source == null && target != null)) {
-////            comparisonReport.addMessage("Race Code error in " + errorMessage + "\n");
-//            return false;
-//        }
-//        return matched;
-//    }
-//
-//    private boolean compareEthnicGroupCode(CE source, CE target) {
-//        boolean matched = true;
-//        if (source != null && target != null) {
-//            if (source.getCode() != null && target.getCode() != null) {
-//                if (!source.getCode().equals(target.getCode())) {
-//                    matched = false;
-////                    comparisonReport.addMessage("Code error in " + errorMessage + "\n");
-//                }
-//            }
-//            if (source.getNullFlavor().getLiteral() != null && target.getNullFlavor().getLiteral() != null) {
-//                if (!source.getNullFlavor().getLiteral().equals(target.getNullFlavor().getLiteral())) {
-//                    matched = false;
-////                    comparisonReport.addMessage("Null Flavor error in " + errorMessage + "\n");
-//                }
-//            }
-//            if (source.getCodeSystem() != null && target.getCodeSystem() != null) {
-//                if (!source.getCodeSystem().equals(target.getCodeSystem())) {
-//                    matched = false;
-////                    comparisonReport.addMessage("Code System error in " + errorMessage + "\n");
-//                }
-//            }
-//            if (source.getCodeSystemName() != null && target.getCodeSystemName() != null) {
-//                if (!source.getCodeSystemName().equals(target.getCodeSystemName())) {
-//                    matched = false;
-////                    comparisonReport.addMessage("Code System Name error in " + errorMessage + "\n");
-//                }
-//            }
-//            if (source.getCodeSystemVersion() != null && target.getCodeSystemVersion() != null) {
-//                if (!source.getCodeSystemVersion().equals(target.getCodeSystemVersion())) {
-//                    matched = false;
-////                    comparisonReport.addMessage("Code System Version error in " + errorMessage + "\n");
-//                }
-//            }
-//            if (source.getDisplayName() != null && target.getDisplayName() != null) {
-//                if (!source.getDisplayName().equals(target.getDisplayName())) {
-//                    matched = false;
-////                    comparisonReport.addMessage("Display Name error in " + errorMessage + "\n");
-//                }
-//            }
-//        }  else if ((source != null && target == null) || (source == null && target != null)) {
-////            comparisonReport.addMessage("Ethnic Group Code error in " + errorMessage + "\n");
-//            return false;
-//        }
-//        return matched;
-//    }
-//
-//    private boolean compareMoodCode(ActMood source, ActMood target) {
-//        boolean matched = true;
-//        if (source != null && target != null) {
-//            if (source.getLiteral() != null && target.getLiteral() != null) {
-//                if (!source.getLiteral().equals(target.getLiteral())) {
-//                    matched = false;
-////                    comparisonReport.addMessage("Literal error in " + errorMessage + "\n");
-//                }
-//            }
-//            if (source.getName() != null && target.getName() != null) {
-//                if (!source.getName().equals(target.getLiteral())) {
-//                    matched = false;
-////                    comparisonReport.addMessage("Name error in " + errorMessage + "\n");
-//                }
-//            }
-//            if (source.getValue() != target.getValue()) {
-//                matched = false;
-////                comparisonReport.addMessage("Version Number error in " + errorMessage + "\n");
-//            }
-//        }  else if ((source != null && target == null) || (source == null && target != null)) {
-////            comparisonReport.addMessage("Mood Code error in " + errorMessage + "\n");
-//            return false;
-//        }
-//        return matched;
-//    }
-//
-//    private boolean compareMoodCode(x_DocumentSubstanceMood source, x_DocumentSubstanceMood target) {
-//        boolean matched = true;
-//        if (source != null && target != null) {
-//            if (source.getLiteral() != null && target.getLiteral() != null) {
-//                if (!source.getLiteral().equals(target.getLiteral())) {
-//                    matched = false;
-////                    comparisonReport.addMessage("Literal error in " + errorMessage + "\n");
-//                }
-//            }
-//            if (source.getName() != null && target.getName() != null) {
-//                if (!source.getName().equals(target.getLiteral())) {
-//                    matched = false;
-////                    comparisonReport.addMessage("Name error in " + errorMessage + "\n");
-//                }
-//            }
-//            if (source.getValue() != target.getValue()) {
-//                matched = false;
-////                comparisonReport.addMessage("Version Number error in " + errorMessage + "\n");
-//            }
-//        }  else if ((source != null && target == null) || (source == null && target != null)) {
-////            comparisonReport.addMessage("Mood Code error in " + errorMessage + "\n");
-//            return false;
-//        }
-//        return matched;
-//    }
-//
-//    private boolean compareMoodCode(x_DocumentProcedureMood source, x_DocumentProcedureMood target) {
-//        boolean matched = true;
-//        if (source != null && target != null) {
-//            if (source.getLiteral() != null && target.getLiteral() != null) {
-//                if (!source.getLiteral().equals(target.getLiteral())) {
-//                    matched = false;
-////                    comparisonReport.addMessage("Literal error in " + errorMessage + "\n");
-//                }
-//            }
-//            if (source.getName() != null && target.getName() != null) {
-//                if (!source.getName().equals(target.getLiteral())) {
-//                    matched = false;
-////                    comparisonReport.addMessage("Name error in " + errorMessage + "\n");
-//                }
-//            }
-//            if (source.getValue() != target.getValue()) {
-//                matched = false;
-////                comparisonReport.addMessage("Version Number error in " + errorMessage + "\n");
-//            }
-//        }  else if ((source != null && target == null) || (source == null && target != null)) {
-////            comparisonReport.addMessage("Mood Code error in " + errorMessage + "\n");
-//            return false;
-//        }
-//        return matched;
-//    }
-//
-//    private boolean compareMoodCode(x_DocumentEncounterMood source, x_DocumentEncounterMood target) {
-//        boolean matched = true;
-//        if (source != null && target != null) {
-//            if (source.getLiteral() != null && target.getLiteral() != null) {
-//                if (!source.getLiteral().equals(target.getLiteral())) {
-//                    matched = false;
-////                    comparisonReport.addMessage("Literal error in " + errorMessage + "\n");
-//                }
-//            }
-//            if (source.getName() != null && target.getName() != null) {
-//                if (!source.getName().equals(target.getLiteral())) {
-//                    matched = false;
-////                    comparisonReport.addMessage("Name error in " + errorMessage + "\n");
-//                }
-//            }
-//            if (source.getValue() != target.getValue()) {
-//                matched = false;
-////                comparisonReport.addMessage("Version Number error in " + errorMessage + "\n");
-//            }
-//        }  else if ((source != null && target == null) || (source == null && target != null)) {
-////            comparisonReport.addMessage("Mood Code error in " + errorMessage + "\n");
-//            return false;
-//        }
-//        return matched;
-//    }
-//
-//    private boolean compareMoodCode(x_DocumentActMood source, x_DocumentActMood target) {
-//        boolean matched = true;
-//        if (source != null && target != null) {
-//            if (source.getLiteral() != null && target.getLiteral() != null) {
-//                if (!source.getLiteral().equals(target.getLiteral())) {
-//                    matched = false;
-////                    comparisonReport.addMessage("Literal error in " + errorMessage + "\n");
-//                }
-//            }
-//            if (source.getName() != null && target.getName() != null) {
-//                if (!source.getName().equals(target.getName())) {
-//                    matched = false;
-////                    comparisonReport.addMessage("Name error in " + errorMessage + "\n");
-//                }
-//            }
-//            if (source.getValue() != target.getValue()) {
-//                matched = false;
-////                comparisonReport.addMessage("Version Number error in " + errorMessage + "\n");
-//            }
-//        }  else if ((source != null && target == null) || (source == null && target != null)) {
-////            comparisonReport.addMessage("Mood Code error in " + errorMessage + "\n");
-//            return false;
-//        }
-//        return matched;
-//    }
-//
-//    private boolean compareText(ED source, ED target) {
-//        boolean matched = true;
-//        if (source != null && target != null) {
-//            if (source.getLanguage() != null && target.getLanguage() != null) {
-//                if (!source.getLanguage().equals(target.getLanguage())) {
-//                    matched = false;
-////                    comparisonReport.addMessage("Language error in " + errorMessage + "\n");
-//                }
-//            }
-//            if (source.getText() != null && target.getText() != null) {
-//                if (!source.getText().equals(target.getText())) {
-//                    matched = false;
-////                    comparisonReport.addMessage("Text error in " + errorMessage + "\n");
-//                }
-//            }
-//            if (source.getMediaType() != null && target.getMediaType() != null) {
-//                if (!source.getMediaType().equals(target.getMediaType())) {
-//                    matched = false;
-////                    comparisonReport.addMessage("Media Type error in " + errorMessage + "\n");
-//                }
-//            }
-//            if (source.getNullFlavor().getLiteral() != null && target.getNullFlavor().getLiteral() != null) {
-//                if (!source.getNullFlavor().getLiteral().equals(target.getNullFlavor().getLiteral())) {
-//                    matched = false;
-////                    comparisonReport.addMessage("Null Flavor error in " + errorMessage + "\n");
-//                }
-//            }
-//        }  else if ((source != null && target == null) || (source == null && target != null)) {
-////            comparisonReport.addMessage("Text error in " + errorMessage + "\n");
-//            return false;
-//        }
-//        return matched;
-//    }
-//
-//    private boolean compareText(StrucDocText source, StrucDocText target) {
-//        boolean matched = true;
-//        if (source != null && target != null) {
-//            if (source.getText() != null && target.getText() != null) {
-//                if (!source.getText().equals(target.getText())) {
-//                    matched = false;
-////                    comparisonReport.addMessage("Text error in " + errorMessage + "\n");
-//                }
-//            }
-//        }  else if ((source != null && target == null) || (source == null && target != null)) {
-////            comparisonReport.addMessage("Text error in " + errorMessage + "\n");
-//            return false;
-//        }
-//        return matched;
-//    }
-//
-//    private boolean compareDeterminerCode(EntityDeterminer source, EntityDeterminer target) {
-//        boolean matched = true;
-//        if (source != null && target != null) {
-//            if (source.getLiteral() != null && target.getLiteral() != null) {
-//                if (!source.getLiteral().equals(target.getLiteral())) {
-//                    matched = false;
-////                    comparisonReport.addMessage("Literal error in " + errorMessage + "\n");
-//                }
-//            }
-//            if (source.getName() != null && target.getName() != null) {
-//                if (!source.getName().equals(target.getName())) {
-//                    matched = false;
-////                    comparisonReport.addMessage("Name error in " + errorMessage + "\n");
-//                }
-//            }
-//            if (source.getValue() !=  target.getValue()) {
-//                matched = false;
-////                comparisonReport.addMessage("Value error in " + errorMessage + "\n");
-//            }
-//        }  else if ((source != null && target == null) || (source == null && target != null)) {
-////            comparisonReport.addMessage("Determiner Code error in " + errorMessage + "\n");
-//            return false;
-//        }
-//        return matched;
-//    }
-//
-//    private boolean compareDeterminerCode(EntityDeterminerDetermined source, EntityDeterminerDetermined target) {
-//        boolean matched = true;
-//        if (source != null && target != null) {
-//            if (source.getLiteral() != null && target.getLiteral() != null) {
-//                if (!source.getLiteral().equals(target.getLiteral())) {
-//                    matched = false;
-////                    comparisonReport.addMessage("Literal error in " + errorMessage + "\n");
-//                }
-//            }
-//            if (source.getName() != null && target.getName() != null) {
-//                if (!source.getName().equals(target.getName())) {
-//                    matched = false;
-////                    comparisonReport.addMessage("Name error in " + errorMessage + "\n");
-//                }
-//            }
-//            if (source.getValue() !=  target.getValue()) {
-//                matched = false;
-////                comparisonReport.addMessage("Value error in " + errorMessage + "\n");
-//            }
-//        }  else if ((source != null && target == null) || (source == null && target != null)) {
-////            comparisonReport.addMessage("Determiner Code error in " + errorMessage + "\n");
-//            return false;
-//        }
-//        return matched;
-//    }
-//
-//    private boolean compareSCName(SC source, SC target) {
-//        boolean matched = true;
-//        if (source != null && target != null) {
-//            if (source.getCode() != null && target.getCode() != null) {
-//                if (!source.getCode().equals(target.getCode())) {
-//                    matched = false;
-////                    comparisonReport.addMessage("Code error in " + errorMessage + "\n");
-//                }
-//            }
-//            if (source.getNullFlavor().getLiteral() != null && target.getNullFlavor().getLiteral() != null) {
-//                if (!source.getNullFlavor().getLiteral().equals(target.getNullFlavor().getLiteral())) {
-//                    matched = false;
-////                    comparisonReport.addMessage("Null Flavor error in " + errorMessage + "\n");
-//                }
-//            }
-//            if (source.getCodeSystem() != null && target.getCodeSystem() != null) {
-//                if (!source.getCodeSystem().equals(target.getCodeSystem())) {
-//                    matched = false;
-////                    comparisonReport.addMessage("Code System error in " + errorMessage + "\n");
-//                }
-//            }
-//            if (source.getCodeSystemName() != null && target.getCodeSystemName() != null) {
-//                if (!source.getCodeSystemName().equals(target.getCodeSystemName())) {
-//                    matched = false;
-////                    comparisonReport.addMessage("Code System Name error in " + errorMessage + "\n");
-//                }
-//            }
-//            if (source.getCodeSystemVersion() != null && target.getCodeSystemVersion() != null) {
-//                if (!source.getCodeSystemVersion().equals(target.getCodeSystemVersion())) {
-//                    matched = false;
-////                    comparisonReport.addMessage("Code System Version error in " + errorMessage + "\n");
-//                }
-//            }
-//            if (source.getDisplayName() != null && target.getDisplayName() != null) {
-//                if (!source.getDisplayName().equals(target.getDisplayName())) {
-//                    matched = false;
-////                    comparisonReport.addMessage("Display Name error in " + errorMessage + "\n");
-//                }
-//            }
-//        }  else if ((source != null && target == null) || (source == null && target != null)) {
-////            comparisonReport.addMessage("Name error in " + errorMessage + "\n");
-//            return false;
-//        }
-//        return matched;
-//    }
-//
-//    private boolean compareNameEN(EN source, EN target) {
-//        boolean matched = true;
-//        if (source != null && target != null) {
-//            if (source.getNullFlavor().getLiteral() != null && target.getNullFlavor().getLiteral() != null) {
-//                if (!source.getNullFlavor().getLiteral().equals(target.getNullFlavor().getLiteral())) {
-//                    matched = false;
-////                    comparisonReport.addMessage("Null Flavor error in " + errorMessage + "\n");
-//                }
-//            }
-//            if (source.getText() != null && target.getText() != null) {
-//                if (!source.getText().equals(target.getText())) {
-//                    matched = false;
-////                    comparisonReport.addMessage("Text error in " + errorMessage + "\n");
-//                }
-//            }
-//        }  else if ((source != null && target == null) || (source == null && target != null)) {
-////            comparisonReport.addMessage("Name error in " + errorMessage + "\n");
-//            return false;
-//        }
-//        return matched;
-//    }
-//
-//    private boolean comparePreferenceInd(BL source, BL target) {
-//        boolean matched = true;
-//        if (source != null && target != null) {
-//            if (source.getNullFlavor().getLiteral() != null && target.getNullFlavor().getLiteral() != null) {
-//                if (!source.getNullFlavor().getLiteral().equals(target.getNullFlavor().getLiteral())) {
-//                    matched = false;
-////                    comparisonReport.addMessage("Null Flavor error in " + errorMessage + "\n");
-//                }
-//            }
-//            if (source.getValue() != target.getValue()) {
-//                matched = false;
-////                comparisonReport.addMessage("Value error in " + errorMessage + "\n");
-//            }
-//        }  else if ((source != null && target == null) || (source == null && target != null)) {
-////            comparisonReport.addMessage("Preference Ind error in " + errorMessage + "\n");
-//            return false;
-//        }
-//        return matched;
-//    }
-//
-//    private boolean compareDerivationExpr(ST source, ST target) {
-//        boolean matched = true;
-//        if (source != null && target != null) {
-//            if (source.getLanguage() != null && target.getLanguage() != null) {
-//                if (!source.getLanguage().equals(target.getLanguage())) {
-//                    matched = false;
-////                    comparisonReport.addMessage("Language error in " + errorMessage + "\n");
-//                }
-//            }
-//            if (source.getText() != null && target.getText() != null) {
-//                if (!source.getText().equals(target.getText())) {
-//                    matched = false;
-////                    comparisonReport.addMessage("Text error in " + errorMessage + "\n");
-//                }
-//            }
-//            if (source.getMediaType() != null && target.getMediaType() != null) {
-//                if (!source.getMediaType().equals(target.getMediaType())) {
-//                    matched = false;
-////                    comparisonReport.addMessage("Media Type error in " + errorMessage + "\n");
-//                }
-//            }
-//            if (source.getNullFlavor().getLiteral() != null && target.getNullFlavor().getLiteral() != null) {
-//                if (!source.getNullFlavor().getLiteral().equals(target.getNullFlavor().getLiteral())) {
-//                    matched = false;
-////                    comparisonReport.addMessage("Null Flavor error in " + errorMessage + "\n");
-//                }
-//            }
-//        }  else if ((source != null && target == null) || (source == null && target != null)) {
-////            comparisonReport.addMessage("Derivation Expr error in " + errorMessage + "\n");
-//            return false;
-//        }
-//        return matched;
-//    }
-//
-//    private boolean compareRepeatNumber(IVL_INT source, IVL_INT target) {
-//        Boolean matched = true;
-//        if (source != null && target != null) {
-//            if (source.getCenter() != null && target.getCenter() != null) {
-//                if (source.getCenter().getValue() != null && target.getCenter().getValue() != null) {
-//                    if (!source.getCenter().getValue().equals(target.getCenter().getValue())) {
-//                        matched = false;
-////                        comparisonReport.addMessage("Center error in " + errorMessage + "\n");
-//                    }
-//                }
-//            }
-//            if (source.getHigh() != null && target.getHigh() != null) {
-//                if (source.getHigh().getValue() != null && target.getHigh().getValue() != null) {
-//                    if (!source.getHigh().getValue().equals(target.getHigh().getValue())) {
-//                        matched = false;
-////                        comparisonReport.addMessage("High error in " + errorMessage + "\n");
-//                    }
-//                }
-//            }
-//            if (source.getLow() != null && target.getLow() != null) {
-//                if (source.getLow().getValue() != null && target.getLow().getValue() != null) {
-//                    if (!source.getLow().getValue().equals(target.getLow().getValue())) {
-//                        matched = false;
-////                        comparisonReport.addMessage("Low error in " + errorMessage + "\n");
-//                    }
-//                }
-//            }
-//            if (source.getWidth() != null && target.getWidth() != null) {
-//                if (source.getWidth().getValue() != null && target.getWidth().getValue() != null) {
-//                    if (!source.getWidth().getValue().equals(target.getWidth().getValue())) {
-//                        matched = false;
-////                        comparisonReport.addMessage("Width error in " + errorMessage + "\n");
-//                    }
-//                }
-//            }
-//            if (source.getValue() != null && target.getValue() != null) {
-//                if (!source.getValue().equals(target.getValue())) {
-//                    matched = false;
-////                    comparisonReport.addMessage("Media Type error in " + errorMessage + "\n");
-//                }
-//            }
-//            if (source.getNullFlavor().getLiteral() != null && target.getNullFlavor().getLiteral() != null) {
-//                if (!source.getNullFlavor().getLiteral().equals(target.getNullFlavor().getLiteral())) {
-//                    matched = false;
-////                    comparisonReport.addMessage("Null Flavor error in " + errorMessage + "\n");
-//                }
-//            }
-//
-//        }  else if ((source != null && target == null) || (source == null && target != null)) {
-////            comparisonReport.addMessage("Repeat Number error in " + errorMessage + "\n");
-//            return false;
-//        }
-//        return matched;
-//    }
-//
-//    private boolean compareValues(EList<ANY> source, EList<ANY> target) {
-//        return true;
-//    }
-//
-//    private boolean compareValue(ANY source, ANY target) {
-//        return true;
-//    }
-//
-//    private boolean compareCodes(EList<CE> source, EList<CE> target) {
+        currentLocation.exit();
+    }
+
+    private void compareID(II source, II target) {
+        currentLocation.enter("ID");
+        if (source != null && target != null) {
+            comparisons.add(new Comparison<String, String>(new ComparisonLocation(currentLocation), ComparisonUtility.StringComparison(), source.getRoot(), target.getRoot()));
+            comparisons.add(new Comparison<String, String>(new ComparisonLocation(currentLocation), ComparisonUtility.StringComparison(), source.getAssigningAuthorityName(), target.getAssigningAuthorityName()));
+            comparisons.add(new Comparison<String, String>(new ComparisonLocation(currentLocation), ComparisonUtility.StringComparison(), source.getExtension(), target.getExtension()));
+            comparisons.add(new Comparison<String, String>(new ComparisonLocation(currentLocation), ComparisonUtility.StringComparison(), source.getNullFlavor().getLiteral(), target.getNullFlavor().getLiteral()));
+        }
+        currentLocation.exit();
+    }
+
+    private void compareNullFlavor(NullFlavor source, NullFlavor target) {
+        currentLocation.enter("Null Flavor");
+        if (source != null && target != null) {
+            comparisons.add(new Comparison<String, String>(new ComparisonLocation(currentLocation), ComparisonUtility.StringComparison(), source.getLiteral(), target.getLiteral()));
+        }
+        currentLocation.exit();
+    }
+
+    private void compareClassCode(RoleClass source, RoleClass target) {
+        currentLocation.enter("Class Code");
+        if (source != null && target != null) {
+            comparisons.add(new Comparison<String, String>(new ComparisonLocation(currentLocation), ComparisonUtility.StringComparison(), source.getLiteral(), target.getLiteral()));
+            comparisons.add(new Comparison<String, String>(new ComparisonLocation(currentLocation), ComparisonUtility.StringComparison(), source.getName(), target.getName()));
+            comparisons.add(new Comparison<Integer, Integer>(new ComparisonLocation(currentLocation), ComparisonUtility.IntegerComparison(), source.getValue(), target.getValue()));
+        }
+        currentLocation.exit();
+    }
+
+    private void compareClassCode(EntityClassManufacturedMaterial source, EntityClassManufacturedMaterial target) {
+        currentLocation.enter("Class Code");
+        if (source != null && target != null) {
+            comparisons.add(new Comparison<String, String>(new ComparisonLocation(currentLocation), ComparisonUtility.StringComparison(), source.getLiteral(), target.getLiteral()));
+            comparisons.add(new Comparison<String, String>(new ComparisonLocation(currentLocation), ComparisonUtility.StringComparison(), source.getName(), target.getName()));
+            comparisons.add(new Comparison<Integer, Integer>(new ComparisonLocation(currentLocation), ComparisonUtility.IntegerComparison(), source.getValue(), target.getValue()));
+        }
+        currentLocation.exit();
+    }
+
+    private void compareClassCode(EntityClassRoot source, EntityClassRoot target) {
+        currentLocation.enter("Class Code");
+        if (source != null && target != null) {
+            comparisons.add(new Comparison<String, String>(new ComparisonLocation(currentLocation), ComparisonUtility.StringComparison(), source.getLiteral(), target.getLiteral()));
+            comparisons.add(new Comparison<String, String>(new ComparisonLocation(currentLocation), ComparisonUtility.StringComparison(), source.getName(), target.getName()));
+            comparisons.add(new Comparison<Integer, Integer>(new ComparisonLocation(currentLocation), ComparisonUtility.IntegerComparison(), source.getValue(), target.getValue()));
+        }
+        currentLocation.exit();
+
+    }
+
+    private void compareClassCode(RoleClassManufacturedProduct source, RoleClassManufacturedProduct target) {
+        currentLocation.enter("Class Code");
+        if (source != null && target != null) {
+            comparisons.add(new Comparison<String, String>(new ComparisonLocation(currentLocation), ComparisonUtility.StringComparison(), source.getLiteral(), target.getLiteral()));
+            comparisons.add(new Comparison<String, String>(new ComparisonLocation(currentLocation), ComparisonUtility.StringComparison(), source.getName(), target.getName()));
+            comparisons.add(new Comparison<Integer, Integer>(new ComparisonLocation(currentLocation), ComparisonUtility.IntegerComparison(), source.getValue(), target.getValue()));
+        }
+        currentLocation.exit();
+    }
+
+    private void compareClassCode(ActClassDocument source, ActClassDocument target) {
+        currentLocation.enter("Class Code");
+        if (source != null && target != null) {
+            comparisons.add(new Comparison<String, String>(new ComparisonLocation(currentLocation), ComparisonUtility.StringComparison(), source.getLiteral(), target.getLiteral()));
+            comparisons.add(new Comparison<String, String>(new ComparisonLocation(currentLocation), ComparisonUtility.StringComparison(), source.getName(), target.getName()));
+            comparisons.add(new Comparison<Integer, Integer>(new ComparisonLocation(currentLocation), ComparisonUtility.IntegerComparison(), source.getValue(), target.getValue()));
+        }
+        currentLocation.exit();
+    }
+
+    private void compareClassCode(RoleClassRoot source, RoleClassRoot target) {
+        currentLocation.enter("Class Code");
+        if (source != null && target != null) {
+            comparisons.add(new Comparison<String, String>(new ComparisonLocation(currentLocation), ComparisonUtility.StringComparison(), source.getLiteral(), target.getLiteral()));
+            comparisons.add(new Comparison<String, String>(new ComparisonLocation(currentLocation), ComparisonUtility.StringComparison(), source.getName(), target.getName()));
+            comparisons.add(new Comparison<Integer, Integer>(new ComparisonLocation(currentLocation), ComparisonUtility.IntegerComparison(), source.getValue(), target.getValue()));
+        }
+        currentLocation.exit();
+    }
+
+    private void compareClassCode(x_ActClassDocumentEntryAct source, x_ActClassDocumentEntryAct target) {
+        currentLocation.enter("Class Code");
+        if (source != null && target != null) {
+            comparisons.add(new Comparison<String, String>(new ComparisonLocation(currentLocation), ComparisonUtility.StringComparison(), source.getLiteral(), target.getLiteral()));
+            comparisons.add(new Comparison<String, String>(new ComparisonLocation(currentLocation), ComparisonUtility.StringComparison(), source.getName(), target.getName()));
+            comparisons.add(new Comparison<Integer, Integer>(new ComparisonLocation(currentLocation), ComparisonUtility.IntegerComparison(), source.getValue(), target.getValue()));
+        }
+        currentLocation.exit();
+    }
+
+    private void compareClassCode(RoleClassSpecimen source, RoleClassSpecimen target) {
+        currentLocation.enter("Class Code");
+        if (source != null && target != null) {
+            comparisons.add(new Comparison<String, String>(new ComparisonLocation(currentLocation), ComparisonUtility.StringComparison(), source.getLiteral(), target.getLiteral()));
+            comparisons.add(new Comparison<String, String>(new ComparisonLocation(currentLocation), ComparisonUtility.StringComparison(), source.getName(), target.getName()));
+            comparisons.add(new Comparison<Integer, Integer>(new ComparisonLocation(currentLocation), ComparisonUtility.IntegerComparison(), source.getValue(), target.getValue()));
+        }
+        currentLocation.exit();
+    }
+
+    private void compareClassCode(ActClassSupply source, ActClassSupply target) {
+        currentLocation.enter("Class Code");
+        if (source != null && target != null) {
+            comparisons.add(new Comparison<String, String>(new ComparisonLocation(currentLocation), ComparisonUtility.StringComparison(), source.getLiteral(), target.getLiteral()));
+            comparisons.add(new Comparison<String, String>(new ComparisonLocation(currentLocation), ComparisonUtility.StringComparison(), source.getName(), target.getName()));
+            comparisons.add(new Comparison<Integer, Integer>(new ComparisonLocation(currentLocation), ComparisonUtility.IntegerComparison(), source.getValue(), target.getValue()));
+        }
+        currentLocation.exit();
+    }
+
+    private void compareClassCode(x_ActClassDocumentEntryOrganizer source, x_ActClassDocumentEntryOrganizer target) {
+        currentLocation.enter("Class Code");
+        if (source != null && target != null) {
+            comparisons.add(new Comparison<String, String>(new ComparisonLocation(currentLocation), ComparisonUtility.StringComparison(), source.getLiteral(), target.getLiteral()));
+            comparisons.add(new Comparison<String, String>(new ComparisonLocation(currentLocation), ComparisonUtility.StringComparison(), source.getName(), target.getName()));
+            comparisons.add(new Comparison<Integer, Integer>(new ComparisonLocation(currentLocation), ComparisonUtility.IntegerComparison(), source.getValue(), target.getValue()));
+        }
+        currentLocation.exit();
+    }
+
+    private void compareClassCode(ActClassObservation source, ActClassObservation target) {
+        currentLocation.enter("Class Code");
+        if (source != null && target != null) {
+            comparisons.add(new Comparison<String, String>(new ComparisonLocation(currentLocation), ComparisonUtility.StringComparison(), source.getLiteral(), target.getLiteral()));
+            comparisons.add(new Comparison<String, String>(new ComparisonLocation(currentLocation), ComparisonUtility.StringComparison(), source.getName(), target.getName()));
+            comparisons.add(new Comparison<Integer, Integer>(new ComparisonLocation(currentLocation), ComparisonUtility.IntegerComparison(), source.getValue(), target.getValue()));
+        }
+        currentLocation.exit();
+    }
+
+    private void compareClassCode(RoleClassServiceDeliveryLocation source, RoleClassServiceDeliveryLocation target) {
+        currentLocation.enter("Class Code");
+        if (source != null && target != null) {
+            comparisons.add(new Comparison<String, String>(new ComparisonLocation(currentLocation), ComparisonUtility.StringComparison(), source.getLiteral(), target.getLiteral()));
+            comparisons.add(new Comparison<String, String>(new ComparisonLocation(currentLocation), ComparisonUtility.StringComparison(), source.getName(), target.getName()));
+            comparisons.add(new Comparison<Integer, Integer>(new ComparisonLocation(currentLocation), ComparisonUtility.IntegerComparison(), source.getValue(), target.getValue()));
+        }
+        currentLocation.exit();
+    }
+
+    private void compareClassCode(EntityClassPlace source, EntityClassPlace target) {
+        currentLocation.enter("Class Code");
+        if (source != null && target != null) {
+            comparisons.add(new Comparison<String, String>(new ComparisonLocation(currentLocation), ComparisonUtility.StringComparison(), source.getLiteral(), target.getLiteral()));
+            comparisons.add(new Comparison<String, String>(new ComparisonLocation(currentLocation), ComparisonUtility.StringComparison(), source.getName(), target.getName()));
+            comparisons.add(new Comparison<Integer, Integer>(new ComparisonLocation(currentLocation), ComparisonUtility.IntegerComparison(), source.getValue(), target.getValue()));
+        }
+        currentLocation.exit();
+    }
+
+    private void compareClassCode(x_DocumentSubject source, x_DocumentSubject target) {
+        currentLocation.enter("Class Code");
+        if (source != null && target != null) {
+            comparisons.add(new Comparison<String, String>(new ComparisonLocation(currentLocation), ComparisonUtility.StringComparison(), source.getLiteral(), target.getLiteral()));
+            comparisons.add(new Comparison<String, String>(new ComparisonLocation(currentLocation), ComparisonUtility.StringComparison(), source.getName(), target.getName()));
+            comparisons.add(new Comparison<Integer, Integer>(new ComparisonLocation(currentLocation), ComparisonUtility.IntegerComparison(), source.getValue(), target.getValue()));
+        }
+        currentLocation.exit();
+    }
+
+    private void compareClassCode(x_InformationRecipientRole source, x_InformationRecipientRole target) {
+        currentLocation.enter("Class Code");
+        if (source != null && target != null) {
+            comparisons.add(new Comparison<String, String>(new ComparisonLocation(currentLocation), ComparisonUtility.StringComparison(), source.getLiteral(), target.getLiteral()));
+            comparisons.add(new Comparison<String, String>(new ComparisonLocation(currentLocation), ComparisonUtility.StringComparison(), source.getName(), target.getName()));
+            comparisons.add(new Comparison<Integer, Integer>(new ComparisonLocation(currentLocation), ComparisonUtility.IntegerComparison(), source.getValue(), target.getValue()));
+        }
+        currentLocation.exit();
+    }
+
+    private void compareClassCode(EntityClassOrganization source, EntityClassOrganization target) {
+        currentLocation.enter("Class Code");
+        if (source != null && target != null) {
+            comparisons.add(new Comparison<String, String>(new ComparisonLocation(currentLocation), ComparisonUtility.StringComparison(), source.getLiteral(), target.getLiteral()));
+            comparisons.add(new Comparison<String, String>(new ComparisonLocation(currentLocation), ComparisonUtility.StringComparison(), source.getName(), target.getName()));
+            comparisons.add(new Comparison<Integer, Integer>(new ComparisonLocation(currentLocation), ComparisonUtility.IntegerComparison(), source.getValue(), target.getValue()));
+        }
+        currentLocation.exit();
+    }
+
+    private void compareClassCode(ActClassRoot source, ActClassRoot target) {
+        currentLocation.enter("Class Code");
+        if (source != null && target != null) {
+            comparisons.add(new Comparison<String, String>(new ComparisonLocation(currentLocation), ComparisonUtility.StringComparison(), source.getLiteral(), target.getLiteral()));
+            comparisons.add(new Comparison<String, String>(new ComparisonLocation(currentLocation), ComparisonUtility.StringComparison(), source.getName(), target.getName()));
+            comparisons.add(new Comparison<Integer, Integer>(new ComparisonLocation(currentLocation), ComparisonUtility.IntegerComparison(), source.getValue(), target.getValue()));
+        }
+        currentLocation.exit();
+    }
+
+    private void compareClassCode(RoleClassAssociative source, RoleClassAssociative target) {
+        currentLocation.enter("Class Code");
+        if (source != null && target != null) {
+            comparisons.add(new Comparison<String, String>(new ComparisonLocation(currentLocation), ComparisonUtility.StringComparison(), source.getLiteral(), target.getLiteral()));
+            comparisons.add(new Comparison<String, String>(new ComparisonLocation(currentLocation), ComparisonUtility.StringComparison(), source.getName(), target.getName()));
+            comparisons.add(new Comparison<Integer, Integer>(new ComparisonLocation(currentLocation), ComparisonUtility.IntegerComparison(), source.getValue(), target.getValue()));
+        }
+        currentLocation.exit();
+    }
+
+    private void compareClassCode(ActClinicalDocument source, ActClinicalDocument target) {
+        currentLocation.enter("Class Code");
+        if (source != null && target != null) {
+            comparisons.add(new Comparison<String, String>(new ComparisonLocation(currentLocation), ComparisonUtility.StringComparison(), source.getLiteral(), target.getLiteral()));
+            comparisons.add(new Comparison<String, String>(new ComparisonLocation(currentLocation), ComparisonUtility.StringComparison(), source.getName(), target.getName()));
+            comparisons.add(new Comparison<Integer, Integer>(new ComparisonLocation(currentLocation), ComparisonUtility.IntegerComparison(), source.getValue(), target.getValue()));
+        }
+        currentLocation.exit();
+    }
+
+    private void compareClassCode(RoleClassAssignedEntity source, RoleClassAssignedEntity target) {
+        currentLocation.enter("Class Code");
+        if (source != null && target != null) {
+            comparisons.add(new Comparison<String, String>(new ComparisonLocation(currentLocation), ComparisonUtility.StringComparison(), source.getLiteral(), target.getLiteral()));
+            comparisons.add(new Comparison<String, String>(new ComparisonLocation(currentLocation), ComparisonUtility.StringComparison(), source.getName(), target.getName()));
+            comparisons.add(new Comparison<Integer, Integer>(new ComparisonLocation(currentLocation), ComparisonUtility.IntegerComparison(), source.getValue(), target.getValue()));
+        }
+        currentLocation.exit();
+    }
+
+    private void compareClassCode(EntityClassDevice source, EntityClassDevice target) {
+        currentLocation.enter("Class Code");
+        if (source != null && target != null) {
+            comparisons.add(new Comparison<String, String>(new ComparisonLocation(currentLocation), ComparisonUtility.StringComparison(), source.getLiteral(), target.getLiteral()));
+            comparisons.add(new Comparison<String, String>(new ComparisonLocation(currentLocation), ComparisonUtility.StringComparison(), source.getName(), target.getName()));
+            comparisons.add(new Comparison<Integer, Integer>(new ComparisonLocation(currentLocation), ComparisonUtility.IntegerComparison(), source.getValue(), target.getValue()));
+        }
+        currentLocation.exit();
+    }
+
+    private void compareClassCode(EntityClass source, EntityClass target) {
+        currentLocation.enter("Class Code");
+        if (source != null && target != null) {
+            comparisons.add(new Comparison<String, String>(new ComparisonLocation(currentLocation), ComparisonUtility.StringComparison(), source.getLiteral(), target.getLiteral()));
+            comparisons.add(new Comparison<String, String>(new ComparisonLocation(currentLocation), ComparisonUtility.StringComparison(), source.getName(), target.getName()));
+            comparisons.add(new Comparison<Integer, Integer>(new ComparisonLocation(currentLocation), ComparisonUtility.IntegerComparison(), source.getValue(), target.getValue()));
+        }
+        currentLocation.exit();
+    }
+
+    private void compareClassCode(ActClass source, ActClass target) {
+        currentLocation.enter("Class Code");
+        if (source != null && target != null) {
+            comparisons.add(new Comparison<String, String>(new ComparisonLocation(currentLocation), ComparisonUtility.StringComparison(), source.getLiteral(), target.getLiteral()));
+            comparisons.add(new Comparison<String, String>(new ComparisonLocation(currentLocation), ComparisonUtility.StringComparison(), source.getName(), target.getName()));
+            comparisons.add(new Comparison<Integer, Integer>(new ComparisonLocation(currentLocation), ComparisonUtility.IntegerComparison(), source.getValue(), target.getValue()));
+        }
+        currentLocation.exit();
+    }
+
+    private void compareClassCode(RoleClassMutualRelationship source, RoleClassMutualRelationship target) {
+        currentLocation.enter("Class Code");
+        if (source != null && target != null) {
+            comparisons.add(new Comparison<String, String>(new ComparisonLocation(currentLocation), ComparisonUtility.StringComparison(), source.getLiteral(), target.getLiteral()));
+            comparisons.add(new Comparison<String, String>(new ComparisonLocation(currentLocation), ComparisonUtility.StringComparison(), source.getName(), target.getName()));
+            comparisons.add(new Comparison<Integer, Integer>(new ComparisonLocation(currentLocation), ComparisonUtility.IntegerComparison(), source.getValue(), target.getValue()));
+        }
+        currentLocation.exit();
+    }
+
+    private void compareCode(CE source, CE target) {
+        currentLocation.enter("Code");
+        if (source != null && target != null) {
+            comparisons.add(new Comparison<String, String>(new ComparisonLocation(currentLocation), ComparisonUtility.StringComparison(), source.getCode(), target.getCode()));
+            comparisons.add(new Comparison<String, String>(new ComparisonLocation(currentLocation), ComparisonUtility.StringComparison(), source.getNullFlavor().getLiteral(), target.getNullFlavor().getLiteral()));
+            comparisons.add(new Comparison<String, String>(new ComparisonLocation(currentLocation), ComparisonUtility.StringComparison(), source.getCodeSystem(), target.getCodeSystem()));
+            comparisons.add(new Comparison<String, String>(new ComparisonLocation(currentLocation), ComparisonUtility.StringComparison(), source.getCodeSystemName(), target.getCodeSystemName()));
+            comparisons.add(new Comparison<String, String>(new ComparisonLocation(currentLocation), ComparisonUtility.StringComparison(), source.getCodeSystemVersion(), target.getCodeSystemVersion()));
+            comparisons.add(new Comparison<String, String>(new ComparisonLocation(currentLocation), ComparisonUtility.StringComparison(), source.getDisplayName(), target.getDisplayName()));
+        }
+        currentLocation.exit();
+    }
+
+    private void compareCode(CD source, CD target) {
+        currentLocation.enter("Code");
+        if (source != null && target != null) {
+            comparisons.add(new Comparison<String, String>(new ComparisonLocation(currentLocation), ComparisonUtility.StringComparison(), source.getCode(), target.getCode()));
+            comparisons.add(new Comparison<String, String>(new ComparisonLocation(currentLocation), ComparisonUtility.StringComparison(), source.getNullFlavor().getLiteral(), target.getNullFlavor().getLiteral()));
+            comparisons.add(new Comparison<String, String>(new ComparisonLocation(currentLocation), ComparisonUtility.StringComparison(), source.getCodeSystem(), target.getCodeSystem()));
+            comparisons.add(new Comparison<String, String>(new ComparisonLocation(currentLocation), ComparisonUtility.StringComparison(), source.getCodeSystemName(), target.getCodeSystemName()));
+            comparisons.add(new Comparison<String, String>(new ComparisonLocation(currentLocation), ComparisonUtility.StringComparison(), source.getCodeSystemVersion(), target.getCodeSystemVersion()));
+            comparisons.add(new Comparison<String, String>(new ComparisonLocation(currentLocation), ComparisonUtility.StringComparison(), source.getDisplayName(), target.getDisplayName()));
+        }
+        currentLocation.exit();
+    }
+
+    private void compareConfidentialityCode(CE source, CE target) {
+        currentLocation.enter("Confidentiality Code");
+        if (source != null && target != null) {
+            comparisons.add(new Comparison<String, String>(new ComparisonLocation(currentLocation), ComparisonUtility.StringComparison(), source.getCode(), target.getCode()));
+            comparisons.add(new Comparison<String, String>(new ComparisonLocation(currentLocation), ComparisonUtility.StringComparison(), source.getNullFlavor().getLiteral(), target.getNullFlavor().getLiteral()));
+            comparisons.add(new Comparison<String, String>(new ComparisonLocation(currentLocation), ComparisonUtility.StringComparison(), source.getCodeSystem(), target.getCodeSystem()));
+            comparisons.add(new Comparison<String, String>(new ComparisonLocation(currentLocation), ComparisonUtility.StringComparison(), source.getCodeSystemName(), target.getCodeSystemName()));
+            comparisons.add(new Comparison<String, String>(new ComparisonLocation(currentLocation), ComparisonUtility.StringComparison(), source.getCodeSystemVersion(), target.getCodeSystemVersion()));
+            comparisons.add(new Comparison<String, String>(new ComparisonLocation(currentLocation), ComparisonUtility.StringComparison(), source.getDisplayName(), target.getDisplayName()));
+        }
+        currentLocation.exit();
+    }
+
+    private void compareLanguageCode(CE source, CE target) {
+        currentLocation.enter("Language Code");
+        if (source != null && target != null) {
+            comparisons.add(new Comparison<String, String>(new ComparisonLocation(currentLocation), ComparisonUtility.StringComparison(), source.getCode(), target.getCode()));
+            comparisons.add(new Comparison<String, String>(new ComparisonLocation(currentLocation), ComparisonUtility.StringComparison(), source.getNullFlavor().getLiteral(), target.getNullFlavor().getLiteral()));
+            comparisons.add(new Comparison<String, String>(new ComparisonLocation(currentLocation), ComparisonUtility.StringComparison(), source.getCodeSystem(), target.getCodeSystem()));
+            comparisons.add(new Comparison<String, String>(new ComparisonLocation(currentLocation), ComparisonUtility.StringComparison(), source.getCodeSystemName(), target.getCodeSystemName()));
+            comparisons.add(new Comparison<String, String>(new ComparisonLocation(currentLocation), ComparisonUtility.StringComparison(), source.getCodeSystemVersion(), target.getCodeSystemVersion()));
+            comparisons.add(new Comparison<String, String>(new ComparisonLocation(currentLocation), ComparisonUtility.StringComparison(), source.getDisplayName(), target.getDisplayName()));
+        }
+        currentLocation.exit();
+    }
+
+    private void compareTitle(ST source, ST target) {
+        currentLocation.enter("Title");
+        if (source != null && target != null) {
+            comparisons.add(new Comparison<String, String>(new ComparisonLocation(currentLocation), ComparisonUtility.StringComparison(), source.getText(), target.getText()));
+        }
+        currentLocation.exit();
+    }
+
+    private void compareEffectiveTime(TS source, TS target) {
+        currentLocation.enter("Effective Time");
+        if (source != null && target != null) {
+            comparisons.add(new Comparison<String, String>(new ComparisonLocation(currentLocation), ComparisonUtility.StringComparison(), source.getValue(), target.getValue()));
+            comparisons.add(new Comparison<String, String>(new ComparisonLocation(currentLocation), ComparisonUtility.StringComparison(), source.getNullFlavor().getLiteral(), target.getNullFlavor().getLiteral()));
+        }
+        currentLocation.exit();
+    }
+
+    private void compareTypeCode(ParticipationType source, ParticipationType target) {
+        currentLocation.enter("Type Code");
+        if (source != null && target != null) {
+            comparisons.add(new Comparison<String, String>(new ComparisonLocation(currentLocation), ComparisonUtility.StringComparison(), source.getLiteral(), target.getLiteral()));
+            comparisons.add(new Comparison<String, String>(new ComparisonLocation(currentLocation), ComparisonUtility.StringComparison(), source.getName(), target.getName()));
+            comparisons.add(new Comparison<Integer, Integer>(new ComparisonLocation(currentLocation), ComparisonUtility.IntegerComparison(), source.getValue(), target.getValue()));
+        }
+        currentLocation.exit();
+    }
+
+    private void compareTypeCode(ParticipationTargetSubject source, ParticipationTargetSubject target) {
+        currentLocation.enter("Type Code");
+        if (source != null && target != null) {
+            comparisons.add(new Comparison<String, String>(new ComparisonLocation(currentLocation), ComparisonUtility.StringComparison(), source.getLiteral(), target.getLiteral()));
+            comparisons.add(new Comparison<String, String>(new ComparisonLocation(currentLocation), ComparisonUtility.StringComparison(), source.getName(), target.getName()));
+            comparisons.add(new Comparison<Integer, Integer>(new ComparisonLocation(currentLocation), ComparisonUtility.IntegerComparison(), source.getValue(), target.getValue()));
+        }
+        currentLocation.exit();
+    }
+
+    private void compareTypeCode(ParticipationPhysicalPerformer source, ParticipationPhysicalPerformer target) {
+        currentLocation.enter("Type Code");
+        if (source != null && target != null) {
+            comparisons.add(new Comparison<String, String>(new ComparisonLocation(currentLocation), ComparisonUtility.StringComparison(), source.getLiteral(), target.getLiteral()));
+            comparisons.add(new Comparison<String, String>(new ComparisonLocation(currentLocation), ComparisonUtility.StringComparison(), source.getName(), target.getName()));
+            comparisons.add(new Comparison<Integer, Integer>(new ComparisonLocation(currentLocation), ComparisonUtility.IntegerComparison(), source.getValue(), target.getValue()));
+        }
+        currentLocation.exit();
+    }
+
+    private void compareTypeCode(x_ActRelationshipExternalReference source, x_ActRelationshipExternalReference target) {
+        currentLocation.enter("Type Code");
+        if (source != null && target != null) {
+            comparisons.add(new Comparison<String, String>(new ComparisonLocation(currentLocation), ComparisonUtility.StringComparison(), source.getLiteral(), target.getLiteral()));
+            comparisons.add(new Comparison<String, String>(new ComparisonLocation(currentLocation), ComparisonUtility.StringComparison(), source.getName(), target.getName()));
+            comparisons.add(new Comparison<Integer, Integer>(new ComparisonLocation(currentLocation), ComparisonUtility.IntegerComparison(), source.getValue(), target.getValue()));
+        }
+        currentLocation.exit();
+    }
+
+    private void compareTypeCode(x_ActRelationshipEntryRelationship source, x_ActRelationshipEntryRelationship target) {
+        currentLocation.enter("Type Code");
+        if (source != null && target != null) {
+            comparisons.add(new Comparison<String, String>(new ComparisonLocation(currentLocation), ComparisonUtility.StringComparison(), source.getLiteral(), target.getLiteral()));
+            comparisons.add(new Comparison<String, String>(new ComparisonLocation(currentLocation), ComparisonUtility.StringComparison(), source.getName(), target.getName()));
+            comparisons.add(new Comparison<Integer, Integer>(new ComparisonLocation(currentLocation), ComparisonUtility.IntegerComparison(), source.getValue(), target.getValue()));
+        }
+        currentLocation.exit();
+    }
+
+    private void compareTypeCode(ParticipationTargetLocation source, ParticipationTargetLocation target) {
+        currentLocation.enter("Type Code");
+        if (source != null && target != null) {
+            comparisons.add(new Comparison<String, String>(new ComparisonLocation(currentLocation), ComparisonUtility.StringComparison(), source.getLiteral(), target.getLiteral()));
+            comparisons.add(new Comparison<String, String>(new ComparisonLocation(currentLocation), ComparisonUtility.StringComparison(), source.getName(), target.getName()));
+            comparisons.add(new Comparison<Integer, Integer>(new ComparisonLocation(currentLocation), ComparisonUtility.IntegerComparison(), source.getValue(), target.getValue()));
+        }
+        currentLocation.exit();
+    }
+
+    private void compareTypeCode(x_ActRelationshipEntry source, x_ActRelationshipEntry target) {
+        currentLocation.enter("Type Code");
+        if (source != null && target != null) {
+            comparisons.add(new Comparison<String, String>(new ComparisonLocation(currentLocation), ComparisonUtility.StringComparison(), source.getLiteral(), target.getLiteral()));
+            comparisons.add(new Comparison<String, String>(new ComparisonLocation(currentLocation), ComparisonUtility.StringComparison(), source.getName(), target.getName()));
+            comparisons.add(new Comparison<Integer, Integer>(new ComparisonLocation(currentLocation), ComparisonUtility.IntegerComparison(), source.getValue(), target.getValue()));
+        }
+        currentLocation.exit();
+    }
+
+    private void compareTypeCode(ActRelationshipFulfills source, ActRelationshipFulfills target) {
+        currentLocation.enter("Type Code");
+        if (source != null && target != null) {
+            comparisons.add(new Comparison<String, String>(new ComparisonLocation(currentLocation), ComparisonUtility.StringComparison(), source.getLiteral(), target.getLiteral()));
+            comparisons.add(new Comparison<String, String>(new ComparisonLocation(currentLocation), ComparisonUtility.StringComparison(), source.getName(), target.getName()));
+            comparisons.add(new Comparison<Integer, Integer>(new ComparisonLocation(currentLocation), ComparisonUtility.IntegerComparison(), source.getValue(), target.getValue()));
+        }
+        currentLocation.exit();
+    }
+
+    private void compareTypeCode(x_ServiceEventPerformer source, x_ServiceEventPerformer target) {
+        currentLocation.enter("Type Code");
+        if (source != null && target != null) {
+            comparisons.add(new Comparison<String, String>(new ComparisonLocation(currentLocation), ComparisonUtility.StringComparison(), source.getLiteral(), target.getLiteral()));
+            comparisons.add(new Comparison<String, String>(new ComparisonLocation(currentLocation), ComparisonUtility.StringComparison(), source.getName(), target.getName()));
+            comparisons.add(new Comparison<Integer, Integer>(new ComparisonLocation(currentLocation), ComparisonUtility.IntegerComparison(), source.getValue(), target.getValue()));
+        }
+        currentLocation.exit();
+    }
+
+    private void compareTypeCode(x_ActRelationshipDocument source, x_ActRelationshipDocument target) {
+        currentLocation.enter("Type Code");
+        if (source != null && target != null) {
+            comparisons.add(new Comparison<String, String>(new ComparisonLocation(currentLocation), ComparisonUtility.StringComparison(), source.getLiteral(), target.getLiteral()));
+            comparisons.add(new Comparison<String, String>(new ComparisonLocation(currentLocation), ComparisonUtility.StringComparison(), source.getName(), target.getName()));
+            comparisons.add(new Comparison<Integer, Integer>(new ComparisonLocation(currentLocation), ComparisonUtility.IntegerComparison(), source.getValue(), target.getValue()));
+        }
+        currentLocation.exit();
+    }
+
+    private void compareTypeCode(x_EncounterParticipant source, x_EncounterParticipant target) {
+        currentLocation.enter("Type Code");
+        if (source != null && target != null) {
+            comparisons.add(new Comparison<String, String>(new ComparisonLocation(currentLocation), ComparisonUtility.StringComparison(), source.getLiteral(), target.getLiteral()));
+            comparisons.add(new Comparison<String, String>(new ComparisonLocation(currentLocation), ComparisonUtility.StringComparison(), source.getName(), target.getName()));
+            comparisons.add(new Comparison<Integer, Integer>(new ComparisonLocation(currentLocation), ComparisonUtility.IntegerComparison(), source.getValue(), target.getValue()));
+        }
+        currentLocation.exit();
+    }
+
+    private void compareTypeCode(x_InformationRecipient source, x_InformationRecipient target) {
+        currentLocation.enter("Type Code");
+        if (source != null && target != null) {
+            comparisons.add(new Comparison<String, String>(new ComparisonLocation(currentLocation), ComparisonUtility.StringComparison(), source.getLiteral(), target.getLiteral()));
+            comparisons.add(new Comparison<String, String>(new ComparisonLocation(currentLocation), ComparisonUtility.StringComparison(), source.getName(), target.getName()));
+            comparisons.add(new Comparison<Integer, Integer>(new ComparisonLocation(currentLocation), ComparisonUtility.IntegerComparison(), source.getValue(), target.getValue()));
+        }
+        currentLocation.exit();
+    }
+
+    private void compareTypeCode(ActRelationshipHasComponent source, ActRelationshipHasComponent target) {
+        currentLocation.enter("Type Code");
+        if (source != null && target != null) {
+            comparisons.add(new Comparison<String, String>(new ComparisonLocation(currentLocation), ComparisonUtility.StringComparison(), source.getLiteral(), target.getLiteral()));
+            comparisons.add(new Comparison<String, String>(new ComparisonLocation(currentLocation), ComparisonUtility.StringComparison(), source.getName(), target.getName()));
+            comparisons.add(new Comparison<Integer, Integer>(new ComparisonLocation(currentLocation), ComparisonUtility.IntegerComparison(), source.getValue(), target.getValue()));
+        }
+        currentLocation.exit();
+    }
+
+    private void compareTypeCode(ActRelationshipType source, ActRelationshipType target) {
+        currentLocation.enter("Type Code");
+        if (source != null && target != null) {
+            comparisons.add(new Comparison<String, String>(new ComparisonLocation(currentLocation), ComparisonUtility.StringComparison(), source.getLiteral(), target.getLiteral()));
+            comparisons.add(new Comparison<String, String>(new ComparisonLocation(currentLocation), ComparisonUtility.StringComparison(), source.getName(), target.getName()));
+            comparisons.add(new Comparison<Integer, Integer>(new ComparisonLocation(currentLocation), ComparisonUtility.IntegerComparison(), source.getValue(), target.getValue()));
+        }
+        currentLocation.exit();
+    }
+
+    private void compareContextControlCode(ContextControl source, ContextControl target) {
+        currentLocation.enter("Context Control Code");
+        if (source != null && target != null) {
+            comparisons.add(new Comparison<String, String>(new ComparisonLocation(currentLocation), ComparisonUtility.StringComparison(), source.getLiteral(), target.getLiteral()));
+            comparisons.add(new Comparison<String, String>(new ComparisonLocation(currentLocation), ComparisonUtility.StringComparison(), source.getName(), target.getName()));
+            comparisons.add(new Comparison<Integer, Integer>(new ComparisonLocation(currentLocation), ComparisonUtility.IntegerComparison(), source.getValue(), target.getValue()));
+        }
+        currentLocation.exit();
+    }
+
+    private void compareTime(TS source, TS target) {
+        currentLocation.enter("Time");
+        if (source != null && target != null) {
+            comparisons.add(new Comparison<String, String>(new ComparisonLocation(currentLocation), ComparisonUtility.StringComparison(), source.getNullFlavor().getLiteral(), target.getNullFlavor().getLiteral()));
+            comparisons.add(new Comparison<String, String>(new ComparisonLocation(currentLocation), ComparisonUtility.StringComparison(), source.getValue(), target.getValue()));
+        }
+        currentLocation.exit();
+    }
+
+    private void compareSignatureCode(CS source, CS target) {
+        currentLocation.enter("Signature Code");
+        if (source != null && target != null) {
+            comparisons.add(new Comparison<String, String>(new ComparisonLocation(currentLocation), ComparisonUtility.StringComparison(), source.getCode(), target.getCode()));
+            comparisons.add(new Comparison<String, String>(new ComparisonLocation(currentLocation), ComparisonUtility.StringComparison(), source.getNullFlavor().getLiteral(), target.getNullFlavor().getLiteral()));
+            comparisons.add(new Comparison<String, String>(new ComparisonLocation(currentLocation), ComparisonUtility.StringComparison(), source.getCodeSystem(), target.getCodeSystem()));
+            comparisons.add(new Comparison<String, String>(new ComparisonLocation(currentLocation), ComparisonUtility.StringComparison(), source.getCodeSystemName(), target.getCodeSystemName()));
+            comparisons.add(new Comparison<String, String>(new ComparisonLocation(currentLocation), ComparisonUtility.StringComparison(), source.getCodeSystemVersion(), target.getCodeSystemVersion()));
+            comparisons.add(new Comparison<String, String>(new ComparisonLocation(currentLocation), ComparisonUtility.StringComparison(), source.getDisplayName(), target.getDisplayName()));
+        }
+        currentLocation.exit();
+    }
+
+    private void compareFunctionCode(CE source, CE target) {
+        currentLocation.enter("Function Code");
+        if (source != null && target != null) {
+            comparisons.add(new Comparison<String, String>(new ComparisonLocation(currentLocation), ComparisonUtility.StringComparison(), source.getCode(), target.getCode()));
+            comparisons.add(new Comparison<String, String>(new ComparisonLocation(currentLocation), ComparisonUtility.StringComparison(), source.getNullFlavor().getLiteral(), target.getNullFlavor().getLiteral()));
+            comparisons.add(new Comparison<String, String>(new ComparisonLocation(currentLocation), ComparisonUtility.StringComparison(), source.getCodeSystem(), target.getCodeSystem()));
+            comparisons.add(new Comparison<String, String>(new ComparisonLocation(currentLocation), ComparisonUtility.StringComparison(), source.getCodeSystemName(), target.getCodeSystemName()));
+            comparisons.add(new Comparison<String, String>(new ComparisonLocation(currentLocation), ComparisonUtility.StringComparison(), source.getCodeSystemVersion(), target.getCodeSystemVersion()));
+            comparisons.add(new Comparison<String, String>(new ComparisonLocation(currentLocation), ComparisonUtility.StringComparison(), source.getDisplayName(), target.getDisplayName()));
+        }
+        currentLocation.exit();
+    }
+
+    private void compareSetID(II source, II target) {
+        currentLocation.enter("Set ID");
+        if (source != null && target != null) {
+            comparisons.add(new Comparison<String, String>(new ComparisonLocation(currentLocation), ComparisonUtility.StringComparison(), source.getRoot(), target.getRoot()));
+            comparisons.add(new Comparison<String, String>(new ComparisonLocation(currentLocation), ComparisonUtility.StringComparison(), source.getAssigningAuthorityName(), target.getAssigningAuthorityName()));
+            comparisons.add(new Comparison<String, String>(new ComparisonLocation(currentLocation), ComparisonUtility.StringComparison(), source.getExtension(), target.getExtension()));
+            comparisons.add(new Comparison<String, String>(new ComparisonLocation(currentLocation), ComparisonUtility.StringComparison(), source.getNullFlavor().getLiteral(), target.getNullFlavor().getLiteral()));
+        }
+        currentLocation.exit();
+    }
+
+    private void compareVersionNumber(INT source, INT target) {
+        currentLocation.enter("Version Number");
+        if (source != null && target != null) {
+            comparisons.add(new Comparison<BigInteger, BigInteger>(new ComparisonLocation(currentLocation), ComparisonUtility.BigIntegerComparison(), source.getValue(), target.getValue()));
+        }
+        currentLocation.exit();
+    }
+
+    private void compareCopyTime(TS source, TS target) {
+        currentLocation.enter("Copy Time");
+        if (source != null && target != null) {
+            comparisons.add(new Comparison<String, String>(new ComparisonLocation(currentLocation), ComparisonUtility.StringComparison(), source.getNullFlavor().getLiteral(), target.getNullFlavor().getLiteral()));
+            comparisons.add(new Comparison<String, String>(new ComparisonLocation(currentLocation), ComparisonUtility.StringComparison(), source.getValue(), target.getValue()));
+        }
+        currentLocation.exit();
+    }
+
+    private void compareAdministrativeGenderCode(CE source, CE target) {
+        currentLocation.enter("Administrative Gender Code");
+        if (source != null && target != null) {
+            comparisons.add(new Comparison<String, String>(new ComparisonLocation(currentLocation), ComparisonUtility.StringComparison(), source.getNullFlavor().getLiteral(), target.getNullFlavor().getLiteral()));
+            comparisons.add(new Comparison<String, String>(new ComparisonLocation(currentLocation), ComparisonUtility.StringComparison(), source.getCode(), target.getCode()));
+        }
+        currentLocation.exit();
+    }
+
+    private void compareBirthTime(TS source, TS target) {
+        currentLocation.enter("Birth Time");
+        if (source != null && target != null) {
+            comparisons.add(new Comparison<String, String>(new ComparisonLocation(currentLocation), ComparisonUtility.StringComparison(), source.getNullFlavor().getLiteral(), target.getNullFlavor().getLiteral()));
+            comparisons.add(new Comparison<String, String>(new ComparisonLocation(currentLocation), ComparisonUtility.StringComparison(), source.getValue(), target.getValue()));
+        }
+        currentLocation.exit();
+    }
+
+    private void compareMaritalStatusCode(CE source, CE target) {
+        currentLocation.enter("Marital Status Code");
+        if (source != null && target != null) {
+            comparisons.add(new Comparison<String, String>(new ComparisonLocation(currentLocation), ComparisonUtility.StringComparison(), source.getNullFlavor().getLiteral(), target.getNullFlavor().getLiteral()));
+            comparisons.add(new Comparison<String, String>(new ComparisonLocation(currentLocation), ComparisonUtility.StringComparison(), source.getCode(), target.getCode()));
+        }
+        currentLocation.exit();
+    }
+
+    private void compareReligiosAffiliationCode(CE source, CE target) {
+        currentLocation.enter("Religious Affiliation Code");
+        if (source != null && target != null) {
+            comparisons.add(new Comparison<String, String>(new ComparisonLocation(currentLocation), ComparisonUtility.StringComparison(), source.getCode(), target.getCode()));
+            comparisons.add(new Comparison<String, String>(new ComparisonLocation(currentLocation), ComparisonUtility.StringComparison(), source.getNullFlavor().getLiteral(), target.getNullFlavor().getLiteral()));
+            comparisons.add(new Comparison<String, String>(new ComparisonLocation(currentLocation), ComparisonUtility.StringComparison(), source.getCodeSystem(), target.getCodeSystem()));
+            comparisons.add(new Comparison<String, String>(new ComparisonLocation(currentLocation), ComparisonUtility.StringComparison(), source.getCodeSystemName(), target.getCodeSystemName()));
+            comparisons.add(new Comparison<String, String>(new ComparisonLocation(currentLocation), ComparisonUtility.StringComparison(), source.getCodeSystemVersion(), target.getCodeSystemVersion()));
+            comparisons.add(new Comparison<String, String>(new ComparisonLocation(currentLocation), ComparisonUtility.StringComparison(), source.getDisplayName(), target.getDisplayName()));
+        }
+        currentLocation.exit();
+    }
+
+    private void compareRaceCode(CE source, CE target) {
+        currentLocation.enter("Race Code");
+        if (source != null && target != null) {
+            comparisons.add(new Comparison<String, String>(new ComparisonLocation(currentLocation), ComparisonUtility.StringComparison(), source.getCode(), target.getCode()));
+            comparisons.add(new Comparison<String, String>(new ComparisonLocation(currentLocation), ComparisonUtility.StringComparison(), source.getNullFlavor().getLiteral(), target.getNullFlavor().getLiteral()));
+            comparisons.add(new Comparison<String, String>(new ComparisonLocation(currentLocation), ComparisonUtility.StringComparison(), source.getCodeSystem(), target.getCodeSystem()));
+            comparisons.add(new Comparison<String, String>(new ComparisonLocation(currentLocation), ComparisonUtility.StringComparison(), source.getCodeSystemName(), target.getCodeSystemName()));
+            comparisons.add(new Comparison<String, String>(new ComparisonLocation(currentLocation), ComparisonUtility.StringComparison(), source.getCodeSystemVersion(), target.getCodeSystemVersion()));
+            comparisons.add(new Comparison<String, String>(new ComparisonLocation(currentLocation), ComparisonUtility.StringComparison(), source.getDisplayName(), target.getDisplayName()));
+        }
+        currentLocation.exit();
+    }
+
+    private void compareEthnicGroupCode(CE source, CE target) {
+        currentLocation.enter("Ethnic Group Code");
+        if (source != null && target != null) {
+            comparisons.add(new Comparison<String, String>(new ComparisonLocation(currentLocation), ComparisonUtility.StringComparison(), source.getCode(), target.getCode()));
+            comparisons.add(new Comparison<String, String>(new ComparisonLocation(currentLocation), ComparisonUtility.StringComparison(), source.getNullFlavor().getLiteral(), target.getNullFlavor().getLiteral()));
+            comparisons.add(new Comparison<String, String>(new ComparisonLocation(currentLocation), ComparisonUtility.StringComparison(), source.getCodeSystem(), target.getCodeSystem()));
+            comparisons.add(new Comparison<String, String>(new ComparisonLocation(currentLocation), ComparisonUtility.StringComparison(), source.getCodeSystemName(), target.getCodeSystemName()));
+            comparisons.add(new Comparison<String, String>(new ComparisonLocation(currentLocation), ComparisonUtility.StringComparison(), source.getCodeSystemVersion(), target.getCodeSystemVersion()));
+            comparisons.add(new Comparison<String, String>(new ComparisonLocation(currentLocation), ComparisonUtility.StringComparison(), source.getDisplayName(), target.getDisplayName()));
+        }
+        currentLocation.exit();
+    }
+
+    private void compareMoodCode(ActMood source, ActMood target) {
+        currentLocation.enter("Mood Code");
+        if (source != null && target != null) {
+            comparisons.add(new Comparison<String, String>(new ComparisonLocation(currentLocation), ComparisonUtility.StringComparison(), source.getLiteral(), target.getLiteral()));
+            comparisons.add(new Comparison<String, String>(new ComparisonLocation(currentLocation), ComparisonUtility.StringComparison(), source.getName(), target.getName()));
+            comparisons.add(new Comparison<Integer, Integer>(new ComparisonLocation(currentLocation), ComparisonUtility.IntegerComparison(), source.getValue(), target.getValue()));
+        }
+        currentLocation.exit();
+    }
+
+    private void compareMoodCode(x_DocumentSubstanceMood source, x_DocumentSubstanceMood target) {
+        currentLocation.enter("Mood Code");
+        if (source != null && target != null) {
+            comparisons.add(new Comparison<String, String>(new ComparisonLocation(currentLocation), ComparisonUtility.StringComparison(), source.getLiteral(), target.getLiteral()));
+            comparisons.add(new Comparison<String, String>(new ComparisonLocation(currentLocation), ComparisonUtility.StringComparison(), source.getName(), target.getName()));
+            comparisons.add(new Comparison<Integer, Integer>(new ComparisonLocation(currentLocation), ComparisonUtility.IntegerComparison(), source.getValue(), target.getValue()));
+        }
+        currentLocation.exit();
+    }
+
+    private void compareMoodCode(x_DocumentProcedureMood source, x_DocumentProcedureMood target) {
+        currentLocation.enter("Mood Code");
+        if (source != null && target != null) {
+            comparisons.add(new Comparison<String, String>(new ComparisonLocation(currentLocation), ComparisonUtility.StringComparison(), source.getLiteral(), target.getLiteral()));
+            comparisons.add(new Comparison<String, String>(new ComparisonLocation(currentLocation), ComparisonUtility.StringComparison(), source.getName(), target.getName()));
+            comparisons.add(new Comparison<Integer, Integer>(new ComparisonLocation(currentLocation), ComparisonUtility.IntegerComparison(), source.getValue(), target.getValue()));
+        }
+        currentLocation.exit();
+    }
+
+    private void compareMoodCode(x_DocumentEncounterMood source, x_DocumentEncounterMood target) {
+        currentLocation.enter("Mood Code");
+        if (source != null && target != null) {
+            comparisons.add(new Comparison<String, String>(new ComparisonLocation(currentLocation), ComparisonUtility.StringComparison(), source.getLiteral(), target.getLiteral()));
+            comparisons.add(new Comparison<String, String>(new ComparisonLocation(currentLocation), ComparisonUtility.StringComparison(), source.getName(), target.getName()));
+            comparisons.add(new Comparison<Integer, Integer>(new ComparisonLocation(currentLocation), ComparisonUtility.IntegerComparison(), source.getValue(), target.getValue()));
+        }
+        currentLocation.exit();
+    }
+
+    private void compareMoodCode(x_DocumentActMood source, x_DocumentActMood target) {
+        currentLocation.enter("Mood Code");
+        if (source != null && target != null) {
+            comparisons.add(new Comparison<String, String>(new ComparisonLocation(currentLocation), ComparisonUtility.StringComparison(), source.getLiteral(), target.getLiteral()));
+            comparisons.add(new Comparison<String, String>(new ComparisonLocation(currentLocation), ComparisonUtility.StringComparison(), source.getName(), target.getName()));
+            comparisons.add(new Comparison<Integer, Integer>(new ComparisonLocation(currentLocation), ComparisonUtility.IntegerComparison(), source.getValue(), target.getValue()));
+        }
+        currentLocation.exit();
+    }
+
+    private void compareText(ED source, ED target) {
+        currentLocation.enter("Text");
+        if (source != null && target != null) {
+            comparisons.add(new Comparison<String, String>(new ComparisonLocation(currentLocation), ComparisonUtility.StringComparison(), source.getLanguage(), target.getLanguage()));
+            comparisons.add(new Comparison<String, String>(new ComparisonLocation(currentLocation), ComparisonUtility.StringComparison(), source.getText(), target.getText()));
+            comparisons.add(new Comparison<String, String>(new ComparisonLocation(currentLocation), ComparisonUtility.StringComparison(), source.getMediaType(), target.getMediaType()));
+            comparisons.add(new Comparison<String, String>(new ComparisonLocation(currentLocation), ComparisonUtility.StringComparison(), source.getNullFlavor().getLiteral(), target.getNullFlavor().getLiteral()));
+        }
+        currentLocation.exit();
+    }
+
+    private void compareText(StrucDocText source, StrucDocText target) {
+        currentLocation.enter("Text");
+        if (source != null && target != null) {
+            comparisons.add(new Comparison<String, String>(new ComparisonLocation(currentLocation), ComparisonUtility.StringComparison(), source.getText(), target.getText()));
+        }
+        currentLocation.exit();
+    }
+
+    private void compareDeterminerCode(EntityDeterminer source, EntityDeterminer target) {
+        currentLocation.enter("Determiner Code");
+        if (source != null && target != null) {
+            comparisons.add(new Comparison<String, String>(new ComparisonLocation(currentLocation), ComparisonUtility.StringComparison(), source.getLiteral(), target.getLiteral()));
+            comparisons.add(new Comparison<String, String>(new ComparisonLocation(currentLocation), ComparisonUtility.StringComparison(), source.getName(), target.getName()));
+            comparisons.add(new Comparison<Integer, Integer>(new ComparisonLocation(currentLocation), ComparisonUtility.IntegerComparison(), source.getValue(), target.getValue()));
+        }
+        currentLocation.exit();
+    }
+
+    private void compareDeterminerCode(EntityDeterminerDetermined source, EntityDeterminerDetermined target) {
+        currentLocation.enter("Determiner Code");
+        if (source != null && target != null) {
+            comparisons.add(new Comparison<String, String>(new ComparisonLocation(currentLocation), ComparisonUtility.StringComparison(), source.getLiteral(), target.getLiteral()));
+            comparisons.add(new Comparison<String, String>(new ComparisonLocation(currentLocation), ComparisonUtility.StringComparison(), source.getName(), target.getName()));
+            comparisons.add(new Comparison<Integer, Integer>(new ComparisonLocation(currentLocation), ComparisonUtility.IntegerComparison(), source.getValue(), target.getValue()));
+        }
+        currentLocation.exit();
+    }
+
+    private void compareSCName(SC source, SC target) {
+        currentLocation.enter("Name");
+        if (source != null && target != null) {
+            comparisons.add(new Comparison<String, String>(new ComparisonLocation(currentLocation), ComparisonUtility.StringComparison(), source.getCode(), target.getCode()));
+            comparisons.add(new Comparison<String, String>(new ComparisonLocation(currentLocation), ComparisonUtility.StringComparison(), source.getNullFlavor().getLiteral(), target.getNullFlavor().getLiteral()));
+            comparisons.add(new Comparison<String, String>(new ComparisonLocation(currentLocation), ComparisonUtility.StringComparison(), source.getCodeSystem(), target.getCodeSystem()));
+            comparisons.add(new Comparison<String, String>(new ComparisonLocation(currentLocation), ComparisonUtility.StringComparison(), source.getCodeSystemName(), target.getCodeSystemName()));
+            comparisons.add(new Comparison<String, String>(new ComparisonLocation(currentLocation), ComparisonUtility.StringComparison(), source.getCodeSystemVersion(), target.getCodeSystemVersion()));
+            comparisons.add(new Comparison<String, String>(new ComparisonLocation(currentLocation), ComparisonUtility.StringComparison(), source.getDisplayName(), target.getDisplayName()));
+        }
+        currentLocation.exit();
+    }
+
+    private void compareNameEN(EN source, EN target) {
+        currentLocation.enter("Name");
+        if (source != null && target != null) {
+            comparisons.add(new Comparison<String, String>(new ComparisonLocation(currentLocation), ComparisonUtility.StringComparison(), source.getNullFlavor().getLiteral(), target.getNullFlavor().getLiteral()));
+            comparisons.add(new Comparison<String, String>(new ComparisonLocation(currentLocation), ComparisonUtility.StringComparison(), source.getText(), target.getText()));
+        }
+        currentLocation.exit();
+    }
+
+    private void comparePreferenceInd(BL source, BL target) {
+        currentLocation.enter("Preference Ind");
+        boolean matched = true;
+        if (source != null && target != null) {
+            comparisons.add(new Comparison<String, String>(new ComparisonLocation(currentLocation), ComparisonUtility.StringComparison(), source.getNullFlavor().getLiteral(), target.getNullFlavor().getLiteral()));
+            comparisons.add(new Comparison<Boolean, Boolean>(new ComparisonLocation(currentLocation), ComparisonUtility.BooleanComparison(), source.getValue(), target.getValue()));
+        }
+        currentLocation.exit();
+    }
+
+    private void compareDerivationExpr(ST source, ST target) {
+        currentLocation.enter("Derivation Expr");
+        if (source != null && target != null) {
+            comparisons.add(new Comparison<String, String>(new ComparisonLocation(currentLocation), ComparisonUtility.StringComparison(), source.getLanguage(), target.getLanguage()));
+            comparisons.add(new Comparison<String, String>(new ComparisonLocation(currentLocation), ComparisonUtility.StringComparison(), source.getText(), target.getText()));
+            comparisons.add(new Comparison<String, String>(new ComparisonLocation(currentLocation), ComparisonUtility.StringComparison(), source.getMediaType(), target.getMediaType()));
+            comparisons.add(new Comparison<String, String>(new ComparisonLocation(currentLocation), ComparisonUtility.StringComparison(), source.getNullFlavor().getLiteral(), target.getNullFlavor().getLiteral()));
+        }
+        currentLocation.exit();
+    }
+
+    private void compareRepeatNumber(IVL_INT source, IVL_INT target) {
+        currentLocation.enter("Repeat Number");
+        if (source != null && target != null) {
+            if (source.getCenter() != null && target.getCenter() != null) {
+                comparisons.add(new Comparison<BigInteger, BigInteger>(new ComparisonLocation(currentLocation), ComparisonUtility.BigIntegerComparison(), source.getCenter().getValue(), target.getCenter().getValue()));
+            }
+            if (source.getHigh() != null && target.getHigh() != null) {
+                comparisons.add(new Comparison<BigInteger, BigInteger>(new ComparisonLocation(currentLocation), ComparisonUtility.BigIntegerComparison(), source.getHigh().getValue(), target.getHigh().getValue()));
+            }
+            if (source.getLow() != null && target.getLow() != null) {
+                comparisons.add(new Comparison<BigInteger, BigInteger>(new ComparisonLocation(currentLocation), ComparisonUtility.BigIntegerComparison(), source.getLow().getValue(), target.getLow().getValue()));
+            }
+            if (source.getWidth() != null && target.getWidth() != null) {
+                comparisons.add(new Comparison<BigInteger, BigInteger>(new ComparisonLocation(currentLocation), ComparisonUtility.BigIntegerComparison(), source.getWidth().getValue(), target.getWidth().getValue()));
+            }
+            comparisons.add(new Comparison<BigInteger, BigInteger>(new ComparisonLocation(currentLocation), ComparisonUtility.BigIntegerComparison(), source.getValue(), target.getValue()));
+            comparisons.add(new Comparison<String, String>(new ComparisonLocation(currentLocation), ComparisonUtility.StringComparison(), source.getNullFlavor().getLiteral(), target.getNullFlavor().getLiteral()));
+        }
+        currentLocation.exit();
+    }
+
+    private void compareValues(EList<ANY> source, EList<ANY> target) {
+        currentLocation.enter("Values");
+        currentLocation.exit();
+    }
+
+    private void compareValue(ANY source, ANY target) {
+        currentLocation.enter("Value");
+        currentLocation.exit();
+    }
+
+    private void compareCodes(EList<CE> source, EList<CE> target) {
+        currentLocation.enter("Code");
 //        boolean errorExists = false;
 //        for (int i=0; i<source.size(); i++) {
 //            int targetMatches = 0;
@@ -7215,9 +4564,11 @@ public class MDHTPreCompareService extends PreCompareService {
 //            }
 //        }
 //        return !errorExists;
-//    }
-//
-//    private boolean compareCodesCD(EList<CD> source, EList<CD> target) {
+        currentLocation.exit();
+    }
+
+    private void compareCodesCD(EList<CD> source, EList<CD> target) {
+        currentLocation.enter("Code");
 //        boolean errorExists = false;
 //        for (int i=0; i<source.size(); i++) {
 //            int targetMatches = 0;
@@ -7272,9 +4623,11 @@ public class MDHTPreCompareService extends PreCompareService {
 //            }
 //        }
 //        return !errorExists;
-//    }
-//
-//    private boolean compareTargetSiteCode(EList<CD> source, EList<CD> target) {
+        currentLocation.exit();
+    }
+
+    private void compareTargetSiteCode(EList<CD> source, EList<CD> target) {
+        currentLocation.enter("Target Site Code");
 //        boolean errorExists = false;
 //        for (int i=0; i<source.size(); i++) {
 //            int targetMatches = 0;
@@ -7329,138 +4682,62 @@ public class MDHTPreCompareService extends PreCompareService {
 //            }
 //        }
 //        return !errorExists;
-//    }
-//
-//    private boolean compareDose(IVL_PQ source, IVL_PQ target) {
-//        Boolean matched = true;
-//        if (source != null && target != null) {
-//            if (source.getCenter() != null && target.getCenter() != null) {
-//                if (source.getCenter().getValue() != null && target.getCenter().getValue() != null) {
-//                    if (!source.getCenter().getValue().equals(target.getCenter().getValue())) {
-//                        matched = false;
-////                        comparisonReport.addMessage("Center error in " + errorMessage + "\n");
-//                    }
-//                }
-//            }
-//            if (source.getHigh() != null && target.getHigh() != null) {
-//                if (source.getHigh().getValue() != null && target.getHigh().getValue() != null) {
-//                    if (!source.getHigh().getValue().equals(target.getHigh().getValue())) {
-//                        matched = false;
-////                        comparisonReport.addMessage("High error in " + errorMessage + "\n");
-//                    }
-//                }
-//            }
-//            if (source.getLow() != null && target.getLow() != null) {
-//                if (source.getLow().getValue() != null && target.getLow().getValue() != null) {
-//                    if (!source.getLow().getValue().equals(target.getLow().getValue())) {
-//                        matched = false;
-////                        comparisonReport.addMessage("Low error in " + errorMessage + "\n");
-//                    }
-//                }
-//            }
-//            if (source.getWidth() != null && target.getWidth() != null) {
-//                if (source.getWidth().getValue() != null && target.getWidth().getValue() != null) {
-//                    if (!source.getWidth().getValue().equals(target.getWidth().getValue())) {
-//                        matched = false;
-////                        comparisonReport.addMessage("Width error in " + errorMessage + "\n");
-//                    }
-//                }
-//            }
-//            if (source.getValue() != null && target.getValue() != null) {
-//                if (!source.getValue().equals(target.getValue())) {
-//                    matched = false;
-////                    comparisonReport.addMessage("Media Type error in " + errorMessage + "\n");
-//                }
-//            }
-//            if (source.getNullFlavor().getLiteral() != null && target.getNullFlavor().getLiteral() != null) {
-//                if (!source.getNullFlavor().getLiteral().equals(target.getNullFlavor().getLiteral())) {
-//                    matched = false;
-////                    comparisonReport.addMessage("Null Flavor error in " + errorMessage + "\n");
-//                }
-//            }
-//        }  else if ((source != null && target == null) || (source == null && target != null)) {
-////            comparisonReport.addMessage("Dose error in " + errorMessage + "\n");
-//            return false;
-//        }
-//        return matched;
-//    }
-//
-//    private boolean compareMaxDose(RTO_PQ_PQ source, RTO_PQ_PQ target) {
-//        boolean matched = true;
-//        if (source != null && target != null) {
-//            if (source.getDenominator().getValue() != null && target.getDenominator().getValue() != null) {
-//                if (!source.getDenominator().getValue().equals(target.getDenominator().getValue())) {
-//                    matched = false;
-////                    comparisonReport.addMessage("Denominator error in " + errorMessage + "\n");
-//                }
-//            }
-//            if (source.getNumerator().getValue() != null && target.getNumerator().getValue() != null) {
-//                if (!source.getNumerator().getValue().equals(target.getNumerator().getValue())) {
-//                    matched = false;
-////                    comparisonReport.addMessage("Numerator error in " + errorMessage + "\n");
-//                }
-//            }
-//            if (source.getNullFlavor().getLiteral() != null && target.getNullFlavor().getLiteral() != null) {
-//                if (!source.getNullFlavor().getLiteral().equals(target.getNullFlavor().getLiteral())) {
-//                    matched = false;
-////                    comparisonReport.addMessage("NullFlavor error in " + errorMessage + "\n");
-//                }
-//            }
-//            if (source.toString() != null && target.toString() != null) {
-//                if (!source.toString().equals(target.toString())) {
-//                    matched = false;
-////                    comparisonReport.addMessage("To String error in " + errorMessage + "\n");
-//                }
-//            }
-//        }  else if ((source != null && target == null) || (source == null && target != null)) {
-////            comparisonReport.addMessage("Max Dose error in " + errorMessage + "\n");
-//            return false;
-//        }
-//        return matched;
-//    }
-//
-//    private boolean compareIDAttribute(String source, String target) {
-//        if (source != null && target != null) {
-//            if (!(source.equals(target))) {
-////                comparisonReport.addMessage("ID Attributes error in " + errorMessage + "\n");
-//                return false;
-//            }
-//        }  else if ((source != null && target == null) || (source == null && target != null)) {
-////            comparisonReport.addMessage("ID Attributes error in " + errorMessage + "\n");
-//            return false;
-//        }
-//        return true;
-//    }
-//
-//    private boolean compareQuantity(PQ source, PQ target) {
-//        boolean matched = true;
-//        if (source != null && target != null) {
-//            if (source.getValue() != null && target.getValue() != null) {
-//                if (!source.getValue().equals(target.getValue())) {
-//                    matched = false;
-////                    comparisonReport.addMessage("Value error in " + errorMessage + "\n");
-//                }
-//            }
-//            if (source.getUnit() != null && target.getUnit() != null) {
-//                if (!source.getUnit().equals(target.getUnit())) {
-//                    matched = false;
-////                    comparisonReport.addMessage("Unit error in " + errorMessage + "\n");
-//                }
-//            }
-//            if (source.getNullFlavor().getLiteral() != null && target.getNullFlavor().getLiteral() != null) {
-//                if (!source.getNullFlavor().getLiteral().equals(target.getNullFlavor().getLiteral())) {
-//                    matched = false;
-////                    comparisonReport.addMessage("Null Flavor error in " + errorMessage + "\n");
-//                }
-//            }
-//        }  else if ((source != null && target == null) || (source == null && target != null)) {
-////            comparisonReport.addMessage("Quantity error in " + errorMessage + "\n");
-//            return false;
-//        }
-//        return matched;
-//    }
-//
-//    private boolean compareQuantities(EList<PQ> source, EList<PQ> target) {
+        currentLocation.exit();
+    }
+
+    private void compareDose(IVL_PQ source, IVL_PQ target) {
+        currentLocation.enter("Dose");
+        if (source != null && target != null) {
+            if (source.getCenter() != null && target.getCenter() != null) {
+                comparisons.add(new Comparison<BigDecimal, BigDecimal>(new ComparisonLocation(currentLocation), ComparisonUtility.BigDecimalComparison(), source.getCenter().getValue(), target.getCenter().getValue()));
+            }
+            if (source.getHigh() != null && target.getHigh() != null) {
+                comparisons.add(new Comparison<BigDecimal, BigDecimal>(new ComparisonLocation(currentLocation), ComparisonUtility.BigDecimalComparison(), source.getHigh().getValue(), target.getHigh().getValue()));
+            }
+            if (source.getLow() != null && target.getLow() != null) {
+                comparisons.add(new Comparison<BigDecimal, BigDecimal>(new ComparisonLocation(currentLocation), ComparisonUtility.BigDecimalComparison(), source.getLow().getValue(), target.getLow().getValue()));
+            }
+            if (source.getWidth() != null && target.getWidth() != null) {
+                comparisons.add(new Comparison<BigDecimal, BigDecimal>(new ComparisonLocation(currentLocation), ComparisonUtility.BigDecimalComparison(), source.getWidth().getValue(), target.getWidth().getValue()));
+            }
+            comparisons.add(new Comparison<BigDecimal, BigDecimal>(new ComparisonLocation(currentLocation), ComparisonUtility.BigDecimalComparison(), source.getValue(), target.getValue()));
+            comparisons.add(new Comparison<String, String>(new ComparisonLocation(currentLocation), ComparisonUtility.StringComparison(), source.getNullFlavor().getLiteral(), target.getNullFlavor().getLiteral()));
+        }
+        currentLocation.exit();
+    }
+
+    private void compareMaxDose(RTO_PQ_PQ source, RTO_PQ_PQ target) {
+        currentLocation.enter("Max Dose");
+        if (source != null && target != null) {
+            if (source.getDenominator() != null && target.getDenominator() != null) {
+                comparisons.add(new Comparison<BigDecimal, BigDecimal>(new ComparisonLocation(currentLocation), ComparisonUtility.BigDecimalComparison(), source.getDenominator().getValue(), target.getDenominator().getValue()));
+            }
+            if (source.getNumerator() != null && target.getNumerator() != null) {
+                comparisons.add(new Comparison<BigDecimal, BigDecimal>(new ComparisonLocation(currentLocation), ComparisonUtility.BigDecimalComparison(), source.getNumerator().getValue(), target.getNumerator().getValue()));
+            }
+            comparisons.add(new Comparison<String, String>(new ComparisonLocation(currentLocation), ComparisonUtility.StringComparison(), source.getNullFlavor().getLiteral(), target.getNullFlavor().getLiteral()));
+        }
+        currentLocation.exit();
+    }
+
+    private void compareIDAttribute(String source, String target) {
+        currentLocation.enter("ID Attribute");
+        comparisons.add(new Comparison<String, String>(new ComparisonLocation(currentLocation), ComparisonUtility.StringComparison(), source, target));
+        currentLocation.exit();
+    }
+
+    private void compareQuantity(PQ source, PQ target) {
+        currentLocation.enter("Quantity");
+        if (source != null && target != null) {
+            comparisons.add(new Comparison<BigDecimal, BigDecimal>(new ComparisonLocation(currentLocation), ComparisonUtility.BigDecimalComparison(), source.getValue(), target.getValue()));
+            comparisons.add(new Comparison<String, String>(new ComparisonLocation(currentLocation), ComparisonUtility.StringComparison(), source.getUnit(), target.getUnit()));
+            comparisons.add(new Comparison<String, String>(new ComparisonLocation(currentLocation), ComparisonUtility.StringComparison(), source.getNullFlavor().getLiteral(), target.getNullFlavor().getLiteral()));
+        }
+        currentLocation.exit();
+    }
+
+    private void compareQuantities(EList<PQ> source, EList<PQ> target) {
+        currentLocation.enter("Quantities");
 //
 //        boolean errorExists = false;
 //        for (int i=0; i<source.size(); i++) {
@@ -7498,60 +4775,41 @@ public class MDHTPreCompareService extends PreCompareService {
 //            }
 //        }
 //        return !errorExists;
-//    }
-//
-//    private boolean compareExpectedUseTime(IVL_TS source, IVL_TS target) {
-//        Boolean matched = true;
-//        if (source != null && target != null) {
-//            if (source.getCenter() != null && target.getCenter() != null) {
-//                if (source.getCenter().getValue() != null && target.getCenter().getValue() != null) {
-//                    if (!source.getCenter().getValue().equals(target.getCenter().getValue())) {
-//                        matched = false;
-////                        comparisonReport.addMessage("Center error in " + errorMessage + "\n");
-//                    }
-//                }
-//            }
-//            if (source.getHigh() != null && target.getHigh() != null) {
-//                if (source.getHigh().getValue() != null && target.getHigh().getValue() != null) {
-//                    if (!source.getHigh().getValue().equals(target.getHigh().getValue())) {
-//                        matched = false;
-////                        comparisonReport.addMessage("High error in " + errorMessage + "\n");
-//                    }
-//                }
-//            }
-//            if (source.getLow() != null && target.getLow() != null) {
-//                if (source.getLow().getValue() != null && target.getLow().getValue() != null) {
-//                    if (!source.getLow().getValue().equals(target.getLow().getValue())) {
-//                        matched = false;
-////                        comparisonReport.addMessage("Low error in " + errorMessage + "\n");
-//                    }
-//                }
-//            }
-//            if (source.getWidth() != null && target.getWidth() != null) {
-//                if (source.getWidth().getValue() != null && target.getWidth().getValue() != null) {
-//                    if (!source.getWidth().getValue().equals(target.getWidth().getValue())) {
-//                        matched = false;
-////                        comparisonReport.addMessage("Width error in " + errorMessage + "\n");
-//                    }
-//                }
-//            }
-//            if (source.getValue() != null && target.getValue() != null) {
-//                if (!source.getValue().equals(target.getValue())) {
-//                    matched = false;
-////                    comparisonReport.addMessage("Media Type error in " + errorMessage + "\n");
-//                }
-//            }
-//            if (source.getNullFlavor().getLiteral() != null && target.getNullFlavor().getLiteral() != null) {
-//                if (!source.getNullFlavor().getLiteral().equals(target.getNullFlavor().getLiteral())) {
-//                    matched = false;
-////                    comparisonReport.addMessage("Null Flavor error in " + errorMessage + "\n");
-//                }
-//            }
-//        }  else if ((source != null && target == null) || (source == null && target != null)) {
-////            comparisonReport.addMessage("Expected Use Time error in " + errorMessage + "\n");
-//            return false;
-//        }
-//        return matched;
-//    }
+        currentLocation.exit();
+    }
+
+    private void compareExpectedUseTime(IVL_TS source, IVL_TS target) {
+        currentLocation.enter("Expected Use Time");
+        if (source != null && target != null) {
+            if (source.getCenter() != null && target.getCenter() != null) {
+                comparisons.add(new Comparison<String, String>(new ComparisonLocation(currentLocation), ComparisonUtility.StringComparison(), source.getCenter().getValue(), target.getCenter().getValue()));
+            }
+            if (source.getHigh() != null && target.getHigh() != null) {
+                comparisons.add(new Comparison<String, String>(new ComparisonLocation(currentLocation), ComparisonUtility.StringComparison(), source.getHigh().getValue(), target.getHigh().getValue()));
+            }
+            if (source.getLow() != null && target.getLow() != null) {
+                comparisons.add(new Comparison<String, String>(new ComparisonLocation(currentLocation), ComparisonUtility.StringComparison(), source.getLow().getValue(), target.getLow().getValue()));
+            }
+            if (source.getWidth() != null && target.getWidth() != null) {
+                comparisons.add(new Comparison<BigDecimal, BigDecimal>(new ComparisonLocation(currentLocation), ComparisonUtility.BigDecimalComparison(), source.getWidth().getValue(), target.getWidth().getValue()));
+            }
+            comparisons.add(new Comparison<String, String>(new ComparisonLocation(currentLocation), ComparisonUtility.StringComparison(), source.getValue(), target.getValue()));
+            comparisons.add(new Comparison<String, String>(new ComparisonLocation(currentLocation), ComparisonUtility.StringComparison(), source.getNullFlavor().getLiteral(), target.getNullFlavor().getLiteral()));
+        }
+        currentLocation.exit();
+    }
+
+    private void compareNegationInd(Boolean source, Boolean target) {
+        currentLocation.enter("Negation Ind");
+        comparisons.add(new Comparison<Boolean,Boolean>(new ComparisonLocation(currentLocation), ComparisonUtility.BooleanComparison(),source,target));
+        currentLocation.exit();
+    }
+
+    private void compareContextConductionInd(Boolean source, Boolean target) {
+        currentLocation.enter("Context Conduction Ind");
+        comparisons.add(new Comparison<Boolean, Boolean>(new ComparisonLocation(currentLocation), ComparisonUtility.BooleanComparison(), source, target));
+        currentLocation.exit();
+
+    }
 
 }
