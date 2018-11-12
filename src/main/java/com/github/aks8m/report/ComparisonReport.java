@@ -1,35 +1,37 @@
 package com.github.aks8m.report;
 
+import com.github.aks8m.report.result.ResultType;
+
 import java.util.ArrayList;
 import java.util.List;
+import com.github.aks8m.report.result.Result;
+
 
 public class ComparisonReport {
 
-    public boolean visited = false;
+    private List<Result> matches;
+    private List<Result> mismatches;
+    private List<Result> warnings;
 
-//    private List<Match> matches;
-//    private List<Mismatch> mismatches;
-//    private List<Warning> warnings;
-//
-//    public ComparisonReport(){
-//        this.matches = new ArrayList<Match>();
-//        this.mismatches = new ArrayList<Mismatch>();
-//        this.warnings = new ArrayList<Warning>();
-//    }
-//
-//    public void addMatch(Match match){
-//        this.matches.add(match);
-//    }
-//
-//    public void addMismatch(Mismatch mismatch){
-//        this.mismatches.add(mismatch);
-//    }
-//
-//    public void addWarning(Warning warning){
-//        this.warnings.add(warning);
-//    }
-//
-//    public List<Mismatch> getMismatches() {
-//        return mismatches;
-//    }
+    public ComparisonReport(){
+        this.matches = new ArrayList<Result>();
+        this.mismatches = new ArrayList<Result>();
+        this.warnings = new ArrayList<Result>();
+    }
+
+    public void addMatch(Result match){
+        this.matches.add(match);
+    }
+
+    public void addMismatch(Result mismatch){
+        this.mismatches.add(mismatch);
+    }
+
+    public void addWarning(Result warning){
+        this.warnings.add(warning);
+    }
+
+    public List<Result> getMismatches() {
+        return mismatches;
+    }
 }

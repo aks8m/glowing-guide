@@ -79,13 +79,12 @@ public class ComparisonUtility {
         };
     }
 
-    public static BiFunction<List<String>, List<List<String>>, Result> StringListComparison() {
-        return (sourceStrings, stringsList) -> {
+    public static BiFunction<List<Object>, List<List<Object>>, Result> ObjectListComparison() {
+        return (sourceObjects, objectsList) -> {
             Result result = new Result();
 
-            for (List<String> list : stringsList) {
-                //change this - requirement is not to be equal but instead to contain all source elements
-                if (sourceStrings.equals(list)) {
+            for (List<Object> list : objectsList) {
+                if (list.containsAll(sourceObjects)) {
                     result.setResultType(ResultType.MATCH);
                     return result;
                 }

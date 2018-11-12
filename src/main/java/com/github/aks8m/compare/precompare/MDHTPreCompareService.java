@@ -11,6 +11,7 @@ import org.openhealthtools.mdht.uml.cda.*;
 import org.openhealthtools.mdht.uml.hl7.datatypes.*;
 import org.openhealthtools.mdht.uml.hl7.vocab.*;
 
+import java.io.ObjectStreamField;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.*;
@@ -53,80 +54,80 @@ public class MDHTPreCompareService extends PreCompareService {
                 //compareID
                 compareID(sourceClinicalDocument.getId(),targetClinicalDocument.getId());
 
-//                //compare code
-//                compareCode(sourceClinicalDocument.getCode(),targetClinicalDocument.getCode());
+                //compare code
+                compareCode(sourceClinicalDocument.getCode(),targetClinicalDocument.getCode());
 
-//                //compare title
-//                compareTitle(sourceClinicalDocument.getTitle(),targetClinicalDocument.getTitle());
-//
-//                //compare Effective Time
-//                compareEffectiveTime(sourceClinicalDocument.getEffectiveTime(),targetClinicalDocument.getEffectiveTime());
-//
-//                //compare confidentiality code
-//                compareConfidentialityCode(sourceClinicalDocument.getConfidentialityCode(),targetClinicalDocument.getConfidentialityCode());
-//
-//                //compare language code
-//                compareLanguageCode(sourceClinicalDocument.getLanguageCode(),targetClinicalDocument.getLanguageCode());
-//
-//                //compare setID
-//                compareSetID(sourceClinicalDocument.getSetId(),targetClinicalDocument.getSetId());
-//
-//                //compare versionNumber
-//                compareVersionNumber(sourceClinicalDocument.getVersionNumber(),targetClinicalDocument.getVersionNumber());
-//
-//                //compare copyTime
-//                compareCopyTime(sourceClinicalDocument.getCopyTime(),targetClinicalDocument.getCopyTime());
-//
-//                //compare Record Targets
-//                recordTargetsComparison(sourceClinicalDocument.getRecordTargets(), targetClinicalDocument.getRecordTargets());
-//
-//                //compare Authors
-//                authorsComparison(sourceClinicalDocument.getAuthors(), targetClinicalDocument.getAuthors());
-//
-//                //compare Data Enterer
-//                dataEntererComparison(sourceClinicalDocument.getDataEnterer(), targetClinicalDocument.getDataEnterer());
-//
-//                //compare informants
-//                informantsComparison(sourceClinicalDocument.getInformants(), targetClinicalDocument.getInformants());
-//
-//                //compare custodian
-//                custodianComparison(sourceClinicalDocument.getCustodian(), targetClinicalDocument.getCustodian());
-//
-//                //compare information recipient
-//                informationRecipientComparison(sourceClinicalDocument.getInformationRecipients(),targetClinicalDocument.getInformationRecipients());
-//
-//                //compare Legal Authenticator
-//                legalAuthenticatorComparison(sourceClinicalDocument.getLegalAuthenticator(), targetClinicalDocument.getLegalAuthenticator());
-//
-//                //compare Authenticators
-//                authenticatorComparison(sourceClinicalDocument.getAuthenticators(),targetClinicalDocument.getAuthenticators());
-//
-//                //compare participants
-//                participants1Comparison(sourceClinicalDocument.getParticipants(),targetClinicalDocument.getParticipants());
-//
-//                //compare getInFulfullmentOf
-//                inFulfillmentOfComparison(sourceClinicalDocument.getInFulfillmentOfs(),targetClinicalDocument.getInFulfillmentOfs());
-//
-//                //compare documentationOf
-//                documentationOfsComparison(sourceClinicalDocument.getDocumentationOfs(), targetClinicalDocument.getDocumentationOfs());
-//
-//                //compare getRelatedDocuments
-//                relatedDocumentsComparison(sourceClinicalDocument.getRelatedDocuments(),targetClinicalDocument.getRelatedDocuments());
-//
-//                //compare Authorizations
-//                authorizationsComparison(sourceClinicalDocument.getAuthorizations(),targetClinicalDocument.getAuthorizations());
-//
-//                //compare componentOf
-//                componentOfComparison(sourceClinicalDocument.getComponentOf(),targetClinicalDocument.getComponentOf());
-//
-//                //compare component
-//                component2Comparison(sourceClinicalDocument.getComponent(), targetClinicalDocument.getComponent());
-//
-//                //compare nullFlavor
-//                compareNullFlavor(sourceClinicalDocument.getNullFlavor(),targetClinicalDocument.getNullFlavor());
-//
-//                //compare classCode
-//                compareClassCode(sourceClinicalDocument.getClassCode(),targetClinicalDocument.getClassCode());
+                //compare title
+                compareTitle(sourceClinicalDocument.getTitle(),targetClinicalDocument.getTitle());
+
+                //compare Effective Time
+                compareEffectiveTime(sourceClinicalDocument.getEffectiveTime(),targetClinicalDocument.getEffectiveTime());
+
+                //compare confidentiality code
+                compareConfidentialityCode(sourceClinicalDocument.getConfidentialityCode(),targetClinicalDocument.getConfidentialityCode());
+
+                //compare language code
+                compareLanguageCode(sourceClinicalDocument.getLanguageCode(),targetClinicalDocument.getLanguageCode());
+
+                //compare setID
+                compareSetID(sourceClinicalDocument.getSetId(),targetClinicalDocument.getSetId());
+
+                //compare versionNumber
+                compareVersionNumber(sourceClinicalDocument.getVersionNumber(),targetClinicalDocument.getVersionNumber());
+
+                //compare copyTime
+                compareCopyTime(sourceClinicalDocument.getCopyTime(),targetClinicalDocument.getCopyTime());
+
+                //compare Record Targets
+                recordTargetsComparison(sourceClinicalDocument.getRecordTargets(), targetClinicalDocument.getRecordTargets());
+
+                //compare Authors
+                authorsComparison(sourceClinicalDocument.getAuthors(), targetClinicalDocument.getAuthors());
+
+                //compare Data Enterer
+                dataEntererComparison(sourceClinicalDocument.getDataEnterer(), targetClinicalDocument.getDataEnterer());
+
+                //compare informants
+                informantsComparison(sourceClinicalDocument.getInformants(), targetClinicalDocument.getInformants());
+
+                //compare custodian
+                custodianComparison(sourceClinicalDocument.getCustodian(), targetClinicalDocument.getCustodian());
+
+                //compare information recipient
+                informationRecipientComparison(sourceClinicalDocument.getInformationRecipients(),targetClinicalDocument.getInformationRecipients());
+
+                //compare Legal Authenticator
+                legalAuthenticatorComparison(sourceClinicalDocument.getLegalAuthenticator(), targetClinicalDocument.getLegalAuthenticator());
+
+                //compare Authenticators
+                authenticatorComparison(sourceClinicalDocument.getAuthenticators(),targetClinicalDocument.getAuthenticators());
+
+                //compare participants
+                participants1Comparison(sourceClinicalDocument.getParticipants(),targetClinicalDocument.getParticipants());
+
+                //compare getInFulfullmentOf
+                inFulfillmentOfComparison(sourceClinicalDocument.getInFulfillmentOfs(),targetClinicalDocument.getInFulfillmentOfs());
+
+                //compare documentationOf
+                documentationOfsComparison(sourceClinicalDocument.getDocumentationOfs(), targetClinicalDocument.getDocumentationOfs());
+
+                //compare getRelatedDocuments
+                relatedDocumentsComparison(sourceClinicalDocument.getRelatedDocuments(),targetClinicalDocument.getRelatedDocuments());
+
+                //compare Authorizations
+                authorizationsComparison(sourceClinicalDocument.getAuthorizations(),targetClinicalDocument.getAuthorizations());
+
+                //compare componentOf
+                componentOfComparison(sourceClinicalDocument.getComponentOf(),targetClinicalDocument.getComponentOf());
+
+                //compare component
+                component2Comparison(sourceClinicalDocument.getComponent(), targetClinicalDocument.getComponent());
+
+                //compare nullFlavor
+                compareNullFlavor(sourceClinicalDocument.getNullFlavor(),targetClinicalDocument.getNullFlavor());
+
+                //compare classCode
+                compareClassCode(sourceClinicalDocument.getClassCode(),targetClinicalDocument.getClassCode());
 
                 currentLocation.exit();
 
@@ -222,16 +223,10 @@ public class MDHTPreCompareService extends PreCompareService {
             typeIDComparison(sourceComponent.getTypeId(),targetComponent.getTypeId());
             //templateID
             compareTemplateID(sourceComponent.getTemplateIds(), targetComponent.getTemplateIds());
-
-            //Choice - Non XML Body /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-//            if(sourceComponent.getNonXMLBody() != null && targetComponent.getNonXMLBody() != null){
-//                nonXMLBodyComparison(sourceComponent.getNonXMLBody(), targetComponent.getNonXMLBody());
-//            }
-//
-//            //Choice - StructuredBody
-//            if(sourceComponent.getStructuredBody() != null && targetComponent.getStructuredBody() != null){
-//                structuredBodyComparison(sourceComponent.getStructuredBody(), targetComponent.getStructuredBody());
-//            }
+            //Choice - Non XML Body
+            nonXMLBodyComparison(sourceComponent.getNonXMLBody(), targetComponent.getNonXMLBody());
+            //Choice - StructuredBody
+            structuredBodyComparison(sourceComponent.getStructuredBody(), targetComponent.getStructuredBody());
             //nullFlavor
             compareNullFlavor(sourceComponent.getNullFlavor(),targetComponent.getNullFlavor());
             //typeCode
@@ -286,13 +281,9 @@ public class MDHTPreCompareService extends PreCompareService {
             //telecom
             compareTelcom(sourceAssignedAuthor.getTelecoms(),targetAssignedAuthor.getTelecoms());
             //choice - assignedPerson (Person)
-//            if(sourceAssignedAuthor.getAssignedPerson() != null && targetAssignedAuthor.getAssignedPerson() != null){
-//                personComparison(sourceAssignedAuthor.getAssignedPerson(), targetAssignedAuthor.getAssignedPerson());
-//            }
-//            //choice - assignedAuthorizing Device(Authorizing Device)
-//            if(targetAssignedAuthor.getAssignedAuthoringDevice() != null && sourceAssignedAuthor.getAssignedAuthoringDevice() != null){
-//                authorizingDeviceComparison(sourceAssignedAuthor.getAssignedAuthoringDevice(), targetAssignedAuthor.getAssignedAuthoringDevice());
-//            }
+            personComparison(sourceAssignedAuthor.getAssignedPerson(), targetAssignedAuthor.getAssignedPerson());
+            //choice - assignedAuthorizing Device(Authorizing Device)
+            authorizingDeviceComparison(sourceAssignedAuthor.getAssignedAuthoringDevice(), targetAssignedAuthor.getAssignedAuthoringDevice());
             //represented Organization
             organizationComparison(sourceAssignedAuthor.getRepresentedOrganization(),targetAssignedAuthor.getRepresentedOrganization());
             //null flavor
@@ -600,515 +591,240 @@ public class MDHTPreCompareService extends PreCompareService {
 
     private void informantsComparison(EList<Informant12> sourceInformant12, EList<Informant12> targetInformant12) {
         currentLocation.enter("Informants");
-//        for (int i=0; i<sourceInformant12.size(); i++) {
-//            for (int j=0; j<targetInformant12.size(); j++) {
-//                if (sourceInformant12.get(i) != null && targetInformant12.get(j) != null) {
-//                    //realmCode
-//                    compareRealmCodes(sourceInformant12.get(i).getRealmCodes(), targetInformant12.get(j).getRealmCodes());
-//
-//                    //typeID
-//                    typeIDComparison(sourceInformant12.get(i).getTypeId(), targetInformant12.get(j).getTypeId());
-//
-//                    //template ID
-//                    compareTemplateID(sourceInformant12.get(i).getTemplateIds(), targetInformant12.get(j).getTemplateIds());
-//
-//                    //choice - assignedEntity, related entity
-//                    if(sourceInformant12.get(i).getAssignedEntity() != null && targetInformant12.get(j).getAssignedEntity() != null){
-//                        assignedEntityComparison(sourceInformant12.get(i).getAssignedEntity(), targetInformant12.get(j).getAssignedEntity());
-//                    }
-//
-//                    //choice - related entity
-//                    if(sourceInformant12.get(i).getRelatedEntity() != null && sourceInformant12.get(j).getRelatedEntity() != null){
-//                        relatedEntityComparison(sourceInformant12.get(i).getRelatedEntity(), targetInformant12.get(j).getRelatedEntity());
-//                    }
-//
-//                    //nullflavor
-//                    compareNullFlavor(sourceInformant12.get(i).getNullFlavor(), targetInformant12.get(j).getNullFlavor());
-//
-//                    //result code
-//                    compareTypeCode(sourceInformant12.get(i).getTypeCode(), targetInformant12.get(j).getTypeCode());
-//
-//                    //contextControlCode
-//                    compareContextControlCode(sourceInformant12.get(i).getContextControlCode(), targetInformant12.get(j).getContextControlCode());
-//
-//                }
-//            }
-//        }
+        for (int i=0; i<sourceInformant12.size(); i++) {
+            for (int j=0; j<targetInformant12.size(); j++) {
+                if (sourceInformant12.get(i) != null && targetInformant12.get(j) != null) {
+                    //realmCode
+                    compareRealmCodes(sourceInformant12.get(i).getRealmCodes(), targetInformant12.get(j).getRealmCodes());
+                    //typeID
+                    typeIDComparison(sourceInformant12.get(i).getTypeId(), targetInformant12.get(j).getTypeId());
+                    //template ID
+                    compareTemplateID(sourceInformant12.get(i).getTemplateIds(), targetInformant12.get(j).getTemplateIds());
+                    //choice - assignedEntity
+                    assignedEntityComparison(sourceInformant12.get(i).getAssignedEntity(), targetInformant12.get(j).getAssignedEntity());
+                    //choice - related entity
+                    relatedEntityComparison(sourceInformant12.get(i).getRelatedEntity(), targetInformant12.get(j).getRelatedEntity());
+                    //nullflavor
+                    compareNullFlavor(sourceInformant12.get(i).getNullFlavor(), targetInformant12.get(j).getNullFlavor());
+                    //result code
+                    compareTypeCode(sourceInformant12.get(i).getTypeCode(), targetInformant12.get(j).getTypeCode());
+                    //contextControlCode
+                    compareContextControlCode(sourceInformant12.get(i).getContextControlCode(), targetInformant12.get(j).getContextControlCode());
+                }
+            }
+        }
         currentLocation.exit();
     }
 
     private void recordTargetsComparison(EList<RecordTarget> sourceRecordTargets, EList<RecordTarget> targetRecordTargets) {
         currentLocation.enter("Record Targets");
-//        boolean errorExists = false;
-//        for (int i = 0; i < sourceRecordTargets.size(); i++) {
-//            int targetMatches = 0;
-//            for (int j = 0; j < targetRecordTargets.size(); j++) {
-//                boolean specificError = false;
-//                //compare realmCode
-//                if (!compareRealmCodes(sourceRecordTargets.get(i).getRealmCodes(), targetRecordTargets.get(j).getRealmCodes())) {
-//                    specificError = true;
-//                }
-//                //compare TypeID
-//                if (!typeIDComparison(sourceRecordTargets.get(i).getTypeId(), targetRecordTargets.get(j).getTypeId())) {
-//                    specificError = true;
-//                }
-//                //compareTemplateID
-//                if (!compareTemplateID(sourceRecordTargets.get(i).getTemplateIds(), targetRecordTargets.get(j).getTemplateIds())) {
-//                    specificError = true;
-//                }
-//                //comparePatientRole
-//                if (!patientRoleComparison(sourceRecordTargets.get(i).getPatientRole(), targetRecordTargets.get(j).getPatientRole())) {
-//                    specificError = true;
-//                }
-//                //compare nullFlavor
-//                if (!compareNullFlavor(sourceRecordTargets.get(i).getNullFlavor(), targetRecordTargets.get(j).getNullFlavor())) {
-//                    specificError = true;
-//                }
-//                //compare typeCode
-//                if (!compareTypeCode(sourceRecordTargets.get(i).getTypeCode(), targetRecordTargets.get(j).getTypeCode())) {
-//                    specificError = true;
-//                }
-//
-//                if (!specificError) {
-//                    targetMatches++;
-//                }
-//            }
-//            if (targetMatches == 0) {
-//                errorExists = true;
-////                comparisonReport.addMessage("Record Targets Comparison Error source " + i + " in " + errorMessage + "\n");
-//            }  else if (targetMatches>1) {
-////                comparisonReport.addMessage("Record Targets Comparison Warning source " + i + " in " + errorMessage + "\n");
-//            }
-//        }
-//        return !errorExists;
+        for (int i = 0; i < sourceRecordTargets.size(); i++) {
+            for (int j = 0; j < targetRecordTargets.size(); j++) {
+                //compare realmCode
+                compareRealmCodes(sourceRecordTargets.get(i).getRealmCodes(), targetRecordTargets.get(j).getRealmCodes());
+                //compare TypeID
+                typeIDComparison(sourceRecordTargets.get(i).getTypeId(), targetRecordTargets.get(j).getTypeId());
+                //compareTemplateID
+                compareTemplateID(sourceRecordTargets.get(i).getTemplateIds(), targetRecordTargets.get(j).getTemplateIds());
+                //comparePatientRole
+                patientRoleComparison(sourceRecordTargets.get(i).getPatientRole(), targetRecordTargets.get(j).getPatientRole());
+                //compare nullFlavor
+                compareNullFlavor(sourceRecordTargets.get(i).getNullFlavor(), targetRecordTargets.get(j).getNullFlavor());
+                //compare typeCode
+                compareTypeCode(sourceRecordTargets.get(i).getTypeCode(), targetRecordTargets.get(j).getTypeCode());
+            }
+        }
         currentLocation.exit();
     }
 
 
     private void authorsComparison(EList<Author> sourceAuthors, EList<Author> targetAuthors) {
         currentLocation.enter("Authors");
-//        boolean errorExists = false;
-//        for (int i=0; i<sourceAuthors.size(); i++) {
-//            int targetMatches = 0;
-//            for (int j = 0; j < targetAuthors.size(); j++) {
-//                boolean specificError = false;
-//                //compare realmCodes
-//                if (!compareRealmCodes(sourceAuthors.get(i).getRealmCodes(), targetAuthors.get(j).getRealmCodes())) {
-//                    specificError = true;
-//                }
-//                //compare typeID
-//                if (!typeIDComparison(sourceAuthors.get(i).getTypeId(), targetAuthors.get(j).getTypeId())) {
-//                    specificError = true;
-//                }
-//                //compare template ID
-//                if (!compareTemplateID(sourceAuthors.get(i).getTemplateIds(), targetAuthors.get(j).getTemplateIds())) {
-//                    specificError = true;
-//                }
-//                //compare functionCode
-//                if (!compareFunctionCode(sourceAuthors.get(i).getFunctionCode(),targetAuthors.get(j).getFunctionCode())) {
-//                    specificError = true;
-//                }
-//                //compare time
-//                if (!compareTime(sourceAuthors.get(i).getTime(), targetAuthors.get(j).getTime())) {
-//                    specificError = true;
-//                }
-//                //compare AssignedAuthor
-//                if (!assignedAuthorComparison(sourceAuthors.get(i).getAssignedAuthor(), targetAuthors.get(j).getAssignedAuthor())) {
-//                    specificError = true;
-//                }
-//                //compare nullFlavor
-//                if (!compareNullFlavor(sourceAuthors.get(i).getNullFlavor(), targetAuthors.get(j).getNullFlavor())) {
-//                    specificError = true;
-//                }
-//                //compare typeCode
-//                if (!compareTypeCode(sourceAuthors.get(i).getTypeCode(), targetAuthors.get(j).getTypeCode())) {
-//                    specificError = true;
-//                }
-//                //compare contextControlCode
-//                if (!compareContextControlCode(sourceAuthors.get(i).getContextControlCode(), targetAuthors.get(j).getContextControlCode())) {
-//                    specificError = true;
-//                }
-//
-//                if (!specificError) {
-//                    targetMatches++;
-//                }
-//            }
-//            if (targetMatches == 0) {
-//                errorExists = true;
-////                comparisonReport.addMessage("Authors Comparison Error source " + i + " in " + errorMessage + "\n");
-//            }  else if (targetMatches>1) {
-////                comparisonReport.addMessage("Authors Comparison Warning source " + i + " in " + errorMessage + "\n");
-//            }
-//        }
-//        return !errorExists;
+        for (int i=0; i<sourceAuthors.size(); i++) {
+            for (int j = 0; j < targetAuthors.size(); j++) {
+                //compare realmCodes
+                compareRealmCodes(sourceAuthors.get(i).getRealmCodes(), targetAuthors.get(j).getRealmCodes());
+                //compare typeID
+                typeIDComparison(sourceAuthors.get(i).getTypeId(), targetAuthors.get(j).getTypeId());
+                //compare template ID
+                compareTemplateID(sourceAuthors.get(i).getTemplateIds(), targetAuthors.get(j).getTemplateIds());
+                //compare functionCode
+                compareFunctionCode(sourceAuthors.get(i).getFunctionCode(),targetAuthors.get(j).getFunctionCode());
+                //compare time
+                compareTime(sourceAuthors.get(i).getTime(), targetAuthors.get(j).getTime());
+                //compare AssignedAuthor
+                assignedAuthorComparison(sourceAuthors.get(i).getAssignedAuthor(), targetAuthors.get(j).getAssignedAuthor());
+                //compare nullFlavor
+                compareNullFlavor(sourceAuthors.get(i).getNullFlavor(), targetAuthors.get(j).getNullFlavor());
+                //compare typeCode
+                compareTypeCode(sourceAuthors.get(i).getTypeCode(), targetAuthors.get(j).getTypeCode());
+                //compare contextControlCode
+                compareContextControlCode(sourceAuthors.get(i).getContextControlCode(), targetAuthors.get(j).getContextControlCode());
+            }
+        }
         currentLocation.exit();
     }
 
     private void participants1Comparison(EList<Participant1> sourceParticipant, EList<Participant1> targetParticipant) {
         currentLocation.enter("Patricipants1");
-//        boolean errorExists = false;
-//        for (int i=0;i<sourceParticipant.size();i++) {
-//            int targetMatches = 0;
-//            for (int j = 0; j < targetParticipant.size(); j++) {
-//                boolean specificError = false;
-//                //realmCodes
-//                if (!compareRealmCodes(sourceParticipant.get(i).getRealmCodes(), targetParticipant.get(j).getRealmCodes())) {
-//                    specificError = true;
-//                }
-//                //typeID
-//                if (!typeIDComparison(sourceParticipant.get(i).getTypeId(), targetParticipant.get(j).getTypeId())) {
-//                    specificError = true;
-//                }
-//                //templateID
-//                if (!compareTemplateID(sourceParticipant.get(i).getTemplateIds(), targetParticipant.get(j).getTemplateIds())) {
-//                    specificError = true;
-//                }
-//                //functionCode
-//                if (!compareFunctionCode(sourceParticipant.get(i).getFunctionCode(), targetParticipant.get(j).getFunctionCode())) {
-//                    specificError = true;
-//                }
-//                //time
-//                if (!compareTime(sourceParticipant.get(i).getTime(), targetParticipant.get(j).getTime())) {
-//                    specificError = true;
-//                }
-//                //associated Entity
-//                if (!associatedEntityComparison(sourceParticipant.get(i).getAssociatedEntity(), targetParticipant.get(j).getAssociatedEntity())) {
-//                    specificError = true;
-//                }
-//                //nullFlavor
-//                if (!compareNullFlavor(sourceParticipant.get(i).getNullFlavor(), targetParticipant.get(j).getNullFlavor())) {
-//                    specificError = true;
-//                }
-//                //typeCode
-//                if (!compareTypeCode(sourceParticipant.get(i).getTypeCode(), targetParticipant.get(j).getTypeCode())) {
-//                    specificError = true;
-//                }
-//
-//                if (!specificError) {
-//                    targetMatches++;
-//                }
-//            }
-//            if (targetMatches == 0) {
-//                errorExists = true;
-////                comparisonReport.addMessage("Participants Comparison Error source " + i + " in " + errorMessage + "\n");
-//            }  else if (targetMatches>1) {
-////                comparisonReport.addMessage("Participants Comparison Warning source " + i + " in " + errorMessage + "\n");
-//            }
-//        }
-//        return !errorExists;
+        for (int i=0;i<sourceParticipant.size();i++) {
+            for (int j = 0; j < targetParticipant.size(); j++) {
+                //realmCodes
+                compareRealmCodes(sourceParticipant.get(i).getRealmCodes(), targetParticipant.get(j).getRealmCodes());
+                //typeID
+                typeIDComparison(sourceParticipant.get(i).getTypeId(), targetParticipant.get(j).getTypeId());
+                //templateID
+                compareTemplateID(sourceParticipant.get(i).getTemplateIds(), targetParticipant.get(j).getTemplateIds());
+                //functionCode
+                compareFunctionCode(sourceParticipant.get(i).getFunctionCode(), targetParticipant.get(j).getFunctionCode());
+                //time
+                compareTime(sourceParticipant.get(i).getTime(), targetParticipant.get(j).getTime());
+                //associated Entity
+                associatedEntityComparison(sourceParticipant.get(i).getAssociatedEntity(), targetParticipant.get(j).getAssociatedEntity());
+                //nullFlavor
+                compareNullFlavor(sourceParticipant.get(i).getNullFlavor(), targetParticipant.get(j).getNullFlavor());
+                //typeCode
+                compareTypeCode(sourceParticipant.get(i).getTypeCode(), targetParticipant.get(j).getTypeCode());
+            }
+        }
         currentLocation.exit();
     }
 
     private void documentationOfsComparison(EList<DocumentationOf> sourceDocumentationOf, EList<DocumentationOf> targetDocumentationOf) {
         currentLocation.enter("DocumentationOfs");
-//        boolean errorExists = false;
-//        for (int i=0;i<sourceDocumentationOf.size();i++) {
-//            int targetMatches = 0;
-//            for (int j = 0; j < targetDocumentationOf.size(); j++) {
-//                boolean specificError = false;
-//                //realmCodes
-//                if (!compareRealmCodes(sourceDocumentationOf.get(i).getRealmCodes(), targetDocumentationOf.get(j).getRealmCodes())) {
-//                    specificError = true;
-//                }
-//                //compare TypeID
-//                if (!typeIDComparison(sourceDocumentationOf.get(i).getTypeId(), targetDocumentationOf.get(j).getTypeId())) {
-//                    specificError = true;
-//                }
-//                //compare templateID
-//                if (!compareTemplateID(sourceDocumentationOf.get(i).getTemplateIds(), targetDocumentationOf.get(j).getTemplateIds())) {
-//                    specificError = true;
-//                }
-//                //compare serviceEvent
-//                if (!serviceEventComparison(sourceDocumentationOf.get(i).getServiceEvent(), targetDocumentationOf.get(j).getServiceEvent())) {
-//                    specificError = true;
-//                }
-//                //compare NullFlavor
-//                if (!compareNullFlavor(sourceDocumentationOf.get(i).getNullFlavor(), targetDocumentationOf.get(j).getNullFlavor())) {
-//                    specificError = true;
-//                }
-//                //compare typeCode
-//                if (!compareTypeCode(sourceDocumentationOf.get(i).getTypeCode(), targetDocumentationOf.get(j).getTypeCode())){
-//                    specificError = true;
-//                }
-//
-//                if(!specificError) {
-//                    targetMatches++;
-//                }
-//
-//            }
-//            if (targetMatches == 0) {
-//                errorExists = true;
-////                comparisonReport.addMessage("DocumentationsOf Comparison Error source " + i + " in " + errorMessage + "\n");
-//            }  else if (targetMatches>1) {
-////                comparisonReport.addMessage("DocumentationsOf Comparison Warning source " + i + " in " + errorMessage + "\n");
-//            }
-//        }
-//        return !errorExists;
+        for (int i=0;i<sourceDocumentationOf.size();i++) {
+            for (int j = 0; j < targetDocumentationOf.size(); j++) {
+                //realmCodes
+                compareRealmCodes(sourceDocumentationOf.get(i).getRealmCodes(), targetDocumentationOf.get(j).getRealmCodes());
+                //compare TypeID
+                typeIDComparison(sourceDocumentationOf.get(i).getTypeId(), targetDocumentationOf.get(j).getTypeId());
+                //compare templateID
+                compareTemplateID(sourceDocumentationOf.get(i).getTemplateIds(), targetDocumentationOf.get(j).getTemplateIds());
+                //compare serviceEvent
+                serviceEventComparison(sourceDocumentationOf.get(i).getServiceEvent(), targetDocumentationOf.get(j).getServiceEvent());
+                //compare NullFlavor
+                compareNullFlavor(sourceDocumentationOf.get(i).getNullFlavor(), targetDocumentationOf.get(j).getNullFlavor());
+                //compare typeCode
+                compareTypeCode(sourceDocumentationOf.get(i).getTypeCode(), targetDocumentationOf.get(j).getTypeCode());
+            }
+        }
         currentLocation.exit();
     }
 
     private void organizationsComparison(EList<Organization> sourceOrganization, EList<Organization> targetOrganization)  {
         currentLocation.enter("Organizations");
-//        boolean errorExists = false;
-//        for (int i=0;i<sourceOrganization.size();i++) {
-//            int targetMatches = 0;
-//            for (int j = 0; j < targetOrganization.size(); j++) {
-//                boolean specificError = false;
-//                //compare RealmCodes
-//                if (!compareRealmCodes(sourceOrganization.get(i).getRealmCodes(), targetOrganization.get(j).getRealmCodes())) {
-//                    specificError = true;
-//                }
-//                //compare TypeID
-//                if (!typeIDComparison(sourceOrganization.get(i).getTypeId(), targetOrganization.get(j).getTypeId())) {
-//                    specificError = true;
-//                }
-//                //compare templateID
-//                if (!compareTemplateID(sourceOrganization.get(i).getTemplateIds(), targetOrganization.get(j).getTemplateIds())) {
-//                    specificError = true;
-//                }
-//                //compare IDs
-//                if (!compareIDs(sourceOrganization.get(i).getIds(), targetOrganization.get(j).getIds())) {
-//                    specificError = true;
-//                }
-//                //compare name
-//                if (!compareNamesON(sourceOrganization.get(i).getNames(),targetOrganization.get(j).getNames())) {
-//                    specificError = true;
-//                }
-//                //compare Telecom
-//                if (!compareTelcom(sourceOrganization.get(i).getTelecoms(),targetOrganization.get(j).getTelecoms())) {
-//                    specificError = true;
-//                }
-//                //compare Addr
-//                if (!compareAddr(sourceOrganization.get(i).getAddrs(),targetOrganization.get(j).getAddrs())) {
-//                    specificError = true;
-//                }
-//                //compare StandardIndustryClassCode
-//                if (!compareCode(sourceOrganization.get(i).getStandardIndustryClassCode(),targetOrganization.get(j).getStandardIndustryClassCode())) {
-//                    specificError = true;
-//                }
-//                //compare asOrganizationPartOf - OrganizationPartOf
-//                if (!organizationPartOfComparison(sourceOrganization.get(i).getAsOrganizationPartOf(),targetOrganization.get(j).getAsOrganizationPartOf())) {
-//                    specificError = true;
-//                }
-//                //compare NullFlavor
-//                if (!compareNullFlavor(sourceOrganization.get(i).getNullFlavor(), targetOrganization.get(j).getNullFlavor())) {
-//                    specificError = true;
-//                }
-//                //compare classCode
-//                if (!compareClassCode(sourceOrganization.get(i).getClassCode(), targetOrganization.get(j).getClassCode())) {
-//                    specificError = true;
-//                }
-//                //compare Determiner Code
-//                if (!compareDeterminerCode(sourceOrganization.get(i).getDeterminerCode(),targetOrganization.get(j).getDeterminerCode())) {
-//                    specificError = true;
-//                }
-//
-//                if (!specificError) {
-//                    targetMatches++;
-//                }
-//
-//            }
-//            if (targetMatches == 0) {
-//                errorExists = true;
-////                comparisonReport.addMessage("Organization Comparison Error source " + i + " in " + errorMessage + "\n");
-//            }  else if (targetMatches>1) {
-////                comparisonReport.addMessage("Organization Comparison Warning source " + i + " in " + errorMessage + "\n");
-//            }
-//        }
-//        return !errorExists;
+        for (int i=0;i<sourceOrganization.size();i++) {
+            for (int j = 0; j < targetOrganization.size(); j++) {
+                //compare RealmCodes
+                compareRealmCodes(sourceOrganization.get(i).getRealmCodes(), targetOrganization.get(j).getRealmCodes());
+                //compare TypeID
+                typeIDComparison(sourceOrganization.get(i).getTypeId(), targetOrganization.get(j).getTypeId());
+                //compare templateID
+                compareTemplateID(sourceOrganization.get(i).getTemplateIds(), targetOrganization.get(j).getTemplateIds());
+                //compare IDs
+                compareIDs(sourceOrganization.get(i).getIds(), targetOrganization.get(j).getIds());
+                //compare name
+                compareNamesON(sourceOrganization.get(i).getNames(),targetOrganization.get(j).getNames());
+                //compare Telecom
+                compareTelcom(sourceOrganization.get(i).getTelecoms(),targetOrganization.get(j).getTelecoms());
+                //compare Addr
+                compareAddr(sourceOrganization.get(i).getAddrs(),targetOrganization.get(j).getAddrs());
+                //compare StandardIndustryClassCode
+                compareCode(sourceOrganization.get(i).getStandardIndustryClassCode(),targetOrganization.get(j).getStandardIndustryClassCode());
+                //compare asOrganizationPartOf - OrganizationPartOf
+                organizationPartOfComparison(sourceOrganization.get(i).getAsOrganizationPartOf(),targetOrganization.get(j).getAsOrganizationPartOf());
+                //compare NullFlavor
+                compareNullFlavor(sourceOrganization.get(i).getNullFlavor(), targetOrganization.get(j).getNullFlavor());
+                //compare classCode
+                compareClassCode(sourceOrganization.get(i).getClassCode(), targetOrganization.get(j).getClassCode());
+                //compare Determiner Code
+                compareDeterminerCode(sourceOrganization.get(i).getDeterminerCode(),targetOrganization.get(j).getDeterminerCode());
+            }
+        }
         currentLocation.exit();
     }
 
     private void informationRecipientComparison(EList<InformationRecipient> sourceInformationRecipient, EList<InformationRecipient> targetInformationRecipient) {
         currentLocation.enter("Information Recipient");
-//        boolean errorExists = false;
-//        for (int i=0;i<sourceInformationRecipient.size();i++) {
-//            int targetMatches = 0;
-//            for (int j = 0; j < targetInformationRecipient.size(); j++) {
-//                boolean specificError = false;
-//                //compare RealmCodes
-//                if (!compareRealmCodes(sourceInformationRecipient.get(i).getRealmCodes(), targetInformationRecipient.get(j).getRealmCodes())) {
-//                    specificError = true;
-//                }
-//                //compare TypeID
-//                if (!typeIDComparison(sourceInformationRecipient.get(i).getTypeId(), targetInformationRecipient.get(j).getTypeId())) {
-//                    specificError = true;
-//                }
-//                //compare templateID
-//                if (!compareTemplateID(sourceInformationRecipient.get(i).getTemplateIds(), targetInformationRecipient.get(j).getTemplateIds())) {
-//                    specificError = true;
-//                }
-//                //compare Intended Recipient
-//                if (!intendedRecipientComparison(sourceInformationRecipient.get(i).getIntendedRecipient(), targetInformationRecipient.get(j).getIntendedRecipient())) {
-//                    specificError = true;
-//                }
-//                //compare NullFlavor
-//                if (!compareNullFlavor(sourceInformationRecipient.get(i).getNullFlavor(), targetInformationRecipient.get(j).getNullFlavor())) {
-//                    specificError = true;
-//                }
-//                //compare typeCode
-//                if (!compareTypeCode(sourceInformationRecipient.get(i).getTypeCode(), targetInformationRecipient.get(j).getTypeCode())) {
-//                    specificError = true;
-//                }
-//
-//                if (!specificError) {
-//                    targetMatches++;
-//                }
-//
-//            }
-//            if (targetMatches == 0) {
-//                errorExists = true;
-////                comparisonReport.addMessage("InformationRecipient Comparison Error source " + i + " in " + errorMessage + "\n");
-//            }  else if (targetMatches>1) {
-////                comparisonReport.addMessage("InformationRecipient Comparison Warning source " + i + " in " + errorMessage + "\n");
-//            }
-//        }
-//        return !errorExists;
+        for (int i=0;i<sourceInformationRecipient.size();i++) {
+            for (int j = 0; j < targetInformationRecipient.size(); j++) {
+                //compare RealmCodes
+                compareRealmCodes(sourceInformationRecipient.get(i).getRealmCodes(), targetInformationRecipient.get(j).getRealmCodes());
+                //compare TypeID
+                typeIDComparison(sourceInformationRecipient.get(i).getTypeId(), targetInformationRecipient.get(j).getTypeId());
+                //compare templateID
+                compareTemplateID(sourceInformationRecipient.get(i).getTemplateIds(), targetInformationRecipient.get(j).getTemplateIds());
+                //compare Intended Recipient
+                intendedRecipientComparison(sourceInformationRecipient.get(i).getIntendedRecipient(), targetInformationRecipient.get(j).getIntendedRecipient());
+                //compare NullFlavor
+                compareNullFlavor(sourceInformationRecipient.get(i).getNullFlavor(), targetInformationRecipient.get(j).getNullFlavor());
+                //compare typeCode
+                compareTypeCode(sourceInformationRecipient.get(i).getTypeCode(), targetInformationRecipient.get(j).getTypeCode());
+            }
+        }
         currentLocation.exit();
     }
 
     private void inFulfillmentOfComparison(EList<InFulfillmentOf> sourceInFulfillmentOf, EList<InFulfillmentOf> targetInFulfillmentOf) {
         currentLocation.enter("In Fulfillment Of");
-//        boolean errorExists = false;
-//        for (int i=0;i<sourceInFulfillmentOf.size();i++) {
-//            int targetMatches = 0;
-//            for (int j = 0; j < targetInFulfillmentOf.size(); j++) {
-//                boolean specificError = false;
-//                //compare RealmCodes
-//                if (!compareRealmCodes(sourceInFulfillmentOf.get(i).getRealmCodes(), targetInFulfillmentOf.get(j).getRealmCodes())) {
-//                    specificError = true;
-//                }
-//                //compare TypeID
-//                if (!typeIDComparison(sourceInFulfillmentOf.get(i).getTypeId(), targetInFulfillmentOf.get(j).getTypeId())) {
-//                    specificError = true;
-//                }
-//                //compare templateID
-//                if (!compareTemplateID(sourceInFulfillmentOf.get(i).getTemplateIds(), targetInFulfillmentOf.get(j).getTemplateIds())) {
-//                    specificError = true;
-//                }
-//                //compare Order
-//                if (!orderComparison(sourceInFulfillmentOf.get(i).getOrder(), targetInFulfillmentOf.get(j).getOrder())) {
-//                    specificError = true;
-//                }
-//                //compare NullFlavor
-//                if (!compareNullFlavor(sourceInFulfillmentOf.get(i).getNullFlavor(), targetInFulfillmentOf.get(j).getNullFlavor())) {
-//                    specificError = true;
-//                }
-//                //compare typeCode
-//                if (!compareTypeCode(sourceInFulfillmentOf.get(i).getTypeCode(), targetInFulfillmentOf.get(j).getTypeCode())) {
-//                    specificError = true;
-//                }
-//
-//                if (!specificError) {
-//                    targetMatches++;
-//                }
-//
-//            }
-//            if (targetMatches == 0) {
-//                errorExists = true;
-////                comparisonReport.addMessage("InFulfillmentOf Comparison Error source " + i + " in " + errorMessage + "\n");
-//            }  else if (targetMatches>1) {
-////                comparisonReport.addMessage("InFulfillmentOf Comparison Warning source " + i + " in " + errorMessage + "\n");
-//            }
-//        }
-//        return !errorExists;
+        for (int i=0;i<sourceInFulfillmentOf.size();i++) {
+            for (int j = 0; j < targetInFulfillmentOf.size(); j++) {
+                //compare RealmCodes
+                compareRealmCodes(sourceInFulfillmentOf.get(i).getRealmCodes(), targetInFulfillmentOf.get(j).getRealmCodes());
+                //compare TypeID
+                typeIDComparison(sourceInFulfillmentOf.get(i).getTypeId(), targetInFulfillmentOf.get(j).getTypeId());
+                //compare templateID
+                compareTemplateID(sourceInFulfillmentOf.get(i).getTemplateIds(), targetInFulfillmentOf.get(j).getTemplateIds());
+                //compare Order
+                orderComparison(sourceInFulfillmentOf.get(i).getOrder(), targetInFulfillmentOf.get(j).getOrder());
+                //compare NullFlavor
+                compareNullFlavor(sourceInFulfillmentOf.get(i).getNullFlavor(), targetInFulfillmentOf.get(j).getNullFlavor());
+                //compare typeCode
+                compareTypeCode(sourceInFulfillmentOf.get(i).getTypeCode(), targetInFulfillmentOf.get(j).getTypeCode());
+            }
+        }
         currentLocation.exit();
     }
 
     private void relatedDocumentsComparison(EList<RelatedDocument> sourceRelatedDocument, EList<RelatedDocument> targetRelatedDocument) {
         currentLocation.enter("Related Documents");
-//        boolean errorExists = false;
-//        for (int i=0;i<sourceRelatedDocument.size();i++) {
-//            int targetMatches = 0;
-//            for (int j = 0; j < targetRelatedDocument.size(); j++) {
-//                boolean specificError = false;
-//                //compare RealmCodes
-//                if (compareRealmCodes(sourceRelatedDocument.get(i).getRealmCodes(), targetRelatedDocument.get(j).getRealmCodes())) {
-//                    specificError = true;
-//                }
-//                //compare TypeID
-//                if (!typeIDComparison(sourceRelatedDocument.get(i).getTypeId(), targetRelatedDocument.get(j).getTypeId())) {
-//                    specificError = true;
-//                }
-//                //compare templateID
-//                if (!compareTemplateID(sourceRelatedDocument.get(i).getTemplateIds(), targetRelatedDocument.get(j).getTemplateIds())) {
-//                    specificError = true;
-//                }
-//                //compare Order
-//                if (!parentDocumentComparison(sourceRelatedDocument.get(i).getParentDocument(), targetRelatedDocument.get(j).getParentDocument())) {
-//                    specificError = true;
-//                }
-//                //compare NullFlavor
-//                if (!compareNullFlavor(sourceRelatedDocument.get(i).getNullFlavor(), targetRelatedDocument.get(j).getNullFlavor())) {
-//                    specificError = true;
-//                }
-//                //compare typeCode
-//                if (!compareTypeCode(sourceRelatedDocument.get(i).getTypeCode(), targetRelatedDocument.get(j).getTypeCode())) {
-//                    specificError = true;
-//                }
-//
-//
-//                if (!specificError){
-//                    targetMatches++;
-//                }
-//
-//            }
-//            if (targetMatches == 0) {
-//                errorExists = true;
-////                comparisonReport.addMessage("Related Documents Comparison Error source " + i + " in " + errorMessage + "\n");
-//            }  else if (targetMatches>1) {
-////                comparisonReport.addMessage("Related Documents Comparison Warning source " + i + " in " + errorMessage + "\n");
-//            }
-//        }
-//        return !errorExists;
+        for (int i=0;i<sourceRelatedDocument.size();i++) {
+            for (int j = 0; j < targetRelatedDocument.size(); j++) {
+                //compare RealmCodes
+                compareRealmCodes(sourceRelatedDocument.get(i).getRealmCodes(), targetRelatedDocument.get(j).getRealmCodes());
+                //compare TypeID
+                typeIDComparison(sourceRelatedDocument.get(i).getTypeId(), targetRelatedDocument.get(j).getTypeId());
+                //compare templateID
+                compareTemplateID(sourceRelatedDocument.get(i).getTemplateIds(), targetRelatedDocument.get(j).getTemplateIds());
+                //compare Order
+                parentDocumentComparison(sourceRelatedDocument.get(i).getParentDocument(), targetRelatedDocument.get(j).getParentDocument());
+                //compare NullFlavor
+                compareNullFlavor(sourceRelatedDocument.get(i).getNullFlavor(), targetRelatedDocument.get(j).getNullFlavor());
+                //compare typeCode
+                compareTypeCode(sourceRelatedDocument.get(i).getTypeCode(), targetRelatedDocument.get(j).getTypeCode());
+            }
+        }
         currentLocation.exit();
     }
 
     private void authorizationsComparison(EList<Authorization> sourceAuthorizations, EList<Authorization> targetAuthorizations) {
         currentLocation.enter("Authorizations");
-//        boolean errorExists = false;
-//        for (int i=0;i<sourceAuthorizations.size();i++) {
-//            int targetMatches = 0;
-//            for (int j = 0; j < targetAuthorizations.size(); j++) {
-//                boolean specificError = false;
-//                //compare RealmCodes
-//                if (!compareRealmCodes(sourceAuthorizations.get(i).getRealmCodes(), targetAuthorizations.get(j).getRealmCodes())) {
-//                    specificError = true;
-//                }
-//                //compare TypeID
-//                if (!typeIDComparison(sourceAuthorizations.get(i).getTypeId(), targetAuthorizations.get(j).getTypeId())) {
-//                    specificError = true;
-//                }
-//                //compare templateID
-//                if (!compareTemplateID(sourceAuthorizations.get(i).getTemplateIds(), targetAuthorizations.get(j).getTemplateIds())) {
-//                    specificError = true;
-//                }
-//                //compare Consent
-//                if (!consentComparison(sourceAuthorizations.get(i).getConsent(), targetAuthorizations.get(j).getConsent())) {
-//                    specificError = true;
-//                }
-//                //compare NullFlavor
-//                if (!compareNullFlavor(sourceAuthorizations.get(i).getNullFlavor(), targetAuthorizations.get(j).getNullFlavor())) {
-//                    specificError = true;
-//                }
-//                //compare typeCode
-//                if (!compareTypeCode(sourceAuthorizations.get(i).getTypeCode(), targetAuthorizations.get(j).getTypeCode())) {
-//                    specificError = true;
-//                }
-//
-//                if (!specificError){
-//                    targetMatches++;
-//                }
-//
-//            }
-//            if (targetMatches == 0) {
-//                errorExists = true;
-////                comparisonReport.addMessage("Authorizations Comparison Error source " + i + " in " + errorMessage + "\n");
-//            }  else if (targetMatches>1) {
-////                comparisonReport.addMessage("Authorizations Comparison Warning source " + i + " in " + errorMessage + "\n");
-//            }
-//        }
-//        return !errorExists;
+        for (int i=0;i<sourceAuthorizations.size();i++) {
+            for (int j = 0; j < targetAuthorizations.size(); j++) {
+                //compare RealmCodes
+                compareRealmCodes(sourceAuthorizations.get(i).getRealmCodes(), targetAuthorizations.get(j).getRealmCodes());
+                //compare TypeID
+                typeIDComparison(sourceAuthorizations.get(i).getTypeId(), targetAuthorizations.get(j).getTypeId());
+                //compare templateID
+                compareTemplateID(sourceAuthorizations.get(i).getTemplateIds(), targetAuthorizations.get(j).getTemplateIds());
+                //compare Consent
+                consentComparison(sourceAuthorizations.get(i).getConsent(), targetAuthorizations.get(j).getConsent());
+                //compare NullFlavor
+                compareNullFlavor(sourceAuthorizations.get(i).getNullFlavor(), targetAuthorizations.get(j).getNullFlavor());
+                //compare typeCode
+                compareTypeCode(sourceAuthorizations.get(i).getTypeCode(), targetAuthorizations.get(j).getTypeCode());
+            }
+        }
         currentLocation.exit();
     }
 
@@ -1133,69 +849,32 @@ public class MDHTPreCompareService extends PreCompareService {
 
     private void guardiansComparison(EList<Guardian> sourceGuardian, EList<Guardian> targetGuardian) {
         currentLocation.enter("Guardians");
-//        boolean errorExists = false;
-//        for (int i=0;i<sourceGuardian.size();i++) {
-//            int targetMatches = 0;
-//            for (int j = 0; j < targetGuardian.size(); j++) {
-//                boolean specificError = false;
-//                //compare RealmCodes
-//                if (!compareRealmCodes(sourceGuardian.get(i).getRealmCodes(), targetGuardian.get(j).getRealmCodes())) {
-//                    specificError = true;
-//                }
-//                //compare TypeID
-//                if (!typeIDComparison(sourceGuardian.get(i).getTypeId(), targetGuardian.get(j).getTypeId())) {
-//                    specificError = true;
-//                }
-//                //compare templateID
-//                if (!compareTemplateID(sourceGuardian.get(i).getTemplateIds(), targetGuardian.get(j).getTemplateIds())) {
-//                    specificError = true;
-//                }
-//                //compare IDs
-//                if (!compareIDs(sourceGuardian.get(i).getIds(), targetGuardian.get(j).getIds())) {
-//                    specificError = true;
-//                }
-//                //compare code
-//                if (!compareCode(sourceGuardian.get(i).getCode(),targetGuardian.get(j).getCode())) {
-//                    specificError = true;
-//                }
-//                //compare Telecom
-//                if (!compareTelcom(sourceGuardian.get(i).getTelecoms(),targetGuardian.get(j).getTelecoms())) {
-//                    specificError = true;
-//                }
-//                //compare Addr
-//                if (!compareAddr(sourceGuardian.get(i).getAddrs(),targetGuardian.get(j).getAddrs())) {
-//                    specificError = true;
-//                }
-//                //choice - guardianPerson (Person) and guardianOrganization (Organization)
-//                if (!(sourceGuardian.get(i).getGuardianPerson() == null && targetGuardian.get(j).getGuardianPerson() == null
-//                        && sourceGuardian.get(i).getGuardianOrganization() == null && targetGuardian.get(j).getGuardianOrganization() == null)) {
-//                    if (!((personComparison(sourceGuardian.get(i).getGuardianPerson(), targetGuardian.get(j).getGuardianPerson()) && sourceGuardian.get(i).getGuardianPerson() != null)
-//                            || (organizationComparison(sourceGuardian.get(i).getGuardianOrganization(), targetGuardian.get(j).getGuardianOrganization()) && sourceGuardian.get(i).getGuardianOrganization() != null))) {
-//                        specificError = true;
-//                    }
-//                }
-//                //compare NullFlavor
-//                if (!compareNullFlavor(sourceGuardian.get(i).getNullFlavor(), targetGuardian.get(j).getNullFlavor())) {
-//                    specificError = true;
-//                }
-//                //compare classCode
-//                if (!compareClassCode(sourceGuardian.get(i).getClassCode(), targetGuardian.get(j).getClassCode())) {
-//                    specificError = true;
-//                }
-//
-//                if (!specificError){
-//                    targetMatches++;
-//                }
-//
-//            }
-//            if (targetMatches == 0) {
-//                errorExists = true;
-////                comparisonReport.addMessage("Guardians Comparison Error source " + i + " in " + errorMessage + "\n");
-//            }  else if (targetMatches>1) {
-////                comparisonReport.addMessage("Guardians Comparison Warning source " + i + " in " + errorMessage + "\n");
-//            }
-//        }
-//        return !errorExists;
+        for (int i=0;i<sourceGuardian.size();i++) {
+            for (int j = 0; j < targetGuardian.size(); j++) {
+                //compare RealmCodes
+                compareRealmCodes(sourceGuardian.get(i).getRealmCodes(), targetGuardian.get(j).getRealmCodes());
+                //compare TypeID
+                typeIDComparison(sourceGuardian.get(i).getTypeId(), targetGuardian.get(j).getTypeId());
+                //compare templateID
+                compareTemplateID(sourceGuardian.get(i).getTemplateIds(), targetGuardian.get(j).getTemplateIds());
+                //compare IDs
+                compareIDs(sourceGuardian.get(i).getIds(), targetGuardian.get(j).getIds());
+                //compare code
+                compareCode(sourceGuardian.get(i).getCode(),targetGuardian.get(j).getCode());
+                //compare Telecom
+                compareTelcom(sourceGuardian.get(i).getTelecoms(),targetGuardian.get(j).getTelecoms());
+                //compare Addr
+                compareAddr(sourceGuardian.get(i).getAddrs(),targetGuardian.get(j).getAddrs());
+                //choice - guardianPerson (Person) and guardianOrganization (Organization)
+                personComparison(sourceGuardian.get(i).getGuardianPerson(), targetGuardian.get(j).getGuardianPerson());
+                //choice - guardianOrganization (Organization)
+                organizationComparison(sourceGuardian.get(i).getGuardianOrganization(), targetGuardian.get(j).getGuardianOrganization());
+                //compare NullFlavor
+                compareNullFlavor(sourceGuardian.get(i).getNullFlavor(), targetGuardian.get(j).getNullFlavor());
+                //compare classCode
+                compareClassCode(sourceGuardian.get(i).getClassCode(), targetGuardian.get(j).getClassCode());
+            }
+        }
         currentLocation.exit();
     }
 
@@ -1220,54 +899,25 @@ public class MDHTPreCompareService extends PreCompareService {
 
     private void languageCommunicationsComparison(EList<LanguageCommunication> sourceLanguageCommmunication, EList<LanguageCommunication> targetLanguageCommunication) {
         currentLocation.enter("Language Communications");
-//        boolean errorExists = false;
-//        for (int i=0;i<sourceLanguageCommmunication.size();i++) {
-//            int targetMatches = 0;
-//            for (int j = 0; j < targetLanguageCommunication.size(); j++) {
-//                boolean specificError = false;
-//                //compare RealmCodes
-//                if (!compareRealmCodes(sourceLanguageCommmunication.get(i).getRealmCodes(), targetLanguageCommunication.get(j).getRealmCodes())) {
-//                    specificError = true;
-//                }
-//                //compare TypeID
-//                if (!typeIDComparison(sourceLanguageCommmunication.get(i).getTypeId(), targetLanguageCommunication.get(j).getTypeId())) {
-//                    specificError = true;
-//                }
-//                //compare language code
-//                if (!compareLanguageCode(sourceLanguageCommmunication.get(i).getLanguageCode(), targetLanguageCommunication.get(j).getLanguageCode())) {
-//                    specificError = true;
-//                }
-//                //compare Moode Code
-//                if (!compareCode(sourceLanguageCommmunication.get(i).getModeCode(), targetLanguageCommunication.get(j).getModeCode())) {
-//                    specificError = true;
-//                }
-//                //compare Proficiency Level Code
-//                if (!compareCode(sourceLanguageCommmunication.get(i).getProficiencyLevelCode(),targetLanguageCommunication.get(j).getProficiencyLevelCode())) {
-//                    specificError = true;
-//                }
-//                //compare PreferenceInd
-//                if (!comparePreferenceInd(sourceLanguageCommmunication.get(i).getPreferenceInd(),targetLanguageCommunication.get(j).getPreferenceInd())) {
-//                    specificError = true;
-//                }
-//                //compare NullFlavor
-//                if (!compareNullFlavor(sourceLanguageCommmunication.get(i).getNullFlavor(), targetLanguageCommunication.get(j).getNullFlavor())) {
-//                    specificError = true;
-//                }
-//
-//
-//                if (!specificError){
-//                    targetMatches++;
-//                }
-//
-//            }
-//            if (targetMatches == 0) {
-//                errorExists = true;
-////                comparisonReport.addMessage("Language Communications Comparison Error source " + i + " in " + errorMessage + "\n");
-//            }  else if (targetMatches>1) {
-////                comparisonReport.addMessage("Language Communications Comparison Warning source " + i + " in " + errorMessage + "\n");
-//            }
-//        }
-//        return !errorExists;
+        for (int i=0;i<sourceLanguageCommmunication.size();i++) {
+            for (int j = 0; j < targetLanguageCommunication.size(); j++) {
+                //compare RealmCodes
+                compareRealmCodes(sourceLanguageCommmunication.get(i).getRealmCodes(), targetLanguageCommunication.get(j).getRealmCodes());
+                //compare TypeID
+                typeIDComparison(sourceLanguageCommmunication.get(i).getTypeId(), targetLanguageCommunication.get(j).getTypeId());
+                //compare language code
+                compareLanguageCode(sourceLanguageCommmunication.get(i).getLanguageCode(), targetLanguageCommunication.get(j).getLanguageCode());
+                //compare Moode Code
+                compareCode(sourceLanguageCommmunication.get(i).getModeCode(), targetLanguageCommunication.get(j).getModeCode());
+                //compare Proficiency Level Code
+                compareCode(sourceLanguageCommmunication.get(i).getProficiencyLevelCode(),targetLanguageCommunication.get(j).getProficiencyLevelCode());
+                //compare PreferenceInd
+                comparePreferenceInd(sourceLanguageCommmunication.get(i).getPreferenceInd(),targetLanguageCommunication.get(j).getPreferenceInd());
+                //compare NullFlavor
+                compareNullFlavor(sourceLanguageCommmunication.get(i).getNullFlavor(), targetLanguageCommunication.get(j).getNullFlavor());
+            }
+
+        }
         currentLocation.exit();
     }
 
@@ -1300,169 +950,73 @@ public class MDHTPreCompareService extends PreCompareService {
 
     private void performersComparison(EList<Performer1> sourcePerformer1, EList<Performer1> targetPerformer1) {
         currentLocation.enter("Performers");
-//        boolean errorExists = false;
-//        for (int i=0;i<sourcePerformer1.size();i++) {
-//            int targetMatches = 0;
-//            for (int j = 0; j < targetPerformer1.size(); j++) {
-//                boolean specificError = false;
-//                //compare RealmCodes
-//                if (!compareRealmCodes(sourcePerformer1.get(i).getRealmCodes(), targetPerformer1.get(j).getRealmCodes())) {
-//                    specificError = true;
-//                }
-//                //compare TypeID
-//                if (!typeIDComparison(sourcePerformer1.get(i).getTypeId(), targetPerformer1.get(j).getTypeId())) {
-//                    specificError = true;
-//                }
-//                //compare Template ID
-//                if (!compareTemplateID(sourcePerformer1.get(i).getTemplateIds(), targetPerformer1.get(j).getTemplateIds())) {
-//                    specificError = true;
-//                }
-//                //compare FunctionCode
-//                if (!compareCode(sourcePerformer1.get(i).getFunctionCode(), targetPerformer1.get(j).getFunctionCode())) {
-//                    specificError = true;
-//                }
-//                //compare Time
-//                if (!compareTime(sourcePerformer1.get(i).getTime(),targetPerformer1.get(j).getTime())) {
-//                    specificError = true;
-//                }
-//                //compare AssignedEntity
-//                if (!assignedEntityComparison(sourcePerformer1.get(i).getAssignedEntity(),targetPerformer1.get(j).getAssignedEntity())) {
-//                    specificError = true;
-//                }
-//                //typeCode
-//                if (!compareTypeCode(sourcePerformer1.get(i).getTypeCode(),targetPerformer1.get(j).getTypeCode())) {
-//                    specificError = true;
-//                }
-//                //compare NullFlavor
-//                if (!compareNullFlavor(sourcePerformer1.get(i).getNullFlavor(), targetPerformer1.get(j).getNullFlavor())) {
-//                    specificError = true;
-//                }
-//
-//
-//                if (!specificError){
-//                    targetMatches++;
-//                }
-//
-//            }
-//            if (targetMatches == 0) {
-//                errorExists = true;
-////                comparisonReport.addMessage("Performers Comparison Error source " + i + " in " + errorMessage + "\n");
-//            }  else if (targetMatches>1) {
-////                comparisonReport.addMessage("Performers Comparison Warning source " + i + " in " + errorMessage + "\n");
-//            }
-//        }
-//        return !errorExists;
+        for (int i=0;i<sourcePerformer1.size();i++) {
+            for (int j = 0; j < targetPerformer1.size(); j++) {
+                //compare RealmCodes
+                compareRealmCodes(sourcePerformer1.get(i).getRealmCodes(), targetPerformer1.get(j).getRealmCodes());
+                //compare TypeID
+                typeIDComparison(sourcePerformer1.get(i).getTypeId(), targetPerformer1.get(j).getTypeId());
+                //compare Template ID
+                compareTemplateID(sourcePerformer1.get(i).getTemplateIds(), targetPerformer1.get(j).getTemplateIds());
+                //compare FunctionCode
+                compareCode(sourcePerformer1.get(i).getFunctionCode(), targetPerformer1.get(j).getFunctionCode());
+                //compare Time
+                compareTime(sourcePerformer1.get(i).getTime(),targetPerformer1.get(j).getTime());
+                //compare AssignedEntity
+                assignedEntityComparison(sourcePerformer1.get(i).getAssignedEntity(),targetPerformer1.get(j).getAssignedEntity());
+                //typeCode
+                compareTypeCode(sourcePerformer1.get(i).getTypeCode(),targetPerformer1.get(j).getTypeCode());
+                //compare NullFlavor
+                compareNullFlavor(sourcePerformer1.get(i).getNullFlavor(), targetPerformer1.get(j).getNullFlavor());
+            }
+        }
         currentLocation.exit();
     }
 
     private void authenticatorComparison(EList<Authenticator> sourceAuthenticator, EList<Authenticator> targetAuthenticator) {
         currentLocation.enter("Authenticator");
-//        boolean errorExists = false;
-//        for (int i=0;i<sourceAuthenticator.size();i++) {
-//            int targetMatches = 0;
-//            for (int j = 0; j < targetAuthenticator.size(); j++) {
-//                boolean specificError = false;
-//                //compare RealmCodes
-//                if (!compareRealmCodes(sourceAuthenticator.get(i).getRealmCodes(), targetAuthenticator.get(j).getRealmCodes())) {
-//                    specificError = true;
-//                }
-//                //compare TypeID
-//                if (!typeIDComparison(sourceAuthenticator.get(i).getTypeId(), targetAuthenticator.get(j).getTypeId())) {
-//                    specificError = true;
-//                }
-//                //compare TemplateIDs
-//                if (!compareTemplateID(sourceAuthenticator.get(i).getTemplateIds(), targetAuthenticator.get(j).getTemplateIds())) {
-//                    specificError = true;
-//                }
-//                //compare Time
-//                if (!compareTime(sourceAuthenticator.get(i).getTime(), targetAuthenticator.get(j).getTime())) {
-//                    specificError = true;
-//                }
-//                //compare Signature Code
-//                if (!compareCode(sourceAuthenticator.get(i).getSignatureCode(),targetAuthenticator.get(j).getSignatureCode())) {
-//                    specificError = true;
-//                }
-//                //compare Assigned Entity
-//                if (!assignedEntityComparison(sourceAuthenticator.get(i).getAssignedEntity(),targetAuthenticator.get(j).getAssignedEntity())) {
-//                    specificError = true;
-//                }
-//                //compare Type Code
-//                if (!compareTypeCode(sourceAuthenticator.get(i).getTypeCode(),targetAuthenticator.get(j).getTypeCode())) {
-//                    specificError = true;
-//                }
-//                //compare NullFlavor
-//                if (!compareNullFlavor(sourceAuthenticator.get(i).getNullFlavor(), targetAuthenticator.get(j).getNullFlavor())) {
-//                    specificError = true;
-//                }
-//
-//
-//                if (!specificError){
-//                    targetMatches++;
-//                }
-//
-//            }
-//            if (targetMatches == 0) {
-//                errorExists = true;
-////                comparisonReport.addMessage("Authenticator Comparison Error source " + i + " in " + errorMessage + "\n");
-//            }  else if (targetMatches>1) {
-////                comparisonReport.addMessage("Authenticator Comparison Warning source " + i + " in " + errorMessage + "\n");
-//            }
-//        }
-//        return !errorExists;
+        for (int i=0;i<sourceAuthenticator.size();i++) {
+            for (int j = 0; j < targetAuthenticator.size(); j++) {
+                //compare RealmCodes
+                compareRealmCodes(sourceAuthenticator.get(i).getRealmCodes(), targetAuthenticator.get(j).getRealmCodes());
+                //compare TypeID
+                typeIDComparison(sourceAuthenticator.get(i).getTypeId(), targetAuthenticator.get(j).getTypeId());
+                //compare TemplateIDs
+                compareTemplateID(sourceAuthenticator.get(i).getTemplateIds(), targetAuthenticator.get(j).getTemplateIds());
+                //compare Time
+                compareTime(sourceAuthenticator.get(i).getTime(), targetAuthenticator.get(j).getTime());
+                //compare Signature Code
+                compareCode(sourceAuthenticator.get(i).getSignatureCode(),targetAuthenticator.get(j).getSignatureCode());
+                //compare Assigned Entity
+                assignedEntityComparison(sourceAuthenticator.get(i).getAssignedEntity(),targetAuthenticator.get(j).getAssignedEntity());
+                //compare Type Code
+                compareTypeCode(sourceAuthenticator.get(i).getTypeCode(),targetAuthenticator.get(j).getTypeCode());
+                //compare NullFlavor
+                compareNullFlavor(sourceAuthenticator.get(i).getNullFlavor(), targetAuthenticator.get(j).getNullFlavor());        }
+        }
         currentLocation.exit();
     }
 
     private void component3Comparison(EList<Component3> sourceComponent3, EList<Component3> targetComponent3) {
         currentLocation.enter("Component3");
-//        boolean errorExists = false;
-//        for (int i=0;i<sourceComponent3.size();i++) {
-//            int targetMatches = 0;
-//            for (int j = 0; j < targetComponent3.size(); j++) {
-//                boolean specificError = false;
-//                //compare RealmCodes
-//                if (!compareRealmCodes(sourceComponent3.get(i).getRealmCodes(), targetComponent3.get(j).getRealmCodes())) {
-//                    specificError = true;
-//                }
-//                //compare TypeID
-//                if (!typeIDComparison(sourceComponent3.get(i).getTypeId(), targetComponent3.get(j).getTypeId())) {
-//                    specificError = true;
-//                }
-//                //compare TemplateIDs
-//                if (!compareTemplateID(sourceComponent3.get(i).getTemplateIds(), targetComponent3.get(j).getTemplateIds())) {
-//                    specificError = true;
-//                }
-//                //compare Section
-//                if (!sectionComparison(sourceComponent3.get(i).getSection(), targetComponent3.get(j).getSection())) {
-//                    specificError = true;
-//                }
-//                //compare contextConductionInd
-//                if (sourceComponent3.get(i).getContextConductionInd() != targetComponent3.get(j).getContextConductionInd()) {
-//                    errorExists = true;
-////                    comparisonReport.addMessage("Context Conduction Ind in " + errorMessage + " -> Context Conduction Ind\n");
-//                }
-//                //compare Type Code
-//                if (!compareTypeCode(sourceComponent3.get(i).getTypeCode(),targetComponent3.get(j).getTypeCode())) {
-//                    specificError = true;
-//                }
-//                //compare NullFlavor
-//                if (!compareNullFlavor(sourceComponent3.get(i).getNullFlavor(), targetComponent3.get(j).getNullFlavor())) {
-//                    specificError = true;
-//                }
-//
-//
-//                if (!specificError){
-//                    targetMatches++;
-//                }
-//
-//            }
-//            if (targetMatches == 0) {
-//                errorExists = true;
-////                comparisonReport.addMessage("Component3 Comparison Error source " + i + " in " + errorMessage + "\n");
-//            }  else if (targetMatches>1) {
-////                comparisonReport.addMessage("Component3 Comparison Warning source " + i + " in " + errorMessage + "\n");
-//            }
-//        }
-//        return !errorExists;
+        for (int i=0;i<sourceComponent3.size();i++) {
+            for (int j = 0; j < targetComponent3.size(); j++) {
+                //compare RealmCodes
+                compareRealmCodes(sourceComponent3.get(i).getRealmCodes(), targetComponent3.get(j).getRealmCodes());
+                //compare TypeID
+                typeIDComparison(sourceComponent3.get(i).getTypeId(), targetComponent3.get(j).getTypeId());
+                //compare TemplateIDs
+                compareTemplateID(sourceComponent3.get(i).getTemplateIds(), targetComponent3.get(j).getTemplateIds());
+                //compare Section
+                sectionComparison(sourceComponent3.get(i).getSection(), targetComponent3.get(j).getSection());
+                //compare contextConductionInd
+                compareContextConductionInd(sourceComponent3.get(i).getContextConductionInd(),targetComponent3.get(j).getContextConductionInd());
+                //compare Type Code
+                compareTypeCode(sourceComponent3.get(i).getTypeCode(),targetComponent3.get(j).getTypeCode());
+                //compare NullFlavor
+                compareNullFlavor(sourceComponent3.get(i).getNullFlavor(), targetComponent3.get(j).getNullFlavor());
+            }
+        }
         currentLocation.exit();
     }
 
@@ -1496,54 +1050,23 @@ public class MDHTPreCompareService extends PreCompareService {
 
     private void maintainedEntityComparison(EList<MaintainedEntity> sourceMaintainedEntity, EList<MaintainedEntity> targetMaintainedEntity) {
         currentLocation.enter("Maintained Entity");
-//        boolean errorExists = false;
-//        for (int i=0;i<sourceMaintainedEntity.size();i++) {
-//            int targetMatches = 0;
-//            for (int j = 0; j < targetMaintainedEntity.size(); j++) {
-//                boolean specificError = false;
-//                //compare RealmCodes
-//                if (!compareRealmCodes(sourceMaintainedEntity.get(i).getRealmCodes(), targetMaintainedEntity.get(j).getRealmCodes())) {
-//                    specificError = true;
-//                }
-//                //compare TypeID
-//                if (!typeIDComparison(sourceMaintainedEntity.get(i).getTypeId(), targetMaintainedEntity.get(j).getTypeId())) {
-//                    specificError = true;
-//                }
-//                //compare TemplateIDs
-//                if (!compareTemplateID(sourceMaintainedEntity.get(i).getTemplateIds(), targetMaintainedEntity.get(j).getTemplateIds())) {
-//                    specificError = true;
-//                }
-//                //compare EffectiveTime
-//                if (!compareEffectiveTime(sourceMaintainedEntity.get(i).getEffectiveTime(), targetMaintainedEntity.get(j).getEffectiveTime())) {
-//                    specificError = true;
-//                }
-//                //compare Maintaining Person
-//                if (!personComparison(sourceMaintainedEntity.get(i).getMaintainingPerson(),targetMaintainedEntity.get(j).getMaintainingPerson())) {
-//                    specificError = true;
-//                }
-//                //compare Class Code
-//                if (!compareClassCode(sourceMaintainedEntity.get(i).getClassCode(),targetMaintainedEntity.get(j).getClassCode())) {
-//                    specificError = true;
-//                }
-//                //compare NullFlavor
-//                if (!compareNullFlavor(sourceMaintainedEntity.get(i).getNullFlavor(), targetMaintainedEntity.get(j).getNullFlavor())) {
-//                    specificError = true;
-//                }
-//
-//
-//                if (!specificError){
-//                    targetMatches++;
-//                }
-//
-//            }
-//            if (targetMatches == 0) {
-//                errorExists = true;
-////                comparisonReport.addMessage("MaintainedEntity Comparison Error source " + i + " in " + errorMessage + "\n");
-//            }  else if (targetMatches>1) {
-////                comparisonReport.addMessage("MaintainedEntity Comparison Warning source " + i + " in " + errorMessage + "\n");
-//            }
-//        }
-//        return !errorExists;
+        for (int i=0;i<sourceMaintainedEntity.size();i++) {
+            for (int j = 0; j < targetMaintainedEntity.size(); j++) {
+                //compare RealmCodes
+                compareRealmCodes(sourceMaintainedEntity.get(i).getRealmCodes(), targetMaintainedEntity.get(j).getRealmCodes());
+                //compare TypeID
+                typeIDComparison(sourceMaintainedEntity.get(i).getTypeId(), targetMaintainedEntity.get(j).getTypeId());
+                //compare TemplateIDs
+                compareTemplateID(sourceMaintainedEntity.get(i).getTemplateIds(), targetMaintainedEntity.get(j).getTemplateIds());
+                //compare EffectiveTime
+                compareEffectiveTime(sourceMaintainedEntity.get(i).getEffectiveTime(), targetMaintainedEntity.get(j).getEffectiveTime());
+                //compare Maintaining Person
+                personComparison(sourceMaintainedEntity.get(i).getMaintainingPerson(),targetMaintainedEntity.get(j).getMaintainingPerson());
+                //compare Class Code
+                compareClassCode(sourceMaintainedEntity.get(i).getClassCode(),targetMaintainedEntity.get(j).getClassCode());
+                //compare NullFlavor
+                compareNullFlavor(sourceMaintainedEntity.get(i).getNullFlavor(), targetMaintainedEntity.get(j).getNullFlavor());        }
+        }
         currentLocation.exit();
     }
 
@@ -1771,54 +1294,23 @@ public class MDHTPreCompareService extends PreCompareService {
 
     private void encounterParticipantComparison(EList<EncounterParticipant> sourceEncounterParticipant, EList<EncounterParticipant> targetEncounterParticipant) {
         currentLocation.enter("Encounter Participant");
-//        boolean errorExists = false;
-//        for (int i=0;i<sourceEncounterParticipant.size();i++) {
-//            int targetMatches = 0;
-//            for (int j = 0; j < targetEncounterParticipant.size(); j++) {
-//                boolean specificError = false;
-//                //compare RealmCodes
-//                if (!compareRealmCodes(sourceEncounterParticipant.get(i).getRealmCodes(), targetEncounterParticipant.get(j).getRealmCodes())) {
-//                    specificError = true;
-//                }
-//                //compare TypeID
-//                if (!typeIDComparison(sourceEncounterParticipant.get(i).getTypeId(), targetEncounterParticipant.get(j).getTypeId())) {
-//                    specificError = true;
-//                }
-//                //compare TemplateIDs
-//                if (!compareTemplateID(sourceEncounterParticipant.get(i).getTemplateIds(), targetEncounterParticipant.get(j).getTemplateIds())) {
-//                    specificError = true;
-//                }
-//                //compare Time
-//                if (!compareEffectiveTime(sourceEncounterParticipant.get(i).getTime(), targetEncounterParticipant.get(j).getTime())) {
-//                    specificError = true;
-//                }
-//                //compare assignedEntity
-//                if (!assignedEntityComparison(sourceEncounterParticipant.get(i).getAssignedEntity(),targetEncounterParticipant.get(j).getAssignedEntity())) {
-//                    specificError = true;
-//                }
-//                //compare Type Code
-//                if (!compareTypeCode(sourceEncounterParticipant.get(i).getTypeCode(),targetEncounterParticipant.get(j).getTypeCode())) {
-//                    specificError = true;
-//                }
-//                //compare NullFlavor
-//                if (!compareNullFlavor(sourceEncounterParticipant.get(i).getNullFlavor(), targetEncounterParticipant.get(j).getNullFlavor())) {
-//                    specificError = true;
-//                }
-//
-//
-//                if (!specificError){
-//                    targetMatches++;
-//                }
-//
-//            }
-//            if (targetMatches == 0) {
-//                errorExists = true;
-////                comparisonReport.addMessage("encounterParticipant Comparison Error source " + i + " in " + errorMessage + "\n");
-//            }  else if (targetMatches>1) {
-////                comparisonReport.addMessage("encounterParticipant Comparison Warning source " + i + " in " + errorMessage + "\n");
-//            }
-//        }
-//        return !errorExists;
+        for (int i=0;i<sourceEncounterParticipant.size();i++) {
+            for (int j = 0; j < targetEncounterParticipant.size(); j++) {
+                //compare RealmCodes
+                compareRealmCodes(sourceEncounterParticipant.get(i).getRealmCodes(), targetEncounterParticipant.get(j).getRealmCodes());
+                //compare TypeID
+                typeIDComparison(sourceEncounterParticipant.get(i).getTypeId(), targetEncounterParticipant.get(j).getTypeId());
+                //compare TemplateIDs
+                compareTemplateID(sourceEncounterParticipant.get(i).getTemplateIds(), targetEncounterParticipant.get(j).getTemplateIds());
+                //compare Time
+                compareEffectiveTime(sourceEncounterParticipant.get(i).getTime(), targetEncounterParticipant.get(j).getTime());
+                //compare assignedEntity
+                assignedEntityComparison(sourceEncounterParticipant.get(i).getAssignedEntity(),targetEncounterParticipant.get(j).getAssignedEntity());
+                //compare Type Code
+                compareTypeCode(sourceEncounterParticipant.get(i).getTypeCode(),targetEncounterParticipant.get(j).getTypeCode());
+                //compare NullFlavor
+                compareNullFlavor(sourceEncounterParticipant.get(i).getNullFlavor(), targetEncounterParticipant.get(j).getNullFlavor());        }
+        }
         currentLocation.exit();
     }
 
@@ -1866,127 +1358,64 @@ public class MDHTPreCompareService extends PreCompareService {
 
     private void entryComparison(EList<Entry> sourceEntry, EList<Entry> targetEntry) {
         currentLocation.enter("Entry");
-//        boolean errorExists = false;
-//        for (int i=0;i<sourceEntry.size();i++) {
-//            int targetMatches = 0;
-//            for (int j = 0; j < targetEntry.size(); j++) {
-//                boolean specificError = false;
-//                //compare RealmCodes
-//                if (!compareRealmCodes(sourceEntry.get(i).getRealmCodes(), targetEntry.get(j).getRealmCodes())) {
-//                    specificError = true;
-//                }
-//                //compare TypeID
-//                if (!typeIDComparison(sourceEntry.get(i).getTypeId(), targetEntry.get(j).getTypeId())) {
-//                    specificError = true;
-//                }
-//                //compare TemplateIDs
-//                if (!compareTemplateID(sourceEntry.get(i).getTemplateIds(), targetEntry.get(j).getTemplateIds())) {
-//                    specificError = true;
-//                }
-//                //Choice Act, Encounter, Observation, ObservationMedia, Organizer, Procedure, Region of Interest, Substance Administration, Supply
-//                if (!(sourceEntry.get(i).getAct() == null && targetEntry.get(j).getAct() == null
-//                        && sourceEntry.get(i).getEncounter() == null && targetEntry.get(j).getEncounter() == null
-//                        && sourceEntry.get(i).getObservation() == null && targetEntry.get(j).getObservation() == null
-//                        && sourceEntry.get(i).getObservationMedia() == null && targetEntry.get(j).getObservationMedia() == null
-//                        && sourceEntry.get(i).getOrganizer() == null && targetEntry.get(j).getOrganizer() == null
-//                        && sourceEntry.get(i).getProcedure() == null && targetEntry.get(j).getProcedure() == null
-//                        && sourceEntry.get(i).getRegionOfInterest() == null && targetEntry.get(j).getRegionOfInterest() == null
-//                        && sourceEntry.get(i).getSubstanceAdministration() == null && targetEntry.get(j).getSubstanceAdministration() == null
-//                        && sourceEntry.get(i).getSupply() == null && targetEntry.get(j).getSupply() == null)) {
-//                    if (!((actComparison(sourceEntry.get(i).getAct(), targetEntry.get(j).getAct()) && sourceEntry.get(i).getAct() != null)
-//                            || (encounterComparison(sourceEntry.get(i).getEncounter(), targetEntry.get(j).getEncounter()) && sourceEntry.get(i).getEncounter() != null)
-//                            || (observationComparison(sourceEntry.get(i).getObservation(), targetEntry.get(j).getObservation()) && sourceEntry.get(i).getObservation() != null)
-//                            || (observationMediaComparison(sourceEntry.get(i).getObservationMedia(), targetEntry.get(j).getObservationMedia()) && sourceEntry.get(i).getObservationMedia() != null)
-//                            || (organizerComparison(sourceEntry.get(i).getOrganizer(), targetEntry.get(j).getOrganizer()) && sourceEntry.get(i).getOrganizer() != null)
-//                            || (procedureComparison(sourceEntry.get(i).getProcedure(), targetEntry.get(j).getProcedure()) && sourceEntry.get(i).getProcedure() != null)
-//                            || (regionOfInterestComparison(sourceEntry.get(i).getRegionOfInterest(), targetEntry.get(j).getRegionOfInterest()) && sourceEntry.get(i).getRegionOfInterest() != null)
-//                            || (substanceAdministrationComparison(sourceEntry.get(i).getSubstanceAdministration(), targetEntry.get(j).getSubstanceAdministration()) && sourceEntry.get(i).getSubstanceAdministration() != null)
-//                            || (supplyComparison(sourceEntry.get(i).getSupply(), targetEntry.get(j).getSupply()) && sourceEntry.get(i).getSupply() != null))) {
-//                        specificError = true;
-//                    }
-//                }
-//                //compare contextConductionInd
-//                if (sourceEntry.get(i).getContextConductionInd() != targetEntry.get(j).getContextConductionInd()) {
-//                    errorExists = true;
-////                    comparisonReport.addMessage("Context Conduction Ind in " + errorMessage + " -> Context Conduction Ind\n");
-//                }
-//                //compare Type Code
-//                if (!compareTypeCode(sourceEntry.get(i).getTypeCode(),targetEntry.get(j).getTypeCode())) {
-//                    specificError = true;
-//                }
-//                //compare NullFlavor
-//                if (!compareNullFlavor(sourceEntry.get(i).getNullFlavor(), targetEntry.get(j).getNullFlavor())) {
-//                    specificError = true;
-//                }
-//
-//
-//                if (!specificError){
-//                    targetMatches++;
-//                }
-//
-//            }
-//            if (targetMatches == 0) {
-//                errorExists = true;
-////                comparisonReport.addMessage("Entry Comparison Error source " + i + " in " + errorMessage + "\n");
-//            }  else if (targetMatches>1) {
-////                comparisonReport.addMessage("Entry Comparison Warning source " + i + " in " + errorMessage + "\n");
-//            }
-//        }
-//        return !errorExists;
+        for (int i=0;i<sourceEntry.size();i++) {
+            for (int j = 0; j < targetEntry.size(); j++) {
+                //compare RealmCodes
+                compareRealmCodes(sourceEntry.get(i).getRealmCodes(), targetEntry.get(j).getRealmCodes());
+                //compare TypeID
+                typeIDComparison(sourceEntry.get(i).getTypeId(), targetEntry.get(j).getTypeId());
+                //compare TemplateIDs
+                compareTemplateID(sourceEntry.get(i).getTemplateIds(), targetEntry.get(j).getTemplateIds());
+                //Choice Act
+                actComparison(sourceEntry.get(i).getAct(), targetEntry.get(j).getAct());
+                //Choice Encounter
+                encounterComparison(sourceEntry.get(i).getEncounter(), targetEntry.get(j).getEncounter());
+                //Choice Observation
+                observationComparison(sourceEntry.get(i).getObservation(), targetEntry.get(j).getObservation());
+                //Choice ObservationMedia
+                observationMediaComparison(sourceEntry.get(i).getObservationMedia(), targetEntry.get(j).getObservationMedia());
+                //Choice Organizer
+                organizerComparison(sourceEntry.get(i).getOrganizer(), targetEntry.get(j).getOrganizer());
+                //Choice Procedure
+                procedureComparison(sourceEntry.get(i).getProcedure(), targetEntry.get(j).getProcedure());
+                //Choice Region of Interest
+                regionOfInterestComparison(sourceEntry.get(i).getRegionOfInterest(), targetEntry.get(j).getRegionOfInterest());
+                //Choice Substance Administration
+                substanceAdministrationComparison(sourceEntry.get(i).getSubstanceAdministration(), targetEntry.get(j).getSubstanceAdministration());
+                //Choice Supply
+                supplyComparison(sourceEntry.get(i).getSupply(), targetEntry.get(j).getSupply());
+                //compare contextConductionInd
+                compareContextConductionInd(sourceEntry.get(i).getContextConductionInd(),targetEntry.get(j).getContextConductionInd());
+                //compare Type Code
+                compareTypeCode(sourceEntry.get(i).getTypeCode(),targetEntry.get(j).getTypeCode());
+                //compare NullFlavor
+                compareNullFlavor(sourceEntry.get(i).getNullFlavor(), targetEntry.get(j).getNullFlavor());
+
+            }
+        }
         currentLocation.exit();
     }
 
     private void component5Comparison(EList<Component5> sourceComponent, EList<Component5> targetComponent) {
         currentLocation.enter("Component5");
-//        boolean errorExists = false;
-//        for (int i=0;i<sourceComponent.size();i++) {
-//            int targetMatches = 0;
-//            for (int j = 0; j < targetComponent.size(); j++) {
-//                boolean specificError = false;
-//                //compare RealmCodes
-//                if (!compareRealmCodes(sourceComponent.get(i).getRealmCodes(), targetComponent.get(j).getRealmCodes())) {
-//                    specificError = true;
-//                }
-//                //compare TypeID
-//                if (!typeIDComparison(sourceComponent.get(i).getTypeId(), targetComponent.get(j).getTypeId())) {
-//                    specificError = true;
-//                }
-//                //compare TemplateIDs
-//                if (!compareTemplateID(sourceComponent.get(i).getTemplateIds(), targetComponent.get(j).getTemplateIds())) {
-//                    specificError = true;
-//                }
-//                //Section
-//                if (!sectionComparison(sourceComponent.get(i).getSection(),targetComponent.get(j).getSection())) {
-//                    specificError = true;
-//                }
-//                //compare contextConductionInd
-//                if (sourceComponent.get(i).getContextConductionInd() != targetComponent.get(j).getContextConductionInd()) {
-//                    errorExists = true;
-////                    comparisonReport.addMessage("Context Conduction Ind in " + errorMessage + " -> Context Conduction Ind\n");
-//                }
-//                //compare Type Code
-//                if (!compareTypeCode(sourceComponent.get(i).getTypeCode(),targetComponent.get(j).getTypeCode())) {
-//                    specificError = true;
-//                }
-//                //compare NullFlavor
-//                if (!compareNullFlavor(sourceComponent.get(i).getNullFlavor(), targetComponent.get(j).getNullFlavor())) {
-//                    specificError = true;
-//                }
-//
-//
-//                if (!specificError){
-//                    targetMatches++;
-//                }
-//
-//            }
-//            if (targetMatches == 0) {
-//                errorExists = true;
-////                comparisonReport.addMessage("Component5 Comparison Error source " + i + " in " + errorMessage + "\n");
-//            }  else if (targetMatches>1) {
-////                comparisonReport.addMessage("Component5 Comparison Warning source " + i + " in " + errorMessage + "\n");
-//            }
-//        }
-//        return !errorExists;
+        for (int i=0;i<sourceComponent.size();i++) {
+            for (int j = 0; j < targetComponent.size(); j++) {
+                //compare RealmCodes
+                compareRealmCodes(sourceComponent.get(i).getRealmCodes(), targetComponent.get(j).getRealmCodes());
+                //compare TypeID
+                typeIDComparison(sourceComponent.get(i).getTypeId(), targetComponent.get(j).getTypeId());
+                //compare TemplateIDs
+                compareTemplateID(sourceComponent.get(i).getTemplateIds(), targetComponent.get(j).getTemplateIds());
+                //Section
+                sectionComparison(sourceComponent.get(i).getSection(),targetComponent.get(j).getSection());
+                //compare contextConductionInd
+                compareContextConductionInd(sourceComponent.get(i).getContextConductionInd(),targetComponent.get(j).getContextConductionInd());
+                //compare Type Code
+                compareTypeCode(sourceComponent.get(i).getTypeCode(),targetComponent.get(j).getTypeCode());
+                //compare NullFlavor
+                compareNullFlavor(sourceComponent.get(i).getNullFlavor(), targetComponent.get(j).getNullFlavor());
+            }
+        }
         currentLocation.exit();
     }
 
@@ -2548,510 +1977,249 @@ public class MDHTPreCompareService extends PreCompareService {
 
     private void specimenComparison(EList<Specimen> sourceSpecimen, EList<Specimen> targetSpecimen) {
         currentLocation.enter("Specimen");
-//        boolean errorExists = false;
-//        for (int i=0;i<sourceSpecimen.size();i++) {
-//            int targetMatches = 0;
-//            for (int j = 0; j < targetSpecimen.size(); j++) {
-//                boolean specificError = false;
-//                //compare RealmCodes
-//                if (!compareRealmCodes(sourceSpecimen.get(i).getRealmCodes(), targetSpecimen.get(j).getRealmCodes())) {
-//                    specificError = true;
-//                }
-//                //compare TypeID
-//                if (!typeIDComparison(sourceSpecimen.get(i).getTypeId(), targetSpecimen.get(j).getTypeId())) {
-//                    specificError = true;
-//                }
-//                //compare TemplateIDs
-//                if (!compareTemplateID(sourceSpecimen.get(i).getTemplateIds(), targetSpecimen.get(j).getTemplateIds())) {
-//                    specificError = true;
-//                }
-//                //Section
-//                if (!specimenRoleComparison(sourceSpecimen.get(i).getSpecimenRole(),targetSpecimen.get(j).getSpecimenRole())) {
-//                    specificError = true;
-//                }
-//                //compare Type Code
-//                if (!compareTypeCode(sourceSpecimen.get(i).getTypeCode(),targetSpecimen.get(j).getTypeCode())) {
-//                    specificError = true;
-//                }
-//                //compare NullFlavor
-//                if (!compareNullFlavor(sourceSpecimen.get(i).getNullFlavor(), targetSpecimen.get(j).getNullFlavor())) {
-//                    specificError = true;
-//                }
-//
-//
-//                if (!specificError){
-//                    targetMatches++;
-//                }
-//
-//            }
-//            if (targetMatches == 0) {
-//                errorExists = true;
-////                comparisonReport.addMessage("Specimen Comparison Error source " + i + " in " + errorMessage + "\n");
-//            }  else if (targetMatches>1) {
-////                comparisonReport.addMessage("Specimen Comparison Warning source " + i + " in " + errorMessage + "\n");
-//            }
-//        }
-//        return !errorExists;
+        for (int i=0;i<sourceSpecimen.size();i++) {
+            for (int j = 0; j < targetSpecimen.size(); j++) {
+                //compare RealmCodes
+                compareRealmCodes(sourceSpecimen.get(i).getRealmCodes(), targetSpecimen.get(j).getRealmCodes());
+                //compare TypeID
+                typeIDComparison(sourceSpecimen.get(i).getTypeId(), targetSpecimen.get(j).getTypeId());
+                //compare TemplateIDs
+                compareTemplateID(sourceSpecimen.get(i).getTemplateIds(), targetSpecimen.get(j).getTemplateIds());
+                //Section
+                specimenRoleComparison(sourceSpecimen.get(i).getSpecimenRole(),targetSpecimen.get(j).getSpecimenRole());
+                //compare Type Code
+                compareTypeCode(sourceSpecimen.get(i).getTypeCode(),targetSpecimen.get(j).getTypeCode());
+                //compare NullFlavor
+                compareNullFlavor(sourceSpecimen.get(i).getNullFlavor(), targetSpecimen.get(j).getNullFlavor());
+            }
+        }
         currentLocation.exit();
     }
 
     private void performer2Comparison(EList<Performer2> sourcePerformer, EList<Performer2> targetPerformer) {
         currentLocation.enter("Performer2");
-//        boolean errorExists = false;
-//        for (int i=0;i<sourcePerformer.size();i++) {
-//            int targetMatches = 0;
-//            for (int j = 0; j < targetPerformer.size(); j++) {
-//                boolean specificError = false;
-//                //compare RealmCodes
-//                if (!compareRealmCodes(sourcePerformer.get(i).getRealmCodes(), targetPerformer.get(j).getRealmCodes())) {
-//                    specificError = true;
-//                }
-//                //compare TypeID
-//                if (!typeIDComparison(sourcePerformer.get(i).getTypeId(), targetPerformer.get(j).getTypeId())) {
-//                    specificError = true;
-//                }
-//                //compare TemplateIDs
-//                if (!compareTemplateID(sourcePerformer.get(i).getTemplateIds(), targetPerformer.get(j).getTemplateIds())) {
-//                    specificError = true;
-//                }
-//                //Time
-//                if (!compareTime(sourcePerformer.get(i).getTime(),targetPerformer.get(j).getTime())) {
-//                    specificError = true;
-//                }
-//                //modeCode
-//                if (!compareCode(sourcePerformer.get(i).getModeCode(),targetPerformer.get(j).getModeCode())) {
-//                    specificError = true;
-//                }
-//                //assignedEntity - AssignedEntity
-//                if (!assignedEntityComparison(sourcePerformer.get(i).getAssignedEntity(),targetPerformer.get(j).getAssignedEntity())) {
-//                    specificError = true;
-//                }
-//                //compare NullFlavor
-//                if (!compareNullFlavor(sourcePerformer.get(i).getNullFlavor(), targetPerformer.get(j).getNullFlavor())) {
-//                    specificError = true;
-//                }
-//                //result Code
-//                if (!compareTypeCode(sourcePerformer.get(i).getTypeCode(),targetPerformer.get(j).getTypeCode())) {
-//                    specificError = true;
-//                }
-//
-//
-//                if (!specificError){
-//                    targetMatches++;
-//                }
-//
-//            }
-//            if (targetMatches == 0) {
-//                errorExists = true;
-////                comparisonReport.addMessage("Performer2 Comparison Error source " + i + " in " + errorMessage + "\n");
-//            }  else if (targetMatches>1) {
-////                comparisonReport.addMessage("Performer2 Comparison Warning source " + i + " in " + errorMessage + "\n");
-//            }
-//        }
-//        return !errorExists;
+        for (int i=0;i<sourcePerformer.size();i++) {
+            for (int j = 0; j < targetPerformer.size(); j++) {
+                //compare RealmCodes
+                compareRealmCodes(sourcePerformer.get(i).getRealmCodes(), targetPerformer.get(j).getRealmCodes());
+                //compare TypeID
+                typeIDComparison(sourcePerformer.get(i).getTypeId(), targetPerformer.get(j).getTypeId());
+                //compare TemplateIDs
+                compareTemplateID(sourcePerformer.get(i).getTemplateIds(), targetPerformer.get(j).getTemplateIds());
+                //Time
+                compareTime(sourcePerformer.get(i).getTime(),targetPerformer.get(j).getTime());
+                //modeCode
+                compareCode(sourcePerformer.get(i).getModeCode(),targetPerformer.get(j).getModeCode());
+                //assignedEntity - AssignedEntity
+                assignedEntityComparison(sourcePerformer.get(i).getAssignedEntity(),targetPerformer.get(j).getAssignedEntity());
+                //compare NullFlavor
+                compareNullFlavor(sourcePerformer.get(i).getNullFlavor(), targetPerformer.get(j).getNullFlavor());
+                //result Code
+                compareTypeCode(sourcePerformer.get(i).getTypeCode(),targetPerformer.get(j).getTypeCode());        }
+        }
         currentLocation.exit();
     }
 
     private void participants2Comparison(EList<Participant2> sourceParticipants, EList<Participant2> targetParticipants) {
         currentLocation.enter("Participants2");
-//        boolean errorExists = false;
-//        for (int i=0;i<sourceParticipants.size();i++) {
-//            int targetMatches = 0;
-//            for (int j = 0; j < targetParticipants.size(); j++) {
-//                boolean specificError = false;
-//                //compare RealmCodes
-//                if (!compareRealmCodes(sourceParticipants.get(i).getRealmCodes(), targetParticipants.get(j).getRealmCodes())) {
-//                    specificError = true;
-//                }
-//                //compare TypeID
-//                if (!typeIDComparison(sourceParticipants.get(i).getTypeId(), targetParticipants.get(j).getTypeId())) {
-//                    specificError = true;
-//                }
-//                //compare TemplateIDs
-//                if (!compareTemplateID(sourceParticipants.get(i).getTemplateIds(), targetParticipants.get(j).getTemplateIds())) {
-//                    specificError = true;
-//                }
-//                //Time
-//                if (!compareExpectedUseTime(sourceParticipants.get(i).getTime(),targetParticipants.get(j).getTime())) {
-//                    specificError = true;
-//                }
-//                //awarenessCode
-//                if (!compareCode(sourceParticipants.get(i).getAwarenessCode(),targetParticipants.get(j).getAwarenessCode())) {
-//                    specificError = true;
-//                }
-//                //participantRole - ParticipantRole
-//                if (!participantRoleComparison(sourceParticipants.get(i).getParticipantRole(),targetParticipants.get(j).getParticipantRole())) {
-//                    specificError = true;
-//                }
-//                //compare NullFlavor
-//                if (!compareNullFlavor(sourceParticipants.get(i).getNullFlavor(), targetParticipants.get(j).getNullFlavor())) {
-//                    specificError = true;
-//                }
-//                //result Code
-//                if (!compareTypeCode(sourceParticipants.get(i).getTypeCode(),targetParticipants.get(j).getTypeCode())) {
-//                    specificError = true;
-//                }
-//                //contextControlCode
-//                if (!compareContextControlCode(sourceParticipants.get(i).getContextControlCode(),targetParticipants.get(j).getContextControlCode())) {
-//                    specificError = true;
-//                }
-//
-//
-//                if (!specificError){
-//                    targetMatches++;
-//                }
-//
-//            }
-//            if (targetMatches == 0) {
-//                errorExists = true;
-////                comparisonReport.addMessage("Participants2 Comparison Error source " + i + " in " + errorMessage + "\n");
-//            }  else if (targetMatches>1) {
-////                comparisonReport.addMessage("Participants2 Comparison Warning source " + i + " in " + errorMessage + "\n");
-//            }
-//        }
-//        return !errorExists;
+        for (int i=0;i<sourceParticipants.size();i++) {
+            for (int j = 0; j < targetParticipants.size(); j++) {
+                //compare RealmCodes
+                compareRealmCodes(sourceParticipants.get(i).getRealmCodes(), targetParticipants.get(j).getRealmCodes());
+                //compare TypeID
+                typeIDComparison(sourceParticipants.get(i).getTypeId(), targetParticipants.get(j).getTypeId());
+                //compare TemplateIDs
+                compareTemplateID(sourceParticipants.get(i).getTemplateIds(), targetParticipants.get(j).getTemplateIds());
+                //Time
+                compareExpectedUseTime(sourceParticipants.get(i).getTime(),targetParticipants.get(j).getTime());
+                //awarenessCode
+                compareCode(sourceParticipants.get(i).getAwarenessCode(),targetParticipants.get(j).getAwarenessCode());
+                //participantRole - ParticipantRole
+                participantRoleComparison(sourceParticipants.get(i).getParticipantRole(),targetParticipants.get(j).getParticipantRole());
+                //compare NullFlavor
+                compareNullFlavor(sourceParticipants.get(i).getNullFlavor(), targetParticipants.get(j).getNullFlavor());
+                //result Code
+                compareTypeCode(sourceParticipants.get(i).getTypeCode(),targetParticipants.get(j).getTypeCode());
+                //contextControlCode
+                compareContextControlCode(sourceParticipants.get(i).getContextControlCode(),targetParticipants.get(j).getContextControlCode());
+            }
+        }
         currentLocation.exit();
     }
 
     private void entryRelationshipComparison(EList<EntryRelationship> sourceEntryRelationships, EList<EntryRelationship> targetEntryRelationships) {
         currentLocation.enter("Entry Relationship");
-//        boolean errorExists = false;
-//        for (int i=0;i<sourceEntryRelationships.size();i++) {
-//            int targetMatches = 0;
-//            for (int j = 0; j < targetEntryRelationships.size(); j++) {
-//                boolean specificError = false;
-//                //compare RealmCodes
-//                if (!compareRealmCodes(sourceEntryRelationships.get(i).getRealmCodes(), targetEntryRelationships.get(j).getRealmCodes())) {
-//                    specificError = true;
-//                }
-//                //compare TypeID
-//                if (!typeIDComparison(sourceEntryRelationships.get(i).getTypeId(), targetEntryRelationships.get(j).getTypeId())) {
-//                    specificError = true;
-//                }
-//                //compare TemplateIDs
-//                if (!compareTemplateID(sourceEntryRelationships.get(i).getTemplateIds(), targetEntryRelationships.get(j).getTemplateIds())) {
-//                    specificError = true;
-//                }
-//                //sequenceNumber
-//                if (!compareVersionNumber(sourceEntryRelationships.get(i).getSequenceNumber(),targetEntryRelationships.get(j).getSequenceNumber())) {
-//                    specificError = true;
-//                }
-//                //seperatableInd
-//                if (!comparePreferenceInd(sourceEntryRelationships.get(i).getSeperatableInd(),targetEntryRelationships.get(j).getSeperatableInd())) {
-//                    specificError = true;
-//                }
-//                //Choice - Act, Encounter,Observation,observationMedia,Organizer, Procedure,RegionOfInterest,SubstanceAdminstration,Supply
-//                if (!(sourceEntryRelationships.get(i).getAct() == null && targetEntryRelationships.get(j).getAct() == null
-//                        && sourceEntryRelationships.get(i).getEncounter() == null && targetEntryRelationships.get(j).getEncounter() == null
-//                        && sourceEntryRelationships.get(i).getObservation() == null && targetEntryRelationships.get(j).getObservation() == null
-//                        && sourceEntryRelationships.get(i).getObservationMedia() == null && targetEntryRelationships.get(j).getObservationMedia() == null
-//                        && sourceEntryRelationships.get(i).getOrganizer() == null && targetEntryRelationships.get(j).getOrganizer() == null
-//                        && sourceEntryRelationships.get(i).getProcedure() == null && targetEntryRelationships.get(j).getProcedure() == null
-//                        && sourceEntryRelationships.get(i).getRegionOfInterest() == null && targetEntryRelationships.get(j).getRegionOfInterest() == null
-//                        && sourceEntryRelationships.get(i).getSubstanceAdministration() == null && targetEntryRelationships.get(j).getSubstanceAdministration() == null
-//                        && sourceEntryRelationships.get(i).getSupply() == null && targetEntryRelationships.get(j).getSupply() == null)) {
-//                    if (!((actComparison(sourceEntryRelationships.get(i).getAct(), targetEntryRelationships.get(j).getAct()) && sourceEntryRelationships.get(i).getAct() != null)
-//                            || (encounterComparison(sourceEntryRelationships.get(i).getEncounter(), targetEntryRelationships.get(j).getEncounter()) && sourceEntryRelationships.get(i).getEncounter() != null)
-//                            || (observationComparison(sourceEntryRelationships.get(i).getObservation(), targetEntryRelationships.get(j).getObservation()) && sourceEntryRelationships.get(i).getObservation() != null)
-//                            || (observationMediaComparison(sourceEntryRelationships.get(i).getObservationMedia(), targetEntryRelationships.get(j).getObservationMedia()) && sourceEntryRelationships.get(i).getObservationMedia() != null)
-//                            || (organizerComparison(sourceEntryRelationships.get(i).getOrganizer(), targetEntryRelationships.get(j).getOrganizer()) && sourceEntryRelationships.get(i).getOrganizer() != null)
-//                            || (procedureComparison(sourceEntryRelationships.get(i).getProcedure(), targetEntryRelationships.get(j).getProcedure()) && sourceEntryRelationships.get(i).getProcedure() != null)
-//                            || (regionOfInterestComparison(sourceEntryRelationships.get(i).getRegionOfInterest(), targetEntryRelationships.get(j).getRegionOfInterest()) && sourceEntryRelationships.get(i).getRegionOfInterest() != null)
-//                            || (substanceAdministrationComparison(sourceEntryRelationships.get(i).getSubstanceAdministration(), targetEntryRelationships.get(j).getSubstanceAdministration()) && sourceEntryRelationships.get(i).getSubstanceAdministration() != null)
-//                            || (supplyComparison(sourceEntryRelationships.get(i).getSupply(), targetEntryRelationships.get(j).getSupply()) && sourceEntryRelationships.get(i).getSupply() != null))) {
-//                        specificError = true;
-//                    }
-//                }
-//
-//                //compare NullFlavor
-//                if (!compareNullFlavor(sourceEntryRelationships.get(i).getNullFlavor(), targetEntryRelationships.get(j).getNullFlavor())) {
-//                    specificError = true;
-//                }
-//                //result Code
-//                if (!compareTypeCode(sourceEntryRelationships.get(i).getTypeCode(),targetEntryRelationships.get(j).getTypeCode())) {
-//                    specificError = true;
-//                }
-//                //Inversion Ind
-//                if (sourceEntryRelationships.get(i).getInversionInd() != targetEntryRelationships.get(j).getInversionInd()) {
-//                    errorExists = true;
-////                    comparisonReport.addMessage("Inversion Ind error in " + errorMessage + " -> Inversion Ind");
-//
-//                }
-//                //contextConductionInd
-//                if (sourceEntryRelationships.get(i).getContextConductionInd() != targetEntryRelationships.get(j).getContextConductionInd()) {
-//                    specificError = true;
-////                    comparisonReport.addMessage("Context Conduction Ind error in " + errorMessage + " -> Context Conduction Ind");
-//
-//                }
-//
-//
-//                if (!specificError){
-//                    targetMatches++;
-//                }
-//
-//            }
-//            if (targetMatches == 0) {
-//                errorExists = true;
-////                comparisonReport.addMessage("Entry Relationship Comparison Error source " + i + " in " + errorMessage + "\n");
-//            }  else if (targetMatches>1) {
-////                comparisonReport.addMessage("Entry Relationship Comparison Warning source " + i + " in " + errorMessage + "\n");
-//            }
-//        }
-//        return !errorExists;
+        for (int i=0;i<sourceEntryRelationships.size();i++) {
+            for (int j = 0; j < targetEntryRelationships.size(); j++) {
+                //compare RealmCodes
+                compareRealmCodes(sourceEntryRelationships.get(i).getRealmCodes(), targetEntryRelationships.get(j).getRealmCodes());
+                //compare TypeID
+                typeIDComparison(sourceEntryRelationships.get(i).getTypeId(), targetEntryRelationships.get(j).getTypeId());
+                //compare TemplateIDs
+                compareTemplateID(sourceEntryRelationships.get(i).getTemplateIds(), targetEntryRelationships.get(j).getTemplateIds());
+                //sequenceNumber
+                compareVersionNumber(sourceEntryRelationships.get(i).getSequenceNumber(),targetEntryRelationships.get(j).getSequenceNumber());
+                //seperatableInd
+                comparePreferenceInd(sourceEntryRelationships.get(i).getSeperatableInd(),targetEntryRelationships.get(j).getSeperatableInd());
+                //Choice - Act
+                actComparison(sourceEntryRelationships.get(i).getAct(), targetEntryRelationships.get(j).getAct());
+                //Choice - Encounter
+                encounterComparison(sourceEntryRelationships.get(i).getEncounter(), targetEntryRelationships.get(j).getEncounter());
+                //Choice - Observation
+                observationComparison(sourceEntryRelationships.get(i).getObservation(), targetEntryRelationships.get(j).getObservation());
+                //Choice - observationMedia
+                observationMediaComparison(sourceEntryRelationships.get(i).getObservationMedia(), targetEntryRelationships.get(j).getObservationMedia());
+                //Choice - Organizer
+                organizerComparison(sourceEntryRelationships.get(i).getOrganizer(), targetEntryRelationships.get(j).getOrganizer());
+                //Choice - Procedure
+                procedureComparison(sourceEntryRelationships.get(i).getProcedure(), targetEntryRelationships.get(j).getProcedure());
+                //Choice - RegionOfInterest
+                regionOfInterestComparison(sourceEntryRelationships.get(i).getRegionOfInterest(), targetEntryRelationships.get(j).getRegionOfInterest());
+                //Choice - SubstanceAdminstration
+                substanceAdministrationComparison(sourceEntryRelationships.get(i).getSubstanceAdministration(), targetEntryRelationships.get(j).getSubstanceAdministration());
+                //Choice - Supply
+                supplyComparison(sourceEntryRelationships.get(i).getSupply(), targetEntryRelationships.get(j).getSupply());
+                //compare NullFlavor
+                compareNullFlavor(sourceEntryRelationships.get(i).getNullFlavor(), targetEntryRelationships.get(j).getNullFlavor());
+                //result Code
+                compareTypeCode(sourceEntryRelationships.get(i).getTypeCode(),targetEntryRelationships.get(j).getTypeCode());
+                //Inversion Ind
+                compareInversionInd(sourceEntryRelationships.get(i).getInversionInd(),targetEntryRelationships.get(j).getInversionInd());
+                //contextConductionInd
+                compareContextConductionInd(sourceEntryRelationships.get(i).getContextConductionInd(),targetEntryRelationships.get(j).getContextConductionInd());
+            }
+        }
         currentLocation.exit();
     }
 
     private void referenceComparison(EList<Reference> sourceReference, EList<Reference> targetReference) {
         currentLocation.enter("Reference");
-//        boolean errorExists = false;
-//        for (int i=0;i<sourceReference.size();i++) {
-//            int targetMatches = 0;
-//            for (int j = 0; j < targetReference.size(); j++) {
-//                boolean specificError = false;
-//                //compare RealmCodes
-//                if (!compareRealmCodes(sourceReference.get(i).getRealmCodes(), targetReference.get(j).getRealmCodes())) {
-//                    specificError = true;
-//                }
-//                //compare TypeID
-//                if (!typeIDComparison(sourceReference.get(i).getTypeId(), targetReference.get(j).getTypeId())) {
-//                    specificError = true;
-//                }
-//                //compare TemplateIDs
-//                if (!compareTemplateID(sourceReference.get(i).getTemplateIds(), targetReference.get(j).getTemplateIds())) {
-//                    specificError = true;
-//                }
-//                //seperatableInd
-//                if (!comparePreferenceInd(sourceReference.get(i).getSeperatableInd(),targetReference.get(j).getSeperatableInd())) {
-//                    specificError = true;
-//                }
-//                //Choice - ExternalAct, ExternalObservation, ExternalProcedure, ExternalDocument
-//                if (!(sourceReference.get(i).getExternalAct() == null && targetReference.get(j).getExternalAct() == null
-//                        && sourceReference.get(i).getExternalObservation() == null && targetReference.get(j).getExternalObservation() == null
-//                        && sourceReference.get(i).getExternalProcedure() == null && targetReference.get(j).getExternalProcedure() == null
-//                        && sourceReference.get(i).getExternalDocument() == null && targetReference.get(j).getExternalDocument() == null)) {
-//                    if (!((externalActComparison(sourceReference.get(i).getExternalAct(), targetReference.get(j).getExternalAct()) && sourceReference.get(i).getExternalAct() != null)
-//                            || (externalObservationComparison(sourceReference.get(i).getExternalObservation(), targetReference.get(j).getExternalObservation()) && sourceReference.get(i).getExternalObservation() != null)
-//                            || (externalProcedureComparison(sourceReference.get(i).getExternalProcedure(), targetReference.get(j).getExternalProcedure()) && sourceReference.get(i).getExternalProcedure() != null)
-//                            || (externalDocumentComparison(sourceReference.get(i).getExternalDocument(), targetReference.get(j).getExternalDocument()) && sourceReference.get(i).getExternalDocument() != null))) {
-//                        specificError = true;
-//                    }
-//                }
-//                //compare NullFlavor
-//                if (!compareNullFlavor(sourceReference.get(i).getNullFlavor(), targetReference.get(j).getNullFlavor())) {
-//                    specificError = true;
-//                }
-//                //result Code
-//                if (!compareTypeCode(sourceReference.get(i).getTypeCode(),targetReference.get(j).getTypeCode())) {
-//                    specificError = true;
-//                }
-//
-//                if (!specificError){
-//                    targetMatches++;
-//                }
-//
-//            }
-//            if (targetMatches == 0) {
-//                errorExists = true;
-////                comparisonReport.addMessage("Reference Comparison Error source " + i + " in " + errorMessage + "\n");
-//            }  else if (targetMatches>1) {
-////                comparisonReport.addMessage("Reference Comparison Warning source " + i + " in " + errorMessage + "\n");
-//            }
-//        }
-//       return !errorExists;
+        for (int i=0;i<sourceReference.size();i++) {
+            for (int j = 0; j < targetReference.size(); j++) {
+                //compare RealmCodes
+                compareRealmCodes(sourceReference.get(i).getRealmCodes(), targetReference.get(j).getRealmCodes());
+                //compare TypeID
+                typeIDComparison(sourceReference.get(i).getTypeId(), targetReference.get(j).getTypeId());
+                //compare TemplateIDs
+                compareTemplateID(sourceReference.get(i).getTemplateIds(), targetReference.get(j).getTemplateIds());
+                //seperatableInd
+                comparePreferenceInd(sourceReference.get(i).getSeperatableInd(),targetReference.get(j).getSeperatableInd());
+                //Choice - ExternalAct
+                externalActComparison(sourceReference.get(i).getExternalAct(), targetReference.get(j).getExternalAct());
+                //Choice - ExternalObservation
+                externalObservationComparison(sourceReference.get(i).getExternalObservation(), targetReference.get(j).getExternalObservation());
+                //Choice - ExternalProcedure
+                externalProcedureComparison(sourceReference.get(i).getExternalProcedure(), targetReference.get(j).getExternalProcedure());
+                //Choice - ExternalDocument
+                externalDocumentComparison(sourceReference.get(i).getExternalDocument(), targetReference.get(j).getExternalDocument());
+
+                //compare NullFlavor
+                compareNullFlavor(sourceReference.get(i).getNullFlavor(), targetReference.get(j).getNullFlavor());
+                //result Code
+                compareTypeCode(sourceReference.get(i).getTypeCode(),targetReference.get(j).getTypeCode());
+            }
+        }
         currentLocation.exit();
     }
 
     private void preconditionComparison(EList<Precondition> sourcePrecondition, EList<Precondition> targetPrecondition) {
         currentLocation.enter("Precondition");
-//        boolean errorExists = false;
-//        for (int i=0;i<sourcePrecondition.size();i++) {
-//            int targetMatches = 0;
-//            for (int j = 0; j < targetPrecondition.size(); j++) {
-//                boolean specificError = false;
-//                //compare RealmCodes
-//                if (!compareRealmCodes(sourcePrecondition.get(i).getRealmCodes(), targetPrecondition.get(j).getRealmCodes())) {
-//                    specificError = true;
-//                }
-//                //compare TypeID
-//                if (!typeIDComparison(sourcePrecondition.get(i).getTypeId(), targetPrecondition.get(j).getTypeId())) {
-//                    specificError = true;
-//                }
-//                //compare criterion - Criterion
-//                if (!criterionComparison(sourcePrecondition.get(i).getCriterion(), targetPrecondition.get(j).getCriterion())) {
-//                    specificError = true;
-//                }
-//                //compare NullFlavor
-//                if (!compareNullFlavor(sourcePrecondition.get(i).getNullFlavor(), targetPrecondition.get(j).getNullFlavor())) {
-//                    specificError = true;
-//                }
-//                //result Code
-//                if (!compareTypeCode(sourcePrecondition.get(i).getTypeCode(),targetPrecondition.get(j).getTypeCode())) {
-//                    specificError = true;
-//                }
-//
-//                if (!specificError){
-//                    targetMatches++;
-//                }
-//
-//            }
-//            if (targetMatches == 0) {
-//                errorExists = true;
-////                comparisonReport.addMessage("Precondition Comparison Error source " + i + " in " + errorMessage + "\n");
-//            }  else if (targetMatches>1) {
-////                comparisonReport.addMessage("Precondition Comparison Warning source " + i + " in " + errorMessage + "\n");
-//            }
-//        }
-//        return !errorExists;
+        for (int i=0;i<sourcePrecondition.size();i++) {
+            for (int j = 0; j < targetPrecondition.size(); j++) {
+                //compare RealmCodes
+                compareRealmCodes(sourcePrecondition.get(i).getRealmCodes(), targetPrecondition.get(j).getRealmCodes());
+                //compare TypeID
+                typeIDComparison(sourcePrecondition.get(i).getTypeId(), targetPrecondition.get(j).getTypeId());
+                //compare criterion - Criterion
+                criterionComparison(sourcePrecondition.get(i).getCriterion(), targetPrecondition.get(j).getCriterion());
+                //compare NullFlavor
+                compareNullFlavor(sourcePrecondition.get(i).getNullFlavor(), targetPrecondition.get(j).getNullFlavor());
+                //result Code
+                compareTypeCode(sourcePrecondition.get(i).getTypeCode(),targetPrecondition.get(j).getTypeCode());
+            }
+        }
         currentLocation.exit();
     }
 
     private void referenceRangeComparison(EList<ReferenceRange> sourceReferenceRange, EList<ReferenceRange> targetReferenceRange) {
         currentLocation.enter("Reference Range");
-//        boolean errorExists = false;
-//        for (int i=0;i<sourceReferenceRange.size();i++) {
-//            int targetMatches = 0;
-//            for (int j = 0; j < targetReferenceRange.size(); j++) {
-//                boolean specificError = false;
-//                //compare RealmCodes
-//                if (!compareRealmCodes(sourceReferenceRange.get(i).getRealmCodes(), targetReferenceRange.get(j).getRealmCodes())) {
-//                    specificError = true;
-//                }
-//                //compare TypeID
-//                if (!typeIDComparison(sourceReferenceRange.get(i).getTypeId(), targetReferenceRange.get(j).getTypeId())) {
-//                    specificError = true;
-//                }
-//                //compare TemplateIDs
-//                if (!compareTemplateID(sourceReferenceRange.get(i).getTemplateIds(), targetReferenceRange.get(j).getTemplateIds())) {
-//                    specificError = true;
-//                }
-//                //observationRange - ObservationRange
-//                if (!observationRangeComparison(sourceReferenceRange.get(i).getObservationRange(),targetReferenceRange.get(j).getObservationRange())) {
-//                    specificError = true;
-//                }
-//                //compare NullFlavor
-//                if (!compareNullFlavor(sourceReferenceRange.get(i).getNullFlavor(), targetReferenceRange.get(j).getNullFlavor())) {
-//                    specificError = true;
-//                }
-//                //result Code
-//                if (!compareTypeCode(sourceReferenceRange.get(i).getTypeCode(),targetReferenceRange.get(j).getTypeCode())) {
-//                    specificError = true;
-//                }
-//
-//                if (!specificError){
-//                    targetMatches++;
-//                }
-//
-//            }
-//            if (targetMatches == 0) {
-//                errorExists = true;
-////                comparisonReport.addMessage("Reference Range Comparison Error source " + i + " in " + errorMessage + "\n");
-//            }  else if (targetMatches>1) {
-////                comparisonReport.addMessage("Reference Range Comparison Warning source " + i + " in " + errorMessage + "\n");
-//            }
-//        }
-//        return !errorExists;
+        for (int i=0;i<sourceReferenceRange.size();i++) {
+            for (int j = 0; j < targetReferenceRange.size(); j++) {
+                //compare RealmCodes
+                compareRealmCodes(sourceReferenceRange.get(i).getRealmCodes(), targetReferenceRange.get(j).getRealmCodes());
+                //compare TypeID
+                typeIDComparison(sourceReferenceRange.get(i).getTypeId(), targetReferenceRange.get(j).getTypeId());
+                //compare TemplateIDs
+                compareTemplateID(sourceReferenceRange.get(i).getTemplateIds(), targetReferenceRange.get(j).getTemplateIds());
+                //observationRange - ObservationRange
+                observationRangeComparison(sourceReferenceRange.get(i).getObservationRange(),targetReferenceRange.get(j).getObservationRange());
+                //compare NullFlavor
+                compareNullFlavor(sourceReferenceRange.get(i).getNullFlavor(), targetReferenceRange.get(j).getNullFlavor());
+                //result Code
+                compareTypeCode(sourceReferenceRange.get(i).getTypeCode(),targetReferenceRange.get(j).getTypeCode());
+            }
+        }
         currentLocation.exit();
     }
 
     private void component4Comparison(EList<Component4> sourceComponent4, EList<Component4> targetComponent4) {
         currentLocation.enter("Component4");
-//        boolean errorExists = false;
-//        for (int i=0;i<sourceComponent4.size();i++) {
-//            int targetMatches = 0;
-//            for (int j = 0; j < targetComponent4.size(); j++) {
-//                boolean specificError = false;
-//                //compare RealmCodes
-//                if (!compareRealmCodes(sourceComponent4.get(i).getRealmCodes(), targetComponent4.get(j).getRealmCodes())) {
-//                    specificError = true;
-//                }
-//                //compare TypeID
-//                if (!typeIDComparison(sourceComponent4.get(i).getTypeId(), targetComponent4.get(j).getTypeId())) {
-//                    specificError = true;
-//                }
-//                //compare TemplateIDs
-//                if (!compareTemplateID(sourceComponent4.get(i).getTemplateIds(), targetComponent4.get(j).getTemplateIds())) {
-//                    specificError = true;
-//                }
-//                //sequenceNumber
-//                if (!compareVersionNumber(sourceComponent4.get(i).getSequenceNumber(),targetComponent4.get(j).getSequenceNumber())) {
-//                    specificError = true;
-//                }
-//                //seperatableInd
-//                if (!comparePreferenceInd(sourceComponent4.get(i).getSeperatableInd(),targetComponent4.get(j).getSeperatableInd())) {
-//                    specificError = true;
-//                }
-//                //choice - Act, Encounter, Observation, ObservationMedia, Organizer, Procedure, RegionOfInterest, SubstanceAdministraion,Supply
-//                if (!(sourceComponent4.get(i).getAct() == null && targetComponent4.get(j).getAct() == null
-//                        && sourceComponent4.get(i).getEncounter() == null && targetComponent4.get(j).getEncounter() == null
-//                        && sourceComponent4.get(i).getObservation() == null && targetComponent4.get(j).getObservation() == null
-//                        && sourceComponent4.get(i).getObservationMedia() == null && targetComponent4.get(j).getObservationMedia() == null
-//                        && sourceComponent4.get(i).getOrganizer() == null && targetComponent4.get(j).getOrganizer() == null
-//                        && sourceComponent4.get(i).getProcedure() == null && targetComponent4.get(j).getProcedure() == null
-//                        && sourceComponent4.get(i).getRegionOfInterest() == null && targetComponent4.get(j).getRegionOfInterest() == null
-//                        && sourceComponent4.get(i).getSubstanceAdministration() == null && targetComponent4.get(j).getSubstanceAdministration() == null
-//                        && sourceComponent4.get(i).getSupply() == null && targetComponent4.get(j).getSupply() == null)) {
-//                    if (!((actComparison(sourceComponent4.get(i).getAct(), targetComponent4.get(j).getAct()) && sourceComponent4.get(i).getAct() != null)
-//                            || (observationComparison(sourceComponent4.get(i).getObservation(), targetComponent4.get(j).getObservation()) && sourceComponent4.get(i).getObservation() != null)
-//                            || (observationMediaComparison(sourceComponent4.get(i).getObservationMedia(), targetComponent4.get(j).getObservationMedia()) && sourceComponent4.get(i).getObservationMedia() != null)
-//                            || (organizerComparison(sourceComponent4.get(i).getOrganizer(), targetComponent4.get(j).getOrganizer()) && sourceComponent4.get(i).getOrganizer() != null)
-//                            || (procedureComparison(sourceComponent4.get(i).getProcedure(), targetComponent4.get(j).getProcedure()) && sourceComponent4.get(i).getProcedure() != null)
-//                            || (regionOfInterestComparison(sourceComponent4.get(i).getRegionOfInterest(), targetComponent4.get(j).getRegionOfInterest()) && sourceComponent4.get(i).getRegionOfInterest() != null)
-//                            || (substanceAdministrationComparison(sourceComponent4.get(i).getSubstanceAdministration(), targetComponent4.get(j).getSubstanceAdministration()) && sourceComponent4.get(i).getSubstanceAdministration() != null)
-//                            || (supplyComparison(sourceComponent4.get(i).getSupply(), targetComponent4.get(j).getSupply()) && sourceComponent4.get(i).getSupply() != null))) {
-//                        specificError = true;
-//                    }
-//                }
-//                //compare NullFlavor
-//                if (!compareNullFlavor(sourceComponent4.get(i).getNullFlavor(), targetComponent4.get(j).getNullFlavor())) {
-//                    specificError = true;
-//                }
-//                //result Code
-//                if (!compareTypeCode(sourceComponent4.get(i).getTypeCode(),targetComponent4.get(j).getTypeCode())) {
-//                    specificError = true;
-//                }
-//                //contextConductionInd
-//                if (sourceComponent4.get(i).getContextConductionInd() != sourceComponent4.get(j).getContextConductionInd()) {
-//                    specificError = true;
-////                    comparisonReport.addMessage("Context Conduction Ind error in " + errorMessage + " -> Context Conduction Ind");
-//                }
-//
-//                if (!specificError){
-//                    targetMatches++;
-//                }
-//
-//            }
-//            if (targetMatches == 0) {
-//                errorExists = true;
-////                comparisonReport.addMessage("Component4 Comparison Error source " + i + " in " + errorMessage + "\n");
-//            }  else if (targetMatches>1) {
-////                comparisonReport.addMessage("Component4 Comparison Warning source " + i + " in " + errorMessage + "\n");
-//            }
-//        }
-//        return !errorExists;
+        for (int i=0;i<sourceComponent4.size();i++) {
+            for (int j = 0; j < targetComponent4.size(); j++) {
+                //compare RealmCodes
+                compareRealmCodes(sourceComponent4.get(i).getRealmCodes(), targetComponent4.get(j).getRealmCodes());
+                //compare TypeID
+                typeIDComparison(sourceComponent4.get(i).getTypeId(), targetComponent4.get(j).getTypeId());
+                //compare TemplateIDs
+                compareTemplateID(sourceComponent4.get(i).getTemplateIds(), targetComponent4.get(j).getTemplateIds());
+                //sequenceNumber
+                compareVersionNumber(sourceComponent4.get(i).getSequenceNumber(),targetComponent4.get(j).getSequenceNumber());
+                //seperatableInd
+                comparePreferenceInd(sourceComponent4.get(i).getSeperatableInd(),targetComponent4.get(j).getSeperatableInd());
+                //Choice - Act
+                actComparison(sourceComponent4.get(i).getAct(), targetComponent4.get(j).getAct());
+                //Choice - Observation
+                observationComparison(sourceComponent4.get(i).getObservation(), targetComponent4.get(j).getObservation());
+                //Choice - ObservationMedia
+                observationMediaComparison(sourceComponent4.get(i).getObservationMedia(), targetComponent4.get(j).getObservationMedia());
+                //Choice - Organizer
+                organizerComparison(sourceComponent4.get(i).getOrganizer(), targetComponent4.get(j).getOrganizer());
+                //Choice - Procedure
+                procedureComparison(sourceComponent4.get(i).getProcedure(), targetComponent4.get(j).getProcedure());
+                //Choice - RegionOfInterest
+                regionOfInterestComparison(sourceComponent4.get(i).getRegionOfInterest(), targetComponent4.get(j).getRegionOfInterest());
+                //Choice - SubstanceAdministration
+                substanceAdministrationComparison(sourceComponent4.get(i).getSubstanceAdministration(), targetComponent4.get(j).getSubstanceAdministration());
+                //Choice - Supply
+                supplyComparison(sourceComponent4.get(i).getSupply(), targetComponent4.get(j).getSupply());
+                //compare NullFlavor
+                compareNullFlavor(sourceComponent4.get(i).getNullFlavor(), targetComponent4.get(j).getNullFlavor());
+                //result Code
+                compareTypeCode(sourceComponent4.get(i).getTypeCode(),targetComponent4.get(j).getTypeCode());
+                //contextConductionInd
+                compareContextConductionInd(sourceComponent4.get(i).getContextConductionInd(),targetComponent4.get(j).getContextConductionInd());
+            }
+        }
         currentLocation.exit();
     }
 
     private void compareValuesROI(EList<RegionOfInterestValue> sourceValue, EList<RegionOfInterestValue> targetValue) {
         currentLocation.enter("Region Of Interest Value");
-//        boolean errorExists = false;
-//        for (int i=0; i<sourceValue.size(); i++) {
-//            int targetMatches = 0;
-//            for (int j=0; j<targetValue.size(); j++) {
-//                if (sourceValue.get(i).getValue().equals(targetValue.get(j).getValue())
-//                        && sourceValue.get(i).getNullFlavor().getLiteral().equals(targetValue.get(j).getNullFlavor().getLiteral())
-//                        && (sourceValue.get(i).isUnsorted() == targetValue.get(j).isUnsorted()))
-//                {
-//                    targetMatches++;
-//                }
-//            }
-//            if (targetMatches==0) {
-//                errorExists = true;
-////                comparisonReport.addMessage("Region of Interest Value Error source " + i + " in " + errorMessage + "\n");
-//            } else if (targetMatches>1) {
-////                comparisonReport.addMessage("Region of Interest Value Warning source " + i + " has " + targetMatches + " in target in " + errorMessage + "\n");
-//            }
-//        }
-//        return !errorExists;
+
+        //initialize targetListObjects
+        List<List<Object>> targetListObjects = sourceValue.stream()
+                .map(RegionOfInterestValue -> new ArrayList<Object>() {{add(RegionOfInterestValue.getValue()); add(RegionOfInterestValue.getNullFlavor().getLiteral()); add(RegionOfInterestValue.isUnsorted()); }} )
+                .collect(Collectors.toList());
+
+        //initialize sourceListObjects
+        List<List<Object>> sourceListObjects = targetValue.stream()
+                .map(RegionOfInterestValue -> new ArrayList<Object>() {{add(RegionOfInterestValue.getValue()); add(RegionOfInterestValue.getNullFlavor().getLiteral()); add(RegionOfInterestValue.isUnsorted());}} )
+                .collect(Collectors.toList());
+
+        for (List<Object> sourceObjects : sourceListObjects) {
+            comparisons.add(new Comparison(new ComparisonLocation(currentLocation), ComparisonUtility.ObjectListComparison(), sourceObjects,targetListObjects));
+        }
+
         currentLocation.exit();
     }
 
@@ -3131,14 +2299,10 @@ public class MDHTPreCompareService extends PreCompareService {
             compareAddr(sourceParticipantRole.getAddrs(),targetParticipantRole.getAddrs());
             //telecom
             compareTelcom(sourceParticipantRole.getTelecoms(),targetParticipantRole.getTelecoms());
-            //Choice - playingDevice (Device), playingEntity(PlayingEntity)
-//            if (!(sourceParticipantRole.getPlayingDevice() == null && targetParticipantRole.getPlayingDevice() == null
-//                    && sourceParticipantRole.getPlayingEntity() == null && targetParticipantRole.getPlayingEntity() == null)) {
-//                if (!((deviceComparison(sourceParticipantRole.getPlayingDevice(), targetParticipantRole.getPlayingDevice()) && sourceParticipantRole.getPlayingDevice() != null)
-//                        || (comparePlayingEntity(sourceParticipantRole.getPlayingEntity(), targetParticipantRole.getPlayingEntity()) && sourceParticipantRole.getPlayingEntity() != null))) {
-//                    errorExists = true;
-//                }
-//            }
+            //Choice - playingDevice (Device),
+            deviceComparison(sourceParticipantRole.getPlayingDevice(), targetParticipantRole.getPlayingDevice());
+            //Choice - playingEntity(PlayingEntity)
+            comparePlayingEntity(sourceParticipantRole.getPlayingEntity(), targetParticipantRole.getPlayingEntity());
             //scopingEntity - Entity
             entityComparison(sourceParticipantRole.getScopingEntity(),targetParticipantRole.getScopingEntity());
             //nullFlavor
@@ -3316,14 +2480,10 @@ public class MDHTPreCompareService extends PreCompareService {
             compareTemplateID(sourceManufacturedProduct.getTemplateIds(), targetManufacturedProduct.getTemplateIds());
             //id
             compareIDs(sourceManufacturedProduct.getIds(), targetManufacturedProduct.getIds());
-            //Choice - manufacturedLabeled(LabeledDrug), manufacturedMaterial(Material)
-//            if (!(sourceManufacturedProduct.getManufacturedLabeledDrug() == null && targetManufacturedProduct.getManufacturedLabeledDrug() == null
-//                    && sourceManufacturedProduct.getManufacturedMaterial() == null && targetManufacturedProduct.getManufacturedMaterial() == null)) {
-//                if (!((labeledDrugComparison(sourceManufacturedProduct.getManufacturedLabeledDrug(), targetManufacturedProduct.getManufacturedLabeledDrug()) && sourceManufacturedProduct.getManufacturedLabeledDrug() != null)
-//                        || (materialComparison(sourceManufacturedProduct.getManufacturedMaterial(), targetManufacturedProduct.getManufacturedMaterial()) && sourceManufacturedProduct.getManufacturedMaterial() != null))) {
-//                    errorExists = true;
-//                }
-//            }
+            //Choice - manufacturedLabeled(LabeledDrug)
+            labeledDrugComparison(sourceManufacturedProduct.getManufacturedLabeledDrug(), targetManufacturedProduct.getManufacturedLabeledDrug());
+            //Choice - manufacturedMaterial(Material)
+            materialComparison(sourceManufacturedProduct.getManufacturedMaterial(), targetManufacturedProduct.getManufacturedMaterial());
             //manufacturerOrganization - Organization
             organizationComparison(sourceManufacturedProduct.getManufacturerOrganization(),targetManufacturedProduct.getManufacturerOrganization());
             //nullFlavor
@@ -3473,28 +2633,18 @@ public class MDHTPreCompareService extends PreCompareService {
     private void compareRealmCodes(EList<CS> source, EList<CS> target) {
         currentLocation.enter("Realm Codes");
 
-        //initialize targetListString
-        List<List<String>> targetListStrings = new ArrayList<>();
-        for (CS targetCS : target) {
-            List<String> subList = new ArrayList<>();
-            subList.add(targetCS.getCode());
-            subList.add(targetCS.getNullFlavor().getLiteral());
-            subList.add(targetCS.getCodeSystemName());
-            subList.add(targetCS.getCodeSystemVersion());
-            subList.add(targetCS.getCodeSystem());
-            subList.add(targetCS.getDisplayName());
-            targetListStrings.add(subList);
-        }
+        //initialize targetListObjects
+        List<List<Object>> targetListObjects = target.stream()
+                .map(cs -> new ArrayList<Object>() {{add(cs.getCode()); add(cs.getNullFlavor().getLiteral()); add(cs.getCodeSystemName()); add(cs.getCodeSystemVersion()); add(cs.getCodeSystem()); add(cs.getDisplayName());}} )
+                .collect(Collectors.toList());
 
-        List<String> sourceStrings = new ArrayList<>();
-        for (CS sourceCS : source) {
-            sourceStrings.add(sourceCS.getCode());
-            sourceStrings.add(sourceCS.getNullFlavor().getLiteral());
-            sourceStrings.add(sourceCS.getCodeSystemName());
-            sourceStrings.add(sourceCS.getCodeSystemVersion());
-            sourceStrings.add(sourceCS.getCodeSystem());
-            sourceStrings.add(sourceCS.getDisplayName());
-            comparisons.add(new Comparison(new ComparisonLocation(currentLocation), ComparisonUtility.StringListComparison(), sourceStrings,targetListStrings));
+        //initialize sourceListObjects
+        List<List<Object>> sourceListObjects = source.stream()
+                .map(cs -> new ArrayList<Object>() {{add(cs.getCode()); add(cs.getNullFlavor().getLiteral()); add(cs.getCodeSystemName()); add(cs.getCodeSystemVersion()); add(cs.getCodeSystem()); add(cs.getDisplayName());}} )
+                .collect(Collectors.toList());
+
+        for (List<Object> sourceObjects : sourceListObjects) {
+            comparisons.add(new Comparison(new ComparisonLocation(currentLocation), ComparisonUtility.ObjectListComparison(), sourceObjects,targetListObjects));
         }
 
         currentLocation.exit();
@@ -3503,24 +2653,18 @@ public class MDHTPreCompareService extends PreCompareService {
     private void compareTemplateID(EList<II> source, EList<II> target) {
         currentLocation.enter("Template IDs");
 
-        //initialize targetListString
-        List<List<String>> targetListStrings = new ArrayList<>();
-        for (II targetII : target) {
-            List<String> subList = new ArrayList<>();
-            subList.add(targetII.getRoot());
-            subList.add(targetII.getNullFlavor().getLiteral());
-            subList.add(targetII.getAssigningAuthorityName());
-            subList.add(targetII.getExtension());
-            targetListStrings.add(subList);
-        }
+        //initialize targetListObjects
+        List<List<Object>> targetListObjects = target.stream()
+                .map(ii -> new ArrayList<Object>() {{add(ii.getRoot()); add(ii.getNullFlavor().getLiteral()); add(ii.getAssigningAuthorityName()); add(ii.getExtension());}} )
+                .collect(Collectors.toList());
 
-        List<String> sourceStrings = new ArrayList<>();
-        for (II sourceII : source) {
-            sourceStrings.add(sourceII.getRoot());
-            sourceStrings.add(sourceII.getNullFlavor().getLiteral());
-            sourceStrings.add(sourceII.getAssigningAuthorityName());
-            sourceStrings.add(sourceII.getExtension());
-            comparisons.add(new Comparison(new ComparisonLocation(currentLocation), ComparisonUtility.StringListComparison(), sourceStrings,targetListStrings));
+        //initialize sourceListObjects
+        List<List<Object>> sourceListObjects = source.stream()
+                .map(ii -> new ArrayList<Object>() {{add(ii.getRoot()); add(ii.getNullFlavor().getLiteral()); add(ii.getAssigningAuthorityName()); add(ii.getExtension());}} )
+                .collect(Collectors.toList());
+
+        for (List<Object> sourceObjects : sourceListObjects) {
+            comparisons.add(new Comparison(new ComparisonLocation(currentLocation), ComparisonUtility.ObjectListComparison(), sourceObjects,targetListObjects));
         }
 
         currentLocation.exit();
@@ -3528,25 +2672,32 @@ public class MDHTPreCompareService extends PreCompareService {
 
     private void compareIDs(EList<II> source, EList<II> target) {
         currentLocation.enter("IDs");
+        if (source.size() != 0 && target.size() != 0){
+            if (source.get(0) != null && target.get(0) != null) {
+                //initialize targetListObjects
+                List<List<Object>> targetListObjects = target.stream()
+                        .map(ii -> new ArrayList<Object>() {{
+                            add(ii.getRoot());
+                            add(ii.getNullFlavor().getLiteral());
+                            add(ii.getAssigningAuthorityName());
+                            add(ii.getExtension());
+                        }})
+                        .collect(Collectors.toList());
 
-        //initialize targetListString
-        List<List<String>> targetListStrings = new ArrayList<>();
-        for (II targetII : target) {
-            List<String> subList = new ArrayList<>();
-            subList.add(targetII.getRoot());
-            subList.add(targetII.getNullFlavor().getLiteral());
-            subList.add(targetII.getAssigningAuthorityName());
-            subList.add(targetII.getExtension());
-            targetListStrings.add(subList);
-        }
+                //initialize sourceListObjects
+                List<List<Object>> sourceListObjects = source.stream()
+                        .map(ii -> new ArrayList<Object>() {{
+                            add(ii.getRoot());
+                            add(ii.getNullFlavor().getLiteral());
+                            add(ii.getAssigningAuthorityName());
+                            add(ii.getExtension());
+                        }})
+                        .collect(Collectors.toList());
 
-        List<String> sourceStrings = new ArrayList<>();
-        for (II sourceII : source) {
-            sourceStrings.add(sourceII.getRoot());
-            sourceStrings.add(sourceII.getNullFlavor().getLiteral());
-            sourceStrings.add(sourceII.getAssigningAuthorityName());
-            sourceStrings.add(sourceII.getExtension());
-            comparisons.add(new Comparison(new ComparisonLocation(currentLocation), ComparisonUtility.StringListComparison(), sourceStrings,targetListStrings));
+                for (List<Object> sourceObjects : sourceListObjects) {
+                    comparisons.add(new Comparison(new ComparisonLocation(currentLocation), ComparisonUtility.ObjectListComparison(), sourceObjects, targetListObjects));
+                }
+            }
         }
 
         currentLocation.exit();
@@ -3555,41 +2706,38 @@ public class MDHTPreCompareService extends PreCompareService {
     private void compareAddr(EList<AD> source, EList<AD> target) {
         currentLocation.enter("Addr");
 
-        //initialize targetListString
-        List<List<String>> targetListStrings = new ArrayList<>();
-        for (AD targetAD : target) {
-            List<String> subList = new ArrayList<>();
-            subList.add(targetAD.getText());
-            subList.add(targetAD.getNullFlavor().getLiteral());
-            targetListStrings.add(subList);
+        //initialize targetListObjects
+        List<List<Object>> targetListObjects = target.stream()
+                .map(ad -> new ArrayList<Object>() {{add(ad.getText()); add(ad.getNullFlavor().getLiteral());}} )
+                .collect(Collectors.toList());
+
+        //initialize sourceListObjects
+        List<List<Object>> sourceListObjects = source.stream()
+                .map(ad -> new ArrayList<Object>() {{add(ad.getText()); add(ad.getNullFlavor().getLiteral());}} )
+                .collect(Collectors.toList());
+
+        for (List<Object> sourceObjects : sourceListObjects) {
+            comparisons.add(new Comparison(new ComparisonLocation(currentLocation), ComparisonUtility.ObjectListComparison(), sourceObjects,targetListObjects));
         }
 
-        List<String> sourceStrings = new ArrayList<>();
-        for (AD sourceAD : source) {
-            sourceStrings.add(sourceAD.getText());
-            sourceStrings.add(sourceAD.getNullFlavor().getLiteral());
-            comparisons.add(new Comparison(new ComparisonLocation(currentLocation), ComparisonUtility.StringListComparison(), sourceStrings,targetListStrings));
-        }
         currentLocation.exit();
     }
 
     private void compareTelcom(EList<TEL> source, EList<TEL> target) {
         currentLocation.enter("Telecom");
 
-        //initialize targetListString
-        List<List<String>> targetListStrings = new ArrayList<>();
-        for (TEL targetTEL : target) {
-            List<String> subList = new ArrayList<>();
-            subList.add(targetTEL.getValue());
-            subList.add(targetTEL.getNullFlavor().getLiteral());
-            targetListStrings.add(subList);
-        }
+        //initialize targetListObjects
+        List<List<Object>> targetListObjects = target.stream()
+                .map(tel -> new ArrayList<Object>() {{add(tel.getValue()); add(tel.getNullFlavor().getLiteral());}} )
+                .collect(Collectors.toList());
 
-        List<String> sourceStrings = new ArrayList<>();
-        for (TEL sourceTEL : source) {
-            sourceStrings.add(sourceTEL.getValue());
-            sourceStrings.add(sourceTEL.getNullFlavor().getLiteral());
-            comparisons.add(new Comparison(new ComparisonLocation(currentLocation), ComparisonUtility.StringListComparison(), sourceStrings,targetListStrings));
+        //initialize sourceListObjects
+        List<List<Object>> sourceListObjects = source.stream()
+                .map(tel -> new ArrayList<Object>() {{add(tel.getValue()); add(tel.getNullFlavor().getLiteral());}} )
+                .collect(Collectors.toList());
+
+        for (List<Object> sourceObjects : sourceListObjects) {
+            comparisons.add(new Comparison(new ComparisonLocation(currentLocation), ComparisonUtility.ObjectListComparison(), sourceObjects,targetListObjects));
         }
 
         currentLocation.exit();
@@ -3598,20 +2746,18 @@ public class MDHTPreCompareService extends PreCompareService {
     private void compareNamesPN(EList<PN> source, EList<PN> target) {
         currentLocation.enter("Names");
 
-        //initialize targetListString
-        List<List<String>> targetListStrings = new ArrayList<>();
-        for (PN targetPN : target) {
-            List<String> subList = new ArrayList<>();
-            subList.add(targetPN.getText());
-            subList.add(targetPN.getNullFlavor().getLiteral());
-            targetListStrings.add(subList);
-        }
+        //initialize targetListObjects
+        List<List<Object>> targetListObjects = target.stream()
+                .map(pn -> new ArrayList<Object>() {{add(pn.getText()); add(pn.getNullFlavor().getLiteral());}} )
+                .collect(Collectors.toList());
 
-        List<String> sourceStrings = new ArrayList<>();
-        for (PN sourcePN : source) {
-            sourceStrings.add(sourcePN.getText());
-            sourceStrings.add(sourcePN.getNullFlavor().getLiteral());
-            comparisons.add(new Comparison(new ComparisonLocation(currentLocation), ComparisonUtility.StringListComparison(), sourceStrings,targetListStrings));
+        //initialize sourceListObjects
+        List<List<Object>> sourceListObjects = source.stream()
+                .map(pn -> new ArrayList<Object>() {{add(pn.getText()); add(pn.getNullFlavor().getLiteral());}} )
+                .collect(Collectors.toList());
+
+        for (List<Object> sourceObjects : sourceListObjects) {
+            comparisons.add(new Comparison(new ComparisonLocation(currentLocation), ComparisonUtility.ObjectListComparison(), sourceObjects,targetListObjects));
         }
 
         currentLocation.exit();
@@ -3620,20 +2766,18 @@ public class MDHTPreCompareService extends PreCompareService {
     private void compareNamesEN(EList<EN> source, EList<EN> target) {
         currentLocation.enter("Names");
 
-        //initialize targetListString
-        List<List<String>> targetListStrings = new ArrayList<>();
-        for (EN targetEN : target) {
-            List<String> subList = new ArrayList<>();
-            subList.add(targetEN.getText());
-            subList.add(targetEN.getNullFlavor().getLiteral());
-            targetListStrings.add(subList);
-        }
+        //initialize targetListObjects
+        List<List<Object>> targetListObjects = target.stream()
+                .map(en -> new ArrayList<Object>() {{add(en.getText()); add(en.getNullFlavor().getLiteral());}} )
+                .collect(Collectors.toList());
 
-        List<String> sourceStrings = new ArrayList<>();
-        for (EN sourceEN : source) {
-            sourceStrings.add(sourceEN.getText());
-            sourceStrings.add(sourceEN.getNullFlavor().getLiteral());
-            comparisons.add(new Comparison(new ComparisonLocation(currentLocation), ComparisonUtility.StringListComparison(), sourceStrings,targetListStrings));
+        //initialize sourceListObjects
+        List<List<Object>> sourceListObjects = source.stream()
+                .map(en -> new ArrayList<Object>() {{add(en.getText()); add(en.getNullFlavor().getLiteral());}} )
+                .collect(Collectors.toList());
+
+        for (List<Object> sourceObjects : sourceListObjects) {
+            comparisons.add(new Comparison(new ComparisonLocation(currentLocation), ComparisonUtility.ObjectListComparison(), sourceObjects,targetListObjects));
         }
 
         currentLocation.exit();
@@ -3642,20 +2786,18 @@ public class MDHTPreCompareService extends PreCompareService {
     private void compareNamesON(EList<ON> source, EList<ON> target) {
         currentLocation.enter("Names");
 
-        //initialize targetListString
-        List<List<String>> targetListStrings = new ArrayList<>();
-        for (ON targetON : target) {
-            List<String> subList = new ArrayList<>();
-            subList.add(targetON.getText());
-            subList.add(targetON.getNullFlavor().getLiteral());
-            targetListStrings.add(subList);
-        }
+        //initialize targetListObjects
+        List<List<Object>> targetListObjects = target.stream()
+                .map(on -> new ArrayList<Object>() {{add(on.getText()); add(on.getNullFlavor().getLiteral());}} )
+                .collect(Collectors.toList());
 
-        List<String> sourceStrings = new ArrayList<>();
-        for (ON sourceON : source) {
-            sourceStrings.add(sourceON.getText());
-            sourceStrings.add(sourceON.getNullFlavor().getLiteral());
-            comparisons.add(new Comparison(new ComparisonLocation(currentLocation), ComparisonUtility.StringListComparison(), sourceStrings,targetListStrings));
+        //initialize sourceListObjects
+        List<List<Object>> sourceListObjects = source.stream()
+                .map(on -> new ArrayList<Object>() {{add(on.getText()); add(on.getNullFlavor().getLiteral());}} )
+                .collect(Collectors.toList());
+
+        for (List<Object> sourceObjects : sourceListObjects) {
+            comparisons.add(new Comparison(new ComparisonLocation(currentLocation), ComparisonUtility.ObjectListComparison(), sourceObjects,targetListObjects));
         }
 
         currentLocation.exit();
@@ -3663,77 +2805,21 @@ public class MDHTPreCompareService extends PreCompareService {
 
     private void compareEffectiveTime(EList<SXCM_TS> source, EList<SXCM_TS> target) {
         currentLocation.enter("Effective Time");
-//        boolean errorExists = false;
-//
-//
-//
-//
-//
-//
-//        BiFunction<String, List<String>, Result> biFunction = (sourceString, stringList) -> {
-//           for(String string : stringList){
-//               if(sourceString.equals(string))
-//                   return new Match(null,null,null);
-//               else
-//                   return new Mismatch(null,null,null);
-//           }
-//
-//           return null;
-//        };
-//
-//
-//
-//
-        List<String> targetValues = target.stream()
-                .map(sxcm_ts -> sxcm_ts.getValue())
-                .filter(o -> o != null)
+
+        //initialize targetListObjects
+        List<List<Object>> targetListObjects = target.stream()
+                .map(sxcm_ts -> new ArrayList<Object>() {{add(sxcm_ts.getValue()); add(sxcm_ts.getNullFlavor().getLiteral());}} )
                 .collect(Collectors.toList());
-//
-//        List<String> targetNullFlavors = target.stream()
-//                .map(sxcm_ts -> sxcm_ts.getNullFlavor().getLiteral())
-//                .filter(o -> o != null)
-//                .collect(Collectors.toList());
-//
-//        for(SXCM_TS sxcm_ts : source){
-//            final String valueString = sxcm_ts.getValue();
-//            final String nullFlavorString = sxcm_ts.getNullFlavor().getLiteral();
-//
-//            comparisons.add(new Comparison(null, biFunction, valueString, targetValues));
-//            comparisons.add(new Comparison(null, biFunction, nullFlavorString, targetNullFlavors));
-//
-//        }
-//
-//
-//
-//        for (int i = 0; i < source.size(); i++) {
-//            int targetMatches = 0;
-//            for (int j = 0; j < target.size(); j++) {
-//                boolean sourceTargetMismatch = false;
-//                if (source.get(i).getValue() != null && target.get(j).getValue() != null) {
-//                    if (!source.get(i).getValue().equals(target.get(j).getValue())) {
-////                        comparisonReport.addMessage("Value error in " + errorMessage + "\n");
-//                        sourceTargetMismatch = true;
-//                    }
-//                }
-//
-//                if (source.get(i).getNullFlavor().getLiteral() != null && target.get(j).getNullFlavor().getLiteral() != null) {
-//                    if (!source.get(i).getNullFlavor().getLiteral().equals(target.get(j).getNullFlavor().getLiteral())) {
-////                        comparisonReport.addMessage("Null Flavor ror in " + errorMessage + "\n");
-//                        sourceTargetMismatch = true;
-//                    }
-//                }
-//                if (!sourceTargetMismatch) {
-//                    targetMatches++;
-//                }
-//            }
-//            if (targetMatches == 0) {
-//                errorExists = true;
-////                comparisonReport.addMessage("Effective Time error source " + i + " in " + errorMessage + "\n");
-//            } else if (targetMatches > 1) {
-////                comparisonReport.addMessage("Effective Time Warning source " + i + " has " + targetMatches + " in target in " + errorMessage + "\n");
-//            }
-//        }
-//        return !errorExists;
+
+        //initialize sourceListObjects
+        List<List<Object>> sourceListObjects = source.stream()
+                .map(sxcm_ts -> new ArrayList<Object>() {{add(sxcm_ts.getValue()); add(sxcm_ts.getNullFlavor().getLiteral());}} )
+                .collect(Collectors.toList());
+
+        for(List<Object> sourceObjects : sourceListObjects) {
+            comparisons.add(new Comparison(new ComparisonLocation(currentLocation), ComparisonUtility.ObjectListComparison(),sourceObjects,targetListObjects));
+        }
+
         currentLocation.exit();
     }
 
@@ -4458,7 +3544,6 @@ public class MDHTPreCompareService extends PreCompareService {
 
     private void comparePreferenceInd(BL source, BL target) {
         currentLocation.enter("Preference Ind");
-        boolean matched = true;
         if (source != null && target != null) {
             comparisons.add(new Comparison<String, String>(new ComparisonLocation(currentLocation), ComparisonUtility.StringComparison(), source.getNullFlavor().getLiteral(), target.getNullFlavor().getLiteral()));
             comparisons.add(new Comparison<Boolean, Boolean>(new ComparisonLocation(currentLocation), ComparisonUtility.BooleanComparison(), source.getValue(), target.getValue()));
@@ -4500,188 +3585,87 @@ public class MDHTPreCompareService extends PreCompareService {
 
     private void compareValues(EList<ANY> source, EList<ANY> target) {
         currentLocation.enter("Values");
+        //initialize targetListObjects
+        List<List<Object>> targetListObjects = target.stream()
+                .map(any -> new ArrayList<Object>() {{add(any.getNullFlavor().getLiteral());}} )
+                .collect(Collectors.toList());
+
+        //initialize sourceListObjects
+        List<List<Object>> sourceListObjects = source.stream()
+                .map(any -> new ArrayList<Object>() {{add(any.getNullFlavor().getLiteral());}} )
+                .collect(Collectors.toList());
+
+        for (List<Object> sourceObjects : sourceListObjects) {
+            comparisons.add(new Comparison(new ComparisonLocation(currentLocation), ComparisonUtility.ObjectListComparison(), sourceObjects,targetListObjects));
+        }
         currentLocation.exit();
     }
 
     private void compareValue(ANY source, ANY target) {
         currentLocation.enter("Value");
+        if (source != null && target != null) {
+            comparisons.add(new Comparison<String, String>(new ComparisonLocation(currentLocation), ComparisonUtility.StringComparison(), source.getNullFlavor().getLiteral(), target.getNullFlavor().getLiteral()));
+        }
         currentLocation.exit();
     }
 
     private void compareCodes(EList<CE> source, EList<CE> target) {
         currentLocation.enter("Code");
-//        boolean errorExists = false;
-//        for (int i=0; i<source.size(); i++) {
-//            int targetMatches = 0;
-//            for (int j=0; j<target.size(); j++) {
-//                boolean sourceTargetMismatch = false;
-//                if (source.get(i).getCode() != null && target.get(j).getCode() != null) {
-//                    if (!source.get(i).getCode().equals(target.get(j).getCode())) {
-//                        sourceTargetMismatch = true;
-////                        comparisonReport.addMessage("Code error source " + i + " in " + errorMessage + "\n");
-//                    }
-//                }
-//                if (source.get(i).getNullFlavor().getLiteral() != null && target.get(j).getNullFlavor().getLiteral() != null) {
-//                    if (!source.get(i).getNullFlavor().getLiteral().equals(target.get(j).getNullFlavor().getLiteral())) {
-//                        sourceTargetMismatch = true;
-////                        comparisonReport.addMessage("Null Flavor error source " + i + " in " + errorMessage + "\n");
-//                    }
-//                }
-//                if (source.get(i).getCodeSystemName() != null && target.get(j).getCodeSystemName() != null) {
-//                    if (!source.get(i).getCodeSystemName().equals(target.get(j).getCodeSystemName())) {
-//                        sourceTargetMismatch = true;
-////                        comparisonReport.addMessage("Code System Name error source " + i + " in " + errorMessage + "\n");
-//                    }
-//                }
-//                if (source.get(i).getCodeSystem() != null && target.get(j).getCodeSystem() != null) {
-//                    if (!source.get(i).getCodeSystem().equals(target.get(j).getCodeSystem())) {
-//                        sourceTargetMismatch = true;
-////                        comparisonReport.addMessage("Code System error source " + i + " in " + errorMessage + "\n");
-//                    }
-//                }
-//                if (source.get(i).getCodeSystemVersion() != null && target.get(j).getCodeSystemVersion() != null) {
-//                    if (!source.get(i).getCodeSystemVersion().equals(target.get(j).getCodeSystemVersion())) {
-//                        sourceTargetMismatch = true;
-////                        comparisonReport.addMessage("Code System Version error source " + i + " in " + errorMessage + "\n");
-//                    }
-//                }
-//                if (source.get(i).getDisplayName() != null && target.get(j).getDisplayName() != null) {
-//                    if (!source.get(i).getDisplayName().equals(target.get(j).getDisplayName())) {
-//                        sourceTargetMismatch = true;
-////                        comparisonReport.addMessage("Display Name error source " + i + " in " + errorMessage + "\n");
-//                    }
-//                }
-//
-//                if (!sourceTargetMismatch){
-//                    targetMatches++;
-//                }
-//            }
-//            if (targetMatches==0) {
-//                errorExists = true;
-////                comparisonReport.addMessage("Codes Error source " + i + " in " + errorMessage + "\n");
-//            } else if (targetMatches>1) {
-////                comparisonReport.addMessage("Codes Warning source " + i + " has " + targetMatches + " in target in " + errorMessage + "\n");
-//            }
-//        }
-//        return !errorExists;
+
+        //initialize targetListObjects
+        List<List<Object>> targetListObjects = target.stream()
+                .map(ce -> new ArrayList<Object>() {{add(ce.getCode()); add(ce.getNullFlavor().getLiteral()); add(ce.getCodeSystemName()); add(ce.getCodeSystemVersion()); add(ce.getCodeSystem()); add(ce.getDisplayName());}} )
+                .collect(Collectors.toList());
+
+        //initialize sourceListObjects
+        List<List<Object>> sourceListObjects = source.stream()
+                .map(ce -> new ArrayList<Object>() {{add(ce.getCode()); add(ce.getNullFlavor().getLiteral()); add(ce.getCodeSystemName()); add(ce.getCodeSystemVersion()); add(ce.getCodeSystem()); add(ce.getDisplayName());}} )
+                .collect(Collectors.toList());
+
+        for (List<Object> sourceObjects : sourceListObjects) {
+            comparisons.add(new Comparison(new ComparisonLocation(currentLocation), ComparisonUtility.ObjectListComparison(), sourceObjects,targetListObjects));
+        }
+
         currentLocation.exit();
     }
 
     private void compareCodesCD(EList<CD> source, EList<CD> target) {
         currentLocation.enter("Code");
-//        boolean errorExists = false;
-//        for (int i=0; i<source.size(); i++) {
-//            int targetMatches = 0;
-//            for (int j=0; j<target.size(); j++) {
-//                boolean sourceTargetMismatch = false;
-//                if (source.get(i).getCode() != null && target.get(j).getCode() != null) {
-//                    if (!source.get(i).getCode().equals(target.get(j).getCode())) {
-//                        sourceTargetMismatch = true;
-////                        comparisonReport.addMessage("Code error source " + i + " in " + errorMessage + "\n");
-//                    }
-//                }
-//                if (source.get(i).getNullFlavor().getLiteral() != null && target.get(j).getNullFlavor().getLiteral() != null) {
-//                    if (!source.get(i).getNullFlavor().getLiteral().equals(target.get(j).getNullFlavor().getLiteral())) {
-//                        sourceTargetMismatch = true;
-////                        comparisonReport.addMessage("Null Flavor error source " + i + " in " + errorMessage + "\n");
-//                    }
-//                }
-//                if (source.get(i).getCodeSystemName() != null && target.get(j).getCodeSystemName() != null) {
-//                    if (!source.get(i).getCodeSystemName().equals(target.get(j).getCodeSystemName())) {
-//                        sourceTargetMismatch = true;
-////                        comparisonReport.addMessage("Code System Name error source " + i + " in " + errorMessage + "\n");
-//                    }
-//                }
-//                if (source.get(i).getCodeSystem() != null && target.get(j).getCodeSystem() != null) {
-//                    if (!source.get(i).getCodeSystem().equals(target.get(j).getCodeSystem())) {
-//                        sourceTargetMismatch = true;
-////                        comparisonReport.addMessage("Code System error source " + i + " in " + errorMessage + "\n");
-//                    }
-//                }
-//                if (source.get(i).getCodeSystemVersion() != null && target.get(j).getCodeSystemVersion() != null) {
-//                    if (!source.get(i).getCodeSystemVersion().equals(target.get(j).getCodeSystemVersion())) {
-//                        sourceTargetMismatch = true;
-////                        comparisonReport.addMessage("Code System Version error source " + i + " in " + errorMessage + "\n");
-//                    }
-//                }
-//                if (source.get(i).getDisplayName() != null && target.get(j).getDisplayName() != null) {
-//                    if (!source.get(i).getDisplayName().equals(target.get(j).getDisplayName())) {
-//                        sourceTargetMismatch = true;
-////                        comparisonReport.addMessage("Display Name error source " + i + " in " + errorMessage + "\n");
-//                    }
-//                }
-//
-//                if (!sourceTargetMismatch){
-//                    targetMatches++;
-//                }
-//            }
-//            if (targetMatches==0) {
-//                errorExists = true;
-////                comparisonReport.addMessage("RCodes Error source " + i + " in " + errorMessage + "\n");
-//            } else if (targetMatches>1) {
-////                comparisonReport.addMessage("Codes Warning source " + i + " has " + targetMatches + " in target in " + errorMessage + "\n");
-//            }
-//        }
-//        return !errorExists;
+
+        //initialize targetListObjects
+        List<List<Object>> targetListObjects = target.stream()
+                .map(cd -> new ArrayList<Object>() {{add(cd.getCode()); add(cd.getNullFlavor().getLiteral()); add(cd.getCodeSystemName()); add(cd.getCodeSystemVersion()); add(cd.getCodeSystem()); add(cd.getDisplayName());}} )
+                .collect(Collectors.toList());
+
+        //initialize sourceListObjects
+        List<List<Object>> sourceListObjects = source.stream()
+                .map(cd -> new ArrayList<Object>() {{add(cd.getCode()); add(cd.getNullFlavor().getLiteral()); add(cd.getCodeSystemName()); add(cd.getCodeSystemVersion()); add(cd.getCodeSystem()); add(cd.getDisplayName());}} )
+                .collect(Collectors.toList());
+
+        for (List<Object> sourceObjects : sourceListObjects) {
+            comparisons.add(new Comparison(new ComparisonLocation(currentLocation), ComparisonUtility.ObjectListComparison(), sourceObjects,targetListObjects));
+        }
+
         currentLocation.exit();
     }
 
     private void compareTargetSiteCode(EList<CD> source, EList<CD> target) {
         currentLocation.enter("Target Site Code");
-//        boolean errorExists = false;
-//        for (int i=0; i<source.size(); i++) {
-//            int targetMatches = 0;
-//            for (int j=0; j<target.size(); j++) {
-//                boolean sourceTargetMismatch = false;
-//                if (source.get(i).getCode() != null && target.get(j).getCode() != null) {
-//                    if (!source.get(i).getCode().equals(target.get(j).getCode())) {
-//                        sourceTargetMismatch = true;
-////                        comparisonReport.addMessage("Code error source " + i + " in " + errorMessage + "\n");
-//                    }
-//                }
-//                if (source.get(i).getNullFlavor().getLiteral() != null && target.get(j).getNullFlavor().getLiteral() != null) {
-//                    if (!source.get(i).getNullFlavor().getLiteral().equals(target.get(j).getNullFlavor().getLiteral())) {
-//                        sourceTargetMismatch = true;
-////                        comparisonReport.addMessage("Null Flavor error source " + i + " in " + errorMessage + "\n");
-//                    }
-//                }
-//                if (source.get(i).getCodeSystemName() != null && target.get(j).getCodeSystemName() != null) {
-//                    if (!source.get(i).getCodeSystemName().equals(target.get(j).getCodeSystemName())) {
-//                        sourceTargetMismatch = true;
-////                        comparisonReport.addMessage("Code System Name error source " + i + " in " + errorMessage + "\n");
-//                    }
-//                }
-//                if (source.get(i).getCodeSystem() != null && target.get(j).getCodeSystem() != null) {
-//                    if (!source.get(i).getCodeSystem().equals(target.get(j).getCodeSystem())) {
-//                        sourceTargetMismatch = true;
-////                        comparisonReport.addMessage("Code System error source " + i + " in " + errorMessage + "\n");
-//                    }
-//                }
-//                if (source.get(i).getCodeSystemVersion() != null && target.get(j).getCodeSystemVersion() != null) {
-//                    if (!source.get(i).getCodeSystemVersion().equals(target.get(j).getCodeSystemVersion())) {
-//                        sourceTargetMismatch = true;
-////                        comparisonReport.addMessage("Code System Version error source " + i + " in " + errorMessage + "\n");
-//                    }
-//                }
-//                if (source.get(i).getDisplayName() != null && target.get(j).getDisplayName() != null) {
-//                    if (!source.get(i).getDisplayName().equals(target.get(j).getDisplayName())) {
-//                        sourceTargetMismatch = true;
-////                        comparisonReport.addMessage("Display Name error source " + i + " in " + errorMessage + "\n");
-//                    }
-//                }
-//
-//                if (!sourceTargetMismatch){
-//                    targetMatches++;
-//                }
-//            }
-//            if (targetMatches==0) {
-//                errorExists = true;
-////                comparisonReport.addMessage("Target Site Codes Error source " + i + " in " + errorMessage + "\n");
-//            } else if (targetMatches>1) {
-////                comparisonReport.addMessage("Target Site Warning source " + i + " has " + targetMatches + " in target in " + errorMessage + "\n");
-//            }
-//        }
-//        return !errorExists;
+
+        //initialize targetListObjects
+        List<List<Object>> targetListObjects = target.stream()
+                .map(cd -> new ArrayList<Object>() {{add(cd.getCode()); add(cd.getNullFlavor().getLiteral()); add(cd.getCodeSystemName()); add(cd.getCodeSystemVersion()); add(cd.getCodeSystem()); add(cd.getDisplayName());}} )
+                .collect(Collectors.toList());
+
+        //initialize sourceListObjects
+        List<List<Object>> sourceListObjects = source.stream()
+                .map(cd -> new ArrayList<Object>() {{add(cd.getCode()); add(cd.getNullFlavor().getLiteral()); add(cd.getCodeSystemName()); add(cd.getCodeSystemVersion()); add(cd.getCodeSystem()); add(cd.getDisplayName());}} )
+                .collect(Collectors.toList());
+
+        for (List<Object> sourceObjects : sourceListObjects) {
+            comparisons.add(new Comparison(new ComparisonLocation(currentLocation), ComparisonUtility.ObjectListComparison(), sourceObjects,targetListObjects));
+        }
+
         currentLocation.exit();
     }
 
@@ -4738,43 +3722,21 @@ public class MDHTPreCompareService extends PreCompareService {
 
     private void compareQuantities(EList<PQ> source, EList<PQ> target) {
         currentLocation.enter("Quantities");
-//
-//        boolean errorExists = false;
-//        for (int i=0; i<source.size(); i++) {
-//            int targetMatches = 0;
-//            for (int j=0; j<target.size(); j++) {
-//                boolean sourceTargetMismatch = false;
-//                if (source.get(i).getValue() != null && target.get(j).getValue() != null) {
-//                    if (!source.get(i).getValue().equals(target.get(j).getValue())) {
-//                        sourceTargetMismatch = true;
-////                        comparisonReport.addMessage("Value error source " + i + " in " + errorMessage + "\n");
-//                    }
-//                }
-//                if (source.get(i).getNullFlavor().getLiteral() != null && target.get(j).getNullFlavor().getLiteral() != null) {
-//                    if (!source.get(i).getNullFlavor().getLiteral().equals(target.get(j).getNullFlavor().getLiteral())) {
-//                        sourceTargetMismatch = true;
-////                        comparisonReport.addMessage("Null Flavor error source " + i + " in " + errorMessage + "\n");
-//                    }
-//                }
-//                if (source.get(i).getUnit() != null && target.get(j).getUnit() != null) {
-//                    if (!source.get(i).getUnit().equals(target.get(j).getUnit())) {
-//                        sourceTargetMismatch = true;
-////                        comparisonReport.addMessage("Unit error source " + i + " in " + errorMessage + "\n");
-//                    }
-//                }
-//
-//                if (!sourceTargetMismatch){
-//                    targetMatches++;
-//                }
-//            }
-//            if (targetMatches==0) {
-//                errorExists = true;
-////                comparisonReport.addMessage("Quantities Error source " + i + " in " + errorMessage + "\n");
-//            } else if (targetMatches>1) {
-////                comparisonReport.addMessage("Quantities Warning source " + i + " has " + targetMatches + " in target in " + errorMessage + "\n");
-//            }
-//        }
-//        return !errorExists;
+
+        //initialize targetListObjects
+        List<List<Object>> targetListObjects = target.stream()
+                .map(ce -> new ArrayList<Object>() {{add(ce.getValue()); add(ce.getNullFlavor().getLiteral()); add(ce.getUnit());}} )
+                .collect(Collectors.toList());
+
+        //initialize sourceListObjects
+        List<List<Object>> sourceListObjects = source.stream()
+                .map(ce -> new ArrayList<Object>() {{add(ce.getValue()); add(ce.getNullFlavor().getLiteral()); add(ce.getUnit());}} )
+                .collect(Collectors.toList());
+
+        for (List<Object> sourceObjects : sourceListObjects) {
+            comparisons.add(new Comparison(new ComparisonLocation(currentLocation), ComparisonUtility.ObjectListComparison(), sourceObjects,targetListObjects));
+        }
+
         currentLocation.exit();
     }
 
@@ -4809,7 +3771,12 @@ public class MDHTPreCompareService extends PreCompareService {
         currentLocation.enter("Context Conduction Ind");
         comparisons.add(new Comparison<Boolean, Boolean>(new ComparisonLocation(currentLocation), ComparisonUtility.BooleanComparison(), source, target));
         currentLocation.exit();
+    }
 
+    private void compareInversionInd(Boolean source, Boolean target) {
+        currentLocation.enter("Inversion Ind");
+        comparisons.add(new Comparison<Boolean, Boolean>(new ComparisonLocation(currentLocation), ComparisonUtility.BooleanComparison(), source, target));
+        currentLocation.exit();
     }
 
 }

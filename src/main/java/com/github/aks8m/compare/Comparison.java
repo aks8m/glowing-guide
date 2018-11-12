@@ -28,4 +28,8 @@ public class Comparison<T,U> {
        return biFunction.apply(source,target);
     }
 
+    public String toString() {
+        return "SOURCE value: " + source + "\tTARGET value: " + target + "\t LOCATION: " + location.formattedLocation();
+    }
+
 }

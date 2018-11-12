@@ -2,6 +2,7 @@ package com.github.aks8m;
 
 import com.github.aks8m.compare.engine.CompareEngineFactory;
 import com.github.aks8m.compare.engine.CompareEngine;
+import com.github.aks8m.compare.engine.MDHTComparisonEngine;
 import com.github.aks8m.compare.precompare.MDHTPreCompareService;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -13,11 +14,17 @@ import org.openhealthtools.mdht.uml.cda.ClinicalDocument;
 import org.openhealthtools.mdht.uml.cda.util.CDAUtil;
 import org.openhealthtools.mdht.uml.cda.util.ValidationResult;
 
+import com.github.aks8m.compare.Comparison;
+import com.github.aks8m.report.result.Result;
+
+import java.util.*;
+
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBIntrospector;
 import javax.xml.bind.Unmarshaller;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 
 public class AppController {
 
@@ -34,28 +41,34 @@ public class AppController {
 
     private CompareEngine compareEngine;
 
+
     @FXML
     void initialize() {
         this.sourceTextField.setText("C:\\Users\\kmaulden\\Documents\\C-CDA Comparison Files\\xmlComparisons\\ErrorsThrown\\HSEP_IPOACKIES_QUENTIN_typeIDAndTitleError1.xml");
         this.targetTextField.setText("C:\\Users\\kmaulden\\Documents\\C-CDA Comparison Files\\xmlComparisons\\ErrorsThrown\\HSEP_IPOACKIES_QUENTIN_typeIDAndTitleError2.xml");
-   }
+//        this.sourceTextField.setText("C:\\Users\\kmaulden\\Documents\\C-CDA Comparison Files\\xmlComparisons\\HSEP_CCDACCDR1.1_IPOACKIES_QUENTIN_09122018.xml");
+//        this.targetTextField.setText("C:\\Users\\kmaulden\\Documents\\C-CDA Comparison Files\\xmlComparisons\\HSEP_CCDACCDR1.1_IPOACKIES_QUENTIN_09122018.xml");
+
+    }
+
 
    @FXML
    public void runComparison(ActionEvent actionEvent){
 
-        try{
-            compareEngine = CompareEngineFactory.CreateMDHTCompareEngine(this.sourceTextField.getText(),this.targetTextField.getText());
-            //preCompareService.start();
+
+        try {
+
+            compareEngine = CompareEngineFactory.CreateMDHTCompareEngine(this.sourceTextField.getText(), this.targetTextField.getText());
             this.compareEngine.start();
-//            this.compareProgressbar.progressProperty().bind(this.compareEngine.progressProperty());
+            this.compareProgressbar.progressProperty().bind(this.compareEngine.progressProperty());
             this.compareEngine.stateProperty().addListener((observable, oldValue, newValue) -> {
 
-                switch (newValue){
+                switch (newValue) {
                     case SUCCEEDED:
-//                        this.compareEngine.getValue().getMismatches().stream()
-//                                .forEach(mismatch -> this.comparisonOutput.getItems().add(mismatch.toString()));
+                        this.compareEngine.getValue().getMismatches().stream()
+                                .forEach(mismatch -> this.comparisonOutput.getItems().add(mismatch.toString()));
                 }
-        });
+            });
 
 
         }catch (Exception e){
