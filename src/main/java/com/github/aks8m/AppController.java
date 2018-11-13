@@ -44,10 +44,12 @@ public class AppController {
 
     @FXML
     void initialize() {
-        this.sourceTextField.setText("C:\\Users\\kmaulden\\Documents\\C-CDA Comparison Files\\xmlComparisons\\ErrorsThrown\\HSEP_IPOACKIES_QUENTIN_typeIDAndTitleError1.xml");
-        this.targetTextField.setText("C:\\Users\\kmaulden\\Documents\\C-CDA Comparison Files\\xmlComparisons\\ErrorsThrown\\HSEP_IPOACKIES_QUENTIN_typeIDAndTitleError2.xml");
+//        this.sourceTextField.setText("C:\\Users\\kmaulden\\Documents\\C-CDA Comparison Files\\xmlComparisons\\ErrorsThrown\\HSEP_IPOACKIES_QUENTIN_typeIDAndTitleError1.xml");
+//        this.targetTextField.setText("C:\\Users\\kmaulden\\Documents\\C-CDA Comparison Files\\xmlComparisons\\ErrorsThrown\\HSEP_IPOACKIES_QUENTIN_typeIDAndTitleError2.xml");
 //        this.sourceTextField.setText("C:\\Users\\kmaulden\\Documents\\C-CDA Comparison Files\\xmlComparisons\\HSEP_CCDACCDR1.1_IPOACKIES_QUENTIN_09122018.xml");
 //        this.targetTextField.setText("C:\\Users\\kmaulden\\Documents\\C-CDA Comparison Files\\xmlComparisons\\HSEP_CCDACCDR1.1_IPOACKIES_QUENTIN_09122018.xml");
+        this.sourceTextField.setText("C:\\Users\\kmaulden\\Documents\\C-CDA Comparison Files\\xmlComparisons\\ErrorsThrown\\HSEP_IPOACKIES_QUENTIN_complexListErrorParticipant1.xml");
+        this.targetTextField.setText("C:\\Users\\kmaulden\\Documents\\C-CDA Comparison Files\\xmlComparisons\\ErrorsThrown\\HSEP_IPOACKIES_QUENTIN_complexListErrorParticipant2.xml");
 
     }
 
@@ -65,7 +67,19 @@ public class AppController {
 
                 switch (newValue) {
                     case SUCCEEDED:
+                        this.comparisonOutput.getItems().add("--------------------------------COMPARE RESULTS--------------------------------");
+                        this.comparisonOutput.getItems().add("MISMATCHES:");
                         this.compareEngine.getValue().getMismatches().stream()
+                                .forEach(mismatch -> this.comparisonOutput.getItems().add(mismatch.toString()));
+                        this.comparisonOutput.getItems().add(" ");
+                        this.comparisonOutput.getItems().add("WARNINGS:");
+                        this.compareEngine.getValue().getWarnings().stream()
+                                .forEach(mismatch -> this.comparisonOutput.getItems().add(mismatch.toString()));
+                        this.comparisonOutput.getItems().add(" ");
+                        this.comparisonOutput.getItems().add(" ");
+                        this.comparisonOutput.getItems().add("------------------------------POST COMPARE RESULTS-----------------------------");
+                        this.comparisonOutput.getItems().add("MISMATCHES:");
+                        this.compareEngine.getValue().getPostCompareMismatches().stream()
                                 .forEach(mismatch -> this.comparisonOutput.getItems().add(mismatch.toString()));
                 }
             });

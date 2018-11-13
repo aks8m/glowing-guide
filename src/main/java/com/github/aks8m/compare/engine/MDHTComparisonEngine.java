@@ -1,6 +1,7 @@
 package com.github.aks8m.compare.engine;
 
 import com.github.aks8m.compare.precompare.MDHTPreCompareService;
+import com.github.aks8m.compare.postcompare.MDHTPostCompareService;
 import com.github.aks8m.report.ComparisonReport;
 import com.github.aks8m.report.result.ResultType;
 import javafx.application.Platform;
@@ -20,10 +21,10 @@ public class MDHTComparisonEngine extends CompareEngine {
     private ComparisonReport comparisonReport;
     private List<Comparison> comparisons = new ArrayList<>();
     private final MDHTPreCompareService mdhtPreCompareService;
-    //private final MDHTPostCompareService mdhtPostCompareService;
+    private MDHTPostCompareService mdhtPostCompareService;
 
-    private final double PROGRESS_MAX_VALUE = 100.00;
-    private double PROGRESS_INCREMENT = 0.0;
+    private final double PROGRESS_MAX_VALUE = 99.9;
+    private double PROGRESS_INCREMENT = 33.3;
     private double currentProgressValue = 0.0;
 
     @FXML
@@ -49,6 +50,7 @@ public class MDHTComparisonEngine extends CompareEngine {
 
             @Override
             protected ComparisonReport call() throws Exception {
+                //run MDHT pre processing
                 CountDownLatch prelatch = new CountDownLatch(1);
                 Platform.runLater(() -> {
                     try {
@@ -66,9 +68,9 @@ public class MDHTComparisonEngine extends CompareEngine {
                     }
                 });
                 prelatch.await();
+                updateProgress(computeProgress(PROGRESS_INCREMENT),PROGRESS_MAX_VALUE);
 
                 //run MDHT main processing
-                PROGRESS_INCREMENT = PROGRESS_MAX_VALUE/comparisons.size();
                 for (Comparison compare : comparisons) {
                     ResultType resType = compare.compare().getResultType();
                     if (resType == ResultType.MATCH) {
@@ -76,26 +78,30 @@ public class MDHTComparisonEngine extends CompareEngine {
                     } else if (resType == ResultType.MISMATCH) {
                         comparisonReport.addMismatch(new Result(compare,ResultType.MISMATCH));
                     }
-                    updateProgress(computeProgress(PROGRESS_INCREMENT),PROGRESS_MAX_VALUE);
                 }
+                updateProgress(computeProgress(PROGRESS_INCREMENT),PROGRESS_MAX_VALUE);
+
 
                 //run MDHT postcompare processing
-//                CountDownLatch postlatch = new CountDownLatch(1);
-//                Platform.runLater(() -> {
-//                    try {
-//                        mdhtPostCompareSerive.start();
-//                        mdhtPreCompareService.stateProperty().addListener((observable, oldValue, newValue) -> {
-//                            switch (newValue) {
-//                                case SUCCEEDED:
-//                                    //what to do on success
-//                                    prelatch.countDown();
-//                            }
-//                        });
-//                    } catch (Exception e) {
-//                        e.printStackTrace();
-//                    }
-//                });
-//                postlatch.await();
+                mdhtPostCompareService = new MDHTPostCompareService(comparisonReport.getMismatches());
+                CountDownLatch postlatch = new CountDownLatch(1);
+                Platform.runLater(() -> {
+                    try {
+                        mdhtPostCompareService.start();
+                        mdhtPostCompareService.stateProperty().addListener((observable, oldValue, newValue) -> {
+                            switch (newValue) {
+                                case SUCCEEDED:
+                                    comparisonReport.setPostCompareMismatches(mdhtPostCompareService.getValue());
+                                    postlatch.countDown();
+                            }
+                        });
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                });
+                postlatch.await();
+                updateProgress(computeProgress(PROGRESS_INCREMENT),PROGRESS_MAX_VALUE);
+
 
 
                 return comparisonReport;

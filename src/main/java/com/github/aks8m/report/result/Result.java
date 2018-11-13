@@ -23,8 +23,10 @@ public class Result {
 
     public ResultType getResultType() { return resultType; }
 
+    public Comparison getComparison() { return comparison; }
+
     public String toString() {
-        return this.resultType.toString() + ":\t" + this.comparison.toString();
+        return this.comparison.toString();
     }
 
 }

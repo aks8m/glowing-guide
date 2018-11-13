@@ -44,88 +44,60 @@ public class MDHTPreCompareService extends PreCompareService {
 
                 //compare RealmCode
                 compareRealmCodes(sourceClinicalDocument.getRealmCodes(),targetClinicalDocument.getRealmCodes());
-
                 //compare typeID
                 typeIDComparison(sourceClinicalDocument.getTypeId(), targetClinicalDocument.getTypeId());
-
                 //compare templateID
                 compareTemplateID(sourceClinicalDocument.getTemplateIds(), targetClinicalDocument.getTemplateIds());
-
                 //compareID
                 compareID(sourceClinicalDocument.getId(),targetClinicalDocument.getId());
-
                 //compare code
                 compareCode(sourceClinicalDocument.getCode(),targetClinicalDocument.getCode());
-
                 //compare title
                 compareTitle(sourceClinicalDocument.getTitle(),targetClinicalDocument.getTitle());
-
                 //compare Effective Time
                 compareEffectiveTime(sourceClinicalDocument.getEffectiveTime(),targetClinicalDocument.getEffectiveTime());
-
                 //compare confidentiality code
                 compareConfidentialityCode(sourceClinicalDocument.getConfidentialityCode(),targetClinicalDocument.getConfidentialityCode());
-
                 //compare language code
                 compareLanguageCode(sourceClinicalDocument.getLanguageCode(),targetClinicalDocument.getLanguageCode());
-
                 //compare setID
                 compareSetID(sourceClinicalDocument.getSetId(),targetClinicalDocument.getSetId());
-
                 //compare versionNumber
                 compareVersionNumber(sourceClinicalDocument.getVersionNumber(),targetClinicalDocument.getVersionNumber());
-
                 //compare copyTime
                 compareCopyTime(sourceClinicalDocument.getCopyTime(),targetClinicalDocument.getCopyTime());
-
                 //compare Record Targets
                 recordTargetsComparison(sourceClinicalDocument.getRecordTargets(), targetClinicalDocument.getRecordTargets());
-
                 //compare Authors
                 authorsComparison(sourceClinicalDocument.getAuthors(), targetClinicalDocument.getAuthors());
-
                 //compare Data Enterer
                 dataEntererComparison(sourceClinicalDocument.getDataEnterer(), targetClinicalDocument.getDataEnterer());
-
                 //compare informants
                 informantsComparison(sourceClinicalDocument.getInformants(), targetClinicalDocument.getInformants());
-
                 //compare custodian
                 custodianComparison(sourceClinicalDocument.getCustodian(), targetClinicalDocument.getCustodian());
-
                 //compare information recipient
                 informationRecipientComparison(sourceClinicalDocument.getInformationRecipients(),targetClinicalDocument.getInformationRecipients());
-
                 //compare Legal Authenticator
                 legalAuthenticatorComparison(sourceClinicalDocument.getLegalAuthenticator(), targetClinicalDocument.getLegalAuthenticator());
-
                 //compare Authenticators
                 authenticatorComparison(sourceClinicalDocument.getAuthenticators(),targetClinicalDocument.getAuthenticators());
-
                 //compare participants
                 participants1Comparison(sourceClinicalDocument.getParticipants(),targetClinicalDocument.getParticipants());
-
                 //compare getInFulfullmentOf
                 inFulfillmentOfComparison(sourceClinicalDocument.getInFulfillmentOfs(),targetClinicalDocument.getInFulfillmentOfs());
-
                 //compare documentationOf
                 documentationOfsComparison(sourceClinicalDocument.getDocumentationOfs(), targetClinicalDocument.getDocumentationOfs());
-
                 //compare getRelatedDocuments
                 relatedDocumentsComparison(sourceClinicalDocument.getRelatedDocuments(),targetClinicalDocument.getRelatedDocuments());
-
                 //compare Authorizations
                 authorizationsComparison(sourceClinicalDocument.getAuthorizations(),targetClinicalDocument.getAuthorizations());
-
                 //compare componentOf
                 componentOfComparison(sourceClinicalDocument.getComponentOf(),targetClinicalDocument.getComponentOf());
-
                 //compare component
                 component2Comparison(sourceClinicalDocument.getComponent(), targetClinicalDocument.getComponent());
-
                 //compare nullFlavor
                 compareNullFlavor(sourceClinicalDocument.getNullFlavor(),targetClinicalDocument.getNullFlavor());
-
                 //compare classCode
                 compareClassCode(sourceClinicalDocument.getClassCode(),targetClinicalDocument.getClassCode());
 

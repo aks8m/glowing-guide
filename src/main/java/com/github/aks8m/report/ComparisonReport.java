@@ -12,11 +12,13 @@ public class ComparisonReport {
     private List<Result> matches;
     private List<Result> mismatches;
     private List<Result> warnings;
+    private List<Result> postCompareMismatches;
 
     public ComparisonReport(){
         this.matches = new ArrayList<Result>();
         this.mismatches = new ArrayList<Result>();
         this.warnings = new ArrayList<Result>();
+        this.postCompareMismatches = new ArrayList<>();
     }
 
     public void addMatch(Result match){
@@ -31,7 +33,19 @@ public class ComparisonReport {
         this.warnings.add(warning);
     }
 
+    public void setPostCompareMismatches(List<Result> postCompareMismatches) {
+        this.postCompareMismatches = postCompareMismatches;
+    }
+
     public List<Result> getMismatches() {
         return mismatches;
+    }
+
+    public List<Result> getPostCompareMismatches() {
+        return postCompareMismatches;
+    }
+
+    public List<Result> getWarnings() {
+        return warnings;
     }
 }
