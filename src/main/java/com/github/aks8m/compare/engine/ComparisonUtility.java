@@ -93,7 +93,6 @@ public class ComparisonUtility {
 //            result.setResultType(ResultType.MISMATCH);
 //            return result;
 //        };
-    }
 
     public static BiFunction<List<Object>, List<Object>, Result> ObjectsListComparison() {
         return (sourceObjects, targetObjects) -> {

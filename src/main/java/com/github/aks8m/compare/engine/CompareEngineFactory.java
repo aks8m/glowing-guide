@@ -1,7 +1,5 @@
 package com.github.aks8m.compare.engine;
 
-import com.github.aks8m.compare.precompare.MDHTPreCompareService;
-import com.github.aks8m.compare.precompare.PreCompareService;
 import org.openhealthtools.mdht.uml.cda.ClinicalDocument;
 import org.openhealthtools.mdht.uml.cda.util.CDAUtil;
 import org.openhealthtools.mdht.uml.cda.util.ValidationResult;
