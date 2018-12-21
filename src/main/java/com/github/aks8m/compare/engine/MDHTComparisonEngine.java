@@ -1,27 +1,23 @@
 package com.github.aks8m.compare.engine;
 
-import com.github.aks8m.compare.precompare.MDHTPreCompareService;
-import com.github.aks8m.compare.postcompare.MDHTPostCompareService;
+import com.github.aks8m.compare.MDHTComparisonService;
 import com.github.aks8m.report.ComparisonReport;
-import com.github.aks8m.report.result.ResultType;
+import com.github.aks8m.compare.tree.Node;
+import com.github.aks8m.traversal.MDHTTraversalService;
 import javafx.application.Platform;
 import javafx.concurrent.Task;
 import javafx.fxml.FXML;
 import org.openhealthtools.mdht.uml.cda.ClinicalDocument;
-import com.github.aks8m.compare.Comparison;
-import com.github.aks8m.report.result.Result;
 
-import java.util.*;
 import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.Executor;
 
 
 public class MDHTComparisonEngine extends CompareEngine {
 
     private ComparisonReport comparisonReport;
-    private List<Comparison> comparisons = new ArrayList<>();
-    private final MDHTPreCompareService mdhtPreCompareService;
-    private MDHTPostCompareService mdhtPostCompareService;
+    private Node rootNode = null;
+    private final MDHTTraversalService traversalService;
+    private final MDHTComparisonService comparisonService;
 
     private final double PROGRESS_MAX_VALUE = 99.9;
     private double PROGRESS_INCREMENT = 33.3;
@@ -38,7 +34,8 @@ public class MDHTComparisonEngine extends CompareEngine {
     }
 
     public MDHTComparisonEngine(ClinicalDocument sourceClinicalDocument, ClinicalDocument targetClinicalDocument) {
-        this.mdhtPreCompareService = new MDHTPreCompareService(sourceClinicalDocument, targetClinicalDocument);
+        this.traversalService = new MDHTTraversalService(sourceClinicalDocument,targetClinicalDocument);
+        this.comparisonService = new MDHTComparisonService();
     }
 
     @Override
@@ -50,59 +47,48 @@ public class MDHTComparisonEngine extends CompareEngine {
 
             @Override
             protected ComparisonReport call() throws Exception {
-                //run MDHT pre processing
-                CountDownLatch prelatch = new CountDownLatch(1);
+
+                CountDownLatch traversalLatch = new CountDownLatch(1);
                 Platform.runLater(() -> {
                     try {
                         //run MDHT Pre processing
-                        mdhtPreCompareService.start();
-                        mdhtPreCompareService.stateProperty().addListener((observable, oldValue, newValue) -> {
+                        traversalService.start();
+                        traversalService.stateProperty().addListener((observable, oldValue, newValue) -> {
                             switch (newValue) {
                                 case SUCCEEDED:
-                                    comparisons = mdhtPreCompareService.getValue();
-                                    prelatch.countDown();
+                                    rootNode = traversalService.getValue();
+                                    comparisonService.setRootNode(rootNode);
+                                    traversalLatch.countDown();
                             }
                         });
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
                 });
-                prelatch.await();
+                traversalLatch.await();
+
                 updateProgress(computeProgress(PROGRESS_INCREMENT),PROGRESS_MAX_VALUE);
 
                 //run MDHT main processing
-                for (Comparison compare : comparisons) {
-                    ResultType resType = compare.compare().getResultType();
-                    if (resType == ResultType.MATCH) {
-                        comparisonReport.addMatch(new Result(compare, ResultType.MATCH));
-                    } else if (resType == ResultType.MISMATCH) {
-                        comparisonReport.addMismatch(new Result(compare,ResultType.MISMATCH));
-                    }
-                }
-                updateProgress(computeProgress(PROGRESS_INCREMENT),PROGRESS_MAX_VALUE);
-
-
-                //run MDHT postcompare processing
-                mdhtPostCompareService = new MDHTPostCompareService(comparisonReport.getMismatches());
-                CountDownLatch postlatch = new CountDownLatch(1);
+                CountDownLatch compareLatch = new CountDownLatch(1);
                 Platform.runLater(() -> {
                     try {
-                        mdhtPostCompareService.start();
-                        mdhtPostCompareService.stateProperty().addListener((observable, oldValue, newValue) -> {
+                        //run MDHT Pre processing
+                        comparisonService.start();
+                        comparisonService.stateProperty().addListener((observable, oldValue, newValue) -> {
                             switch (newValue) {
                                 case SUCCEEDED:
-                                    comparisonReport.setPostCompareMismatches(mdhtPostCompareService.getValue());
-                                    postlatch.countDown();
+                                    comparisonReport.addMismatches(comparisonService.getValue());
+                                    compareLatch.countDown();
                             }
                         });
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
                 });
-                postlatch.await();
+                compareLatch.await();
+
                 updateProgress(computeProgress(PROGRESS_INCREMENT),PROGRESS_MAX_VALUE);
-
-
 
                 return comparisonReport;
             }

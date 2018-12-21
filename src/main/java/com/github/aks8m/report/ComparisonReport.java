@@ -29,6 +29,8 @@ public class ComparisonReport {
         this.mismatches.add(mismatch);
     }
 
+    public void addMismatches(List<Result> mismatches) {this.mismatches.addAll(mismatches);}
+
     public void addWarning(Result warning){
         this.warnings.add(warning);
     }

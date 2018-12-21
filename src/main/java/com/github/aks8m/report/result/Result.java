@@ -1,7 +1,6 @@
 package com.github.aks8m.report.result;
 
-import com.github.aks8m.compare.Comparison;
-import com.github.aks8m.report.ComparisonLocation;
+import com.github.aks8m.compare.comparisonobject.Comparison;
 
 public class Result {
 
@@ -9,7 +8,6 @@ public class Result {
     private Comparison comparison;
 
     public Result() {
-
     }
 
     public Result(Comparison comparison, ResultType resultType) {
@@ -25,8 +23,10 @@ public class Result {
 
     public Comparison getComparison() { return comparison; }
 
+    public void setComparison(Comparison comparison) { this.comparison = comparison; }
+
     public String toString() {
-        return this.comparison.toString();
+        return comparison != null ? this.comparison.toString() : null;
     }
 
 }

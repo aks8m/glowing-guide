@@ -14,8 +14,9 @@ public class ComparisonLocation {
         locationStack = (Stack<String>) sourceLocation.locationStack.clone();
     }
 
-    public void enter(String location){
+    public ComparisonLocation enter(String location){
         this.locationStack.push(location);
+        return this;
     }
 
     public void exit(){

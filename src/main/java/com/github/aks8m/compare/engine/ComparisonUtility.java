@@ -27,67 +27,81 @@ public class ComparisonUtility {
         };
     }
 
-    public static BiFunction<Boolean, Boolean, Result> BooleanComparison() {
-        return (sourceBoolean, targetBoolean) -> {
-            Result result = new Result();
-
-            if (sourceBoolean == targetBoolean)
-                result.setResultType(ResultType.MATCH);
-            else
-                result.setResultType(ResultType.MISMATCH);
-
-            return result;
-        };
+//    public static BiFunction<Boolean, Boolean, Result> BooleanComparison() {
+//        return (sourceBoolean, targetBoolean) -> {
+//            Result result = new Result();
+//
+//            if (sourceBoolean == targetBoolean)
+//                result.setResultType(ResultType.MATCH);
+//            else
+//                result.setResultType(ResultType.MISMATCH);
+//
+//            return result;
+//        };
+//    }
+//
+//    public static BiFunction<Integer, Integer, Result> IntegerComparison() {
+//        return (sourceInt, targetInt) -> {
+//            Result result = new Result();
+//
+//            if (sourceInt == targetInt)
+//                result.setResultType(ResultType.MATCH);
+//            else
+//                result.setResultType(ResultType.MISMATCH);
+//
+//            return result;
+//        };
+//    }
+//
+//    public static BiFunction<BigInteger, BigInteger, Result> BigIntegerComparison() {
+//        return (sourceBigInt, targetBigInt) -> {
+//            Result result = new Result();
+//
+//            if (sourceBigInt.equals(targetBigInt))
+//                result.setResultType(ResultType.MATCH);
+//            else
+//                result.setResultType(ResultType.MISMATCH);
+//
+//            return result;
+//        };
+//    }
+//
+//    public static BiFunction<BigDecimal, BigDecimal, Result> BigDecimalComparison() {
+//        return (sourceBigDec, targetBigDec) -> {
+//            Result result = new Result();
+//
+//            if (sourceBigDec.equals(targetBigDec))
+//                result.setResultType(ResultType.MATCH);
+//            else
+//                result.setResultType(ResultType.MISMATCH);
+//
+//            return result;
+//        };
+//    }
+//
+//    public static BiFunction<List<Object>, List<List<Object>>, Result> ObjectListComparison() {
+//        return (sourceObjects, objectsList) -> {
+//            Result result = new Result();
+//
+//            for (List<Object> list : objectsList) {
+//                if (list.containsAll(sourceObjects)) {
+//                    result.setResultType(ResultType.MATCH);
+//                    return result;
+//                }
+//            }
+//
+//            result.setResultType(ResultType.MISMATCH);
+//            return result;
+//        };
     }
 
-    public static BiFunction<Integer, Integer, Result> IntegerComparison() {
-        return (sourceInt, targetInt) -> {
+    public static BiFunction<List<Object>, List<Object>, Result> ObjectsListComparison() {
+        return (sourceObjects, targetObjects) -> {
             Result result = new Result();
 
-            if (sourceInt == targetInt)
+            if (targetObjects.containsAll(sourceObjects)) {
                 result.setResultType(ResultType.MATCH);
-            else
-                result.setResultType(ResultType.MISMATCH);
-
-            return result;
-        };
-    }
-
-    public static BiFunction<BigInteger, BigInteger, Result> BigIntegerComparison() {
-        return (sourceBigInt, targetBigInt) -> {
-            Result result = new Result();
-
-            if (sourceBigInt.equals(targetBigInt))
-                result.setResultType(ResultType.MATCH);
-            else
-                result.setResultType(ResultType.MISMATCH);
-
-            return result;
-        };
-    }
-
-    public static BiFunction<BigDecimal, BigDecimal, Result> BigDecimalComparison() {
-        return (sourceBigDec, targetBigDec) -> {
-            Result result = new Result();
-
-            if (sourceBigDec.equals(targetBigDec))
-                result.setResultType(ResultType.MATCH);
-            else
-                result.setResultType(ResultType.MISMATCH);
-
-            return result;
-        };
-    }
-
-    public static BiFunction<List<Object>, List<List<Object>>, Result> ObjectListComparison() {
-        return (sourceObjects, objectsList) -> {
-            Result result = new Result();
-
-            for (List<Object> list : objectsList) {
-                if (list.containsAll(sourceObjects)) {
-                    result.setResultType(ResultType.MATCH);
-                    return result;
-                }
+                return result;
             }
 
             result.setResultType(ResultType.MISMATCH);

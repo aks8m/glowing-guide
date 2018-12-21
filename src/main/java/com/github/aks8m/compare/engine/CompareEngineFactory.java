@@ -22,8 +22,6 @@ public class CompareEngineFactory {
             source = CDAUtil.load(new FileInputStream(sourceFilePath), (ValidationResult) null);
             target = CDAUtil.load(new FileInputStream(targetFilePath), (ValidationResult) null);
 
-            //PreCompareService preCompareService = new MDHTPreCompareService(source, target);
-
 
         }catch (FileNotFoundException fnfE){
             fnfE.printStackTrace();
@@ -35,7 +33,6 @@ public class CompareEngineFactory {
 
 
         return new MDHTComparisonEngine(source,target);
-//          return new MDHTPreCompareService(source,target);
     }
 
 }

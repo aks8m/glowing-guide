@@ -12,7 +12,7 @@ import org.openhealthtools.mdht.uml.cda.util.ValidationResult;
 import java.io.FileInputStream;
 
 /**
- * Main App class for running the glowing guide C-CDA comparison engine
+ * Main App class for running the glowing guide C-CDA comparisonobject engine
  *
  */
 public class App extends Application

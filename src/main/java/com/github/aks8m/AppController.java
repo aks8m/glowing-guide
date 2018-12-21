@@ -2,29 +2,12 @@ package com.github.aks8m;
 
 import com.github.aks8m.compare.engine.CompareEngineFactory;
 import com.github.aks8m.compare.engine.CompareEngine;
-import com.github.aks8m.compare.engine.MDHTComparisonEngine;
-import com.github.aks8m.compare.precompare.MDHTPreCompareService;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.ListView;
 import javafx.scene.control.ProgressBar;
 import javafx.scene.control.TextField;
-import org.openhealthtools.mdht.uml.cda.ClinicalDocument;
-import org.openhealthtools.mdht.uml.cda.util.CDAUtil;
-import org.openhealthtools.mdht.uml.cda.util.ValidationResult;
-
-import com.github.aks8m.compare.Comparison;
-import com.github.aks8m.report.result.Result;
-
-import java.util.*;
-
-import javax.xml.bind.JAXBContext;
-import javax.xml.bind.JAXBIntrospector;
-import javax.xml.bind.Unmarshaller;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 
 public class AppController {
 
@@ -48,8 +31,8 @@ public class AppController {
 //        this.targetTextField.setText("C:\\Users\\kmaulden\\Documents\\C-CDA Comparison Files\\xmlComparisons\\ErrorsThrown\\HSEP_IPOACKIES_QUENTIN_typeIDAndTitleError2.xml");
 //        this.sourceTextField.setText("C:\\Users\\kmaulden\\Documents\\C-CDA Comparison Files\\xmlComparisons\\HSEP_CCDACCDR1.1_IPOACKIES_QUENTIN_09122018.xml");
 //        this.targetTextField.setText("C:\\Users\\kmaulden\\Documents\\C-CDA Comparison Files\\xmlComparisons\\HSEP_CCDACCDR1.1_IPOACKIES_QUENTIN_09122018.xml");
-        this.sourceTextField.setText("C:\\Users\\kmaulden\\Documents\\C-CDA Comparison Files\\xmlComparisons\\ErrorsThrown\\HSEP_IPOACKIES_QUENTIN_complexListErrorParticipant1.xml");
-        this.targetTextField.setText("C:\\Users\\kmaulden\\Documents\\C-CDA Comparison Files\\xmlComparisons\\ErrorsThrown\\HSEP_IPOACKIES_QUENTIN_complexListErrorParticipant2.xml");
+        this.sourceTextField.setText("C:\\Users\\kmaulden\\Documents\\C-CDA Comparison Files\\xmlComparisons\\CompleteMatch\\HSEP_IPOACKIES_QUENTIN_basictree.xml");
+        this.targetTextField.setText("C:\\Users\\kmaulden\\Documents\\C-CDA Comparison Files\\xmlComparisons\\CompleteMatch\\HSEP_IPOACKIES_QUENTIN_basictree1.xml");
 
     }
 
@@ -72,15 +55,15 @@ public class AppController {
                         this.compareEngine.getValue().getMismatches().stream()
                                 .forEach(mismatch -> this.comparisonOutput.getItems().add(mismatch.toString()));
                         this.comparisonOutput.getItems().add(" ");
-                        this.comparisonOutput.getItems().add("WARNINGS:");
-                        this.compareEngine.getValue().getWarnings().stream()
-                                .forEach(mismatch -> this.comparisonOutput.getItems().add(mismatch.toString()));
-                        this.comparisonOutput.getItems().add(" ");
-                        this.comparisonOutput.getItems().add(" ");
-                        this.comparisonOutput.getItems().add("------------------------------POST COMPARE RESULTS-----------------------------");
-                        this.comparisonOutput.getItems().add("MISMATCHES:");
-                        this.compareEngine.getValue().getPostCompareMismatches().stream()
-                                .forEach(mismatch -> this.comparisonOutput.getItems().add(mismatch.toString()));
+//                        this.comparisonOutput.getItems().add("WARNINGS:");
+//                        this.compareEngine.getValue().getWarnings().stream()
+//                                .forEach(mismatch -> this.comparisonOutput.getItems().add(mismatch.toString()));
+//                        this.comparisonOutput.getItems().add(" ");
+//                        this.comparisonOutput.getItems().add(" ");
+//                        this.comparisonOutput.getItems().add("------------------------------POST COMPARE RESULTS-----------------------------");
+//                        this.comparisonOutput.getItems().add("MISMATCHES:");
+//                        this.compareEngine.getValue().getPostCompareMismatches().stream()
+//                                .forEach(mismatch -> this.comparisonOutput.getItems().add(mismatch.toString()));
                 }
             });
 
