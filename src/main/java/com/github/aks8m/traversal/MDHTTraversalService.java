@@ -51,13 +51,14 @@ public class MDHTTraversalService extends TraversalService {
 
     private void reflectiveRecursiveTraversal(Object source, Object target, Node rootNode) throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
         if (source != null) {
+            Node childNode = null;
             if (target == null) {
                 //set comparisonobject Object as source is not null but target is Null
+                rootNode.setComparison(new Comparison(null, ComparisonUtility.StringComparison(),"target is null", ""));
             } else {
                 Object childSource = null;
                 Object childTarget = null;
                 List<Node> siblingNodes = null;
-                Node childNode = null;
 
                 for (Pair<String, NodeValueType> methodName : rootNode.getLocation().getCallableMethods()) {
                     switch (methodName.getR().getMethodType()) {
@@ -73,19 +74,21 @@ public class MDHTTraversalService extends TraversalService {
 
                         case ValueNodeList:
                             for (Object sourcelist : (EList<Object>) source.getClass().getMethod(methodName.getL()).invoke(source)) {
-                                siblingNodes = new ArrayList<>();
-                                for (Object targetlist : (EList<Object>) target.getClass().getMethod(methodName.getL()).invoke(target)) {
-                                    childNode = new Node(methodName.getR(),rootNode);
-                                    siblingNodes.add(childNode);
-                                    rootNode.addChild(childNode);
+                                if (sourcelist != null) { //this null check is needed for weird edge case where IDs returns a list of length 1 but with all null contents
+                                    siblingNodes = new ArrayList<>();
+                                    for (Object targetlist : (EList<Object>) target.getClass().getMethod(methodName.getL()).invoke(target)) {
+                                        childNode = new Node(methodName.getR(),rootNode);
+                                        siblingNodes.add(childNode);
+                                        rootNode.addChild(childNode);
 
-                                    //set comparisonobject for child node
-                                    setChildComparison(methodName,sourcelist,targetlist,childNode);
-                                }
-                                for (int i = 0; i < siblingNodes.size(); i++) {
-                                    siblingNodes.get(i).addSiblings(siblingNodes.subList(0, i));
-                                    siblingNodes.get(i).addSiblings(siblingNodes.subList(i + 1, siblingNodes.size()));
+                                        //set comparisonobject for child node
+                                        setChildComparison(methodName,sourcelist,targetlist,childNode);
+                                    }
+                                    for (int i = 0; i < siblingNodes.size(); i++) {
+                                        siblingNodes.get(i).addSiblings(siblingNodes.subList(0, i));
+                                        siblingNodes.get(i).addSiblings(siblingNodes.subList(i + 1, siblingNodes.size()));
 
+                                    }
                                 }
                             }
                             break;
@@ -133,8 +136,10 @@ public class MDHTTraversalService extends TraversalService {
                 Object sourceAdd = sourcelist;
                 Object targetAdd = targetlist;
                 for (String method : methodList) {
-                    sourceAdd = sourceAdd.getClass().getMethod(method).invoke(sourceAdd);
-                    targetAdd = targetAdd.getClass().getMethod(method).invoke(targetAdd);
+                    if (sourceAdd != null && targetAdd != null) {
+                        sourceAdd = sourceAdd.getClass().getMethod(method).invoke(sourceAdd);
+                        targetAdd = targetAdd.getClass().getMethod(method).invoke(targetAdd);
+                    }
                 }
                 sources.add(sourceAdd);
                 targets.add(targetAdd);

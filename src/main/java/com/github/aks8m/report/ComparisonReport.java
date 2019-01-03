@@ -4,50 +4,47 @@ import com.github.aks8m.report.result.ResultType;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
+
 import com.github.aks8m.report.result.Result;
 
 
 public class ComparisonReport {
 
-    private List<Result> matches;
-    private List<Result> mismatches;
-    private List<Result> warnings;
-    private List<Result> postCompareMismatches;
+    private List<Result> results;
 
     public ComparisonReport(){
-        this.matches = new ArrayList<Result>();
-        this.mismatches = new ArrayList<Result>();
-        this.warnings = new ArrayList<Result>();
-        this.postCompareMismatches = new ArrayList<>();
+        this.results = new ArrayList<Result>();
     }
 
     public void addMatch(Result match){
-        this.matches.add(match);
+        this.results.add(match);
     }
 
     public void addMismatch(Result mismatch){
-        this.mismatches.add(mismatch);
+        this.results.add(mismatch);
     }
 
-    public void addMismatches(List<Result> mismatches) {this.mismatches.addAll(mismatches);}
+    public void addMismatches(List<Result> mismatches) {this.results.addAll(mismatches);}
 
     public void addWarning(Result warning){
-        this.warnings.add(warning);
-    }
-
-    public void setPostCompareMismatches(List<Result> postCompareMismatches) {
-        this.postCompareMismatches = postCompareMismatches;
+        this.results.add(warning);
     }
 
     public List<Result> getMismatches() {
-        return mismatches;
+        return results.stream().filter(res -> res.getResultType().equals(ResultType.MISMATCH)).collect(Collectors.toList());
     }
 
-    public List<Result> getPostCompareMismatches() {
-        return postCompareMismatches;
+    public List<Result> getMatches() {
+        return results.stream().filter(res -> res.getResultType().equals(ResultType.MATCH)).collect(Collectors.toList());
     }
 
     public List<Result> getWarnings() {
-        return warnings;
+        return results.stream().filter(res -> res.getResultType().equals(ResultType.WARNING)).collect(Collectors.toList());
     }
+
+    public List<Result> getCompoundMismatches() {
+        return results.stream().filter(res -> res.getResultType().equals(ResultType.COMPOUNDMISMATCH)).collect(Collectors.toList());
+    }
+
 }

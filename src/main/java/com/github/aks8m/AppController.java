@@ -27,12 +27,18 @@ public class AppController {
 
     @FXML
     void initialize() {
-//        this.sourceTextField.setText("C:\\Users\\kmaulden\\Documents\\C-CDA Comparison Files\\xmlComparisons\\ErrorsThrown\\HSEP_IPOACKIES_QUENTIN_typeIDAndTitleError1.xml");
-//        this.targetTextField.setText("C:\\Users\\kmaulden\\Documents\\C-CDA Comparison Files\\xmlComparisons\\ErrorsThrown\\HSEP_IPOACKIES_QUENTIN_typeIDAndTitleError2.xml");
+
+//        this.sourceTextField.setText("C:\\Users\\kmaulden\\Documents\\C-CDA Comparison Files\\xmlComparisonsNew\\SSA_CCDACCD1.1_IPOACKIES_QUENTIN_nodates_9072018.xml");
+//        this.targetTextField.setText("C:\\Users\\kmaulden\\Documents\\C-CDA Comparison Files\\xmlComparisonsNew\\HSEP_CCDACCDR1.1_IPOACKIES_QUENTIN_09122018.xml");
+
 //        this.sourceTextField.setText("C:\\Users\\kmaulden\\Documents\\C-CDA Comparison Files\\xmlComparisons\\HSEP_CCDACCDR1.1_IPOACKIES_QUENTIN_09122018.xml");
-//        this.targetTextField.setText("C:\\Users\\kmaulden\\Documents\\C-CDA Comparison Files\\xmlComparisons\\HSEP_CCDACCDR1.1_IPOACKIES_QUENTIN_09122018.xml");
-        this.sourceTextField.setText("C:\\Users\\kmaulden\\Documents\\C-CDA Comparison Files\\xmlComparisons\\CompleteMatch\\HSEP_IPOACKIES_QUENTIN_basictree.xml");
-        this.targetTextField.setText("C:\\Users\\kmaulden\\Documents\\C-CDA Comparison Files\\xmlComparisons\\CompleteMatch\\HSEP_IPOACKIES_QUENTIN_basictree1.xml");
+//        this.targetTextField.setText("C:\\Users\\kmaulden\\Documents\\C-CDA Comparison Files\\xmlComparisons\\HSEP_CCDACCDR1.1_IPOACKIES_QUENTIN_09122018-dif.xml");
+
+//        this.sourceTextField.setText("C:\\Users\\kmaulden\\Documents\\C-CDA Comparison Files\\xmlComparisons\\SSA_CCDACCD1.1_IAADLAND_JAN_nodates_9072018.xml");
+//        this.targetTextField.setText("C:\\Users\\kmaulden\\Documents\\C-CDA Comparison Files\\xmlComparisons\\HSEP_CCDACCDR1.1_AALAND_JAN_09122018.xml");
+
+//        this.sourceTextField.setText("C:\\Users\\kmaulden\\Documents\\C-CDA Comparison Files\\xmlComparisons\\SampleCDADocument.xml");
+//        this.targetTextField.setText("C:\\Users\\kmaulden\\Documents\\C-CDA Comparison Files\\xmlComparisons\\SampleCDADocument.xml");
 
     }
 
@@ -51,7 +57,7 @@ public class AppController {
                 switch (newValue) {
                     case SUCCEEDED:
                         this.comparisonOutput.getItems().add("--------------------------------COMPARE RESULTS--------------------------------");
-                        this.comparisonOutput.getItems().add("MISMATCHES:");
+                        this.comparisonOutput.getItems().add("MISMATCHES:" + " (" + this.compareEngine.getValue().getMismatches().size() + ")");
                         this.compareEngine.getValue().getMismatches().stream()
                                 .forEach(mismatch -> this.comparisonOutput.getItems().add(mismatch.toString()));
                         this.comparisonOutput.getItems().add(" ");
