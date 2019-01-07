@@ -48,7 +48,7 @@ public enum NodeValueType {
     InFulfillmentOfs(MethodType.ComplexLocationList, new ArrayList<Pair<String,NodeValueType>>()),
     IntendedRecipient(MethodType.ComplexLocation, new ArrayList<Pair<String,NodeValueType>>()),
     LabeledDrug(MethodType.ComplexLocation, new ArrayList<Pair<String,NodeValueType>>()),
-    LanguageCommunication(MethodType.ComplexLocationList, new ArrayList<Pair<String,NodeValueType>>()),
+    LanguageCommunications(MethodType.ComplexLocationList, new ArrayList<Pair<String,NodeValueType>>()),
     LegalAuthenticator(MethodType.ComplexLocation, new ArrayList<Pair<String,NodeValueType>>()),
     Location(MethodType.ComplexLocation, new ArrayList<Pair<String,NodeValueType>>()),
     MaintainedEntities(MethodType.ComplexLocationList, new ArrayList<Pair<String,NodeValueType>>()),

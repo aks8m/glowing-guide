@@ -19,8 +19,8 @@ public class MDHTComparisonEngine extends CompareEngine {
     private final MDHTTraversalService traversalService;
     private final MDHTComparisonService comparisonService;
 
-    private final double PROGRESS_MAX_VALUE = 99.9;
-    private double PROGRESS_INCREMENT = 33.3;
+    private final double PROGRESS_MAX_VALUE = 100.0;
+    private double PROGRESS_INCREMENT = 50.0;
     private double currentProgressValue = 0.0;
 
     @FXML
