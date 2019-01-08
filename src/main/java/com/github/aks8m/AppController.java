@@ -43,14 +43,21 @@ public class AppController {
 //        this.sourceTextField.setText("C:\\Users\\kmaulden\\Documents\\C-CDA Comparison Files\\xmlComparisons\\SampleCDADocument.xml");
 //        this.targetTextField.setText("C:\\Users\\kmaulden\\Documents\\C-CDA Comparison Files\\xmlComparisons\\SampleCDADocument.xml");
 
-//        this.sourceTextField.setText("C:\\Users\\kmaulden\\Documents\\C-CDA Comparison Files\\TestFiles\\HS_CCDA_R2.1_NWHINFIVE_nodates_gen01042019.xml");
-//        this.targetTextField.setText("C:\\Users\\kmaulden\\Documents\\C-CDA Comparison Files\\TestFiles\\EHX_CCDA_R2.1_NWHINFIVE_nodates_gen01042019.xml");
+        this.sourceTextField.setText("C:\\Users\\kmaulden\\Documents\\C-CDA Comparison Files\\TestFiles\\HS_CCDA_R2.1_NWHINFIVE_nodates_gen01042019.xml");
+        this.targetTextField.setText("C:\\Users\\kmaulden\\Documents\\C-CDA Comparison Files\\TestFiles\\EHX_CCDA_R2.1_NWHINFIVE_nodates_gen01042019.xml");
 
 //        this.sourceTextField.setText("C:\\Users\\kmaulden\\Documents\\C-CDA Comparison Files\\TestFiles\\EHX_CCDA_R1.1_NWHINONE_nodates_gen01032019.xml");
 //        this.targetTextField.setText("C:\\Users\\kmaulden\\Documents\\C-CDA Comparison Files\\TestFiles\\HS_CCDA_R1.1_NWHINONE_nodates_gen01042019.xml");
 
-        this.sourceTextField.setText("/Users/asills/devops/glowing-guide/xmlComparisons/SSA_CCDACCD1.1_IPOACKIES_QUENTIN_nodates_9072018.xml");
-        this.targetTextField.setText("/Users/asills/devops/glowing-guide/xmlComparisons/HSEP_CCDACCDR1.1_IPOACKIES_QUENTIN_09122018.xml");
+//        this.sourceTextField.setText("C:\\Users\\kmaulden\\Documents\\C-CDA Comparison Files\\TestFiles\\EHX_CCDA_R2.1_NWHINONE_nodates_gen01032019.xml");
+//        this.targetTextField.setText("C:\\Users\\kmaulden\\Documents\\C-CDA Comparison Files\\TestFiles\\HS_CCDA_R2.1_NWHINONE_nodates_gen01042019.xml");
+
+//        this.sourceTextField.setText("C:\\Users\\kmaulden\\Documents\\C-CDA Comparison Files\\TestFiles\\EHX_CCDA_R1.1_NWHINONE_nodates_gen01032019_test.xml");
+//        this.targetTextField.setText("C:\\Users\\kmaulden\\Documents\\C-CDA Comparison Files\\TestFiles\\HS_CCDA_R1.1_NWHINONE_nodates_gen01042019_test.xml");
+
+//        this.sourceTextField.setText("C:\\Users\\kmaulden\\Documents\\C-CDA Comparison Files\\TestFiles\\EHX_CCDA_R1.1_NWHINONE_nodates_gen01032019_test1.xml");
+//        this.targetTextField.setText("C:\\Users\\kmaulden\\Documents\\C-CDA Comparison Files\\TestFiles\\HS_CCDA_R1.1_NWHINONE_nodates_gen01042019_test1.xml");
+
 
         sourceRoot.setValue(new TreeResultWrapper("Source Root", null));
         targetRoot.setValue(new TreeResultWrapper("Target Root", null));
@@ -76,6 +83,11 @@ public class AppController {
                         this.comparisonOutput.getItems().add("MISMATCHES:" + " (" + this.compareEngine.getValue().getMismatches().size() + ")");
                         this.compareEngine.getValue().getMismatches().stream()
                                 .forEach(mismatch -> this.comparisonOutput.getItems().add(mismatch.toString()));
+                        this.comparisonOutput.getItems().add(" ");
+
+                        this.comparisonOutput.getItems().add("SOURCE SECTION NOT FOUND IN TARGET:" + " (" + this.compareEngine.getValue().getSectionMatchNotFound().size() + ")");
+                        this.comparisonOutput.getItems().add("NOTE: All granular mismatches in each section are suppressed");
+                        this.compareEngine.getValue().getSectionMatchNotFound().stream().forEach(section -> this.comparisonOutput.getItems().add(section.toString()));
                         this.comparisonOutput.getItems().add(" ");
                 }
             });

@@ -8,7 +8,7 @@ import com.github.aks8m.compare.comparisonobject.Comparison;
 
 public class Node {
     private Node parent = null;
-    private NodeValueType location;
+    private NodeValueType locationType;
     private Comparison comparison = null;
     private List<Node> siblings = new ArrayList<Node>();
     private List<Node> children = new ArrayList<Node>();
@@ -17,18 +17,18 @@ public class Node {
 
     public Node() {}
 
-    public Node(NodeValueType location) {
-        this.location = location;
+    public Node(NodeValueType locationType) {
+        this.locationType = locationType;
     }
 
-    public Node(NodeValueType location, Node parent, Comparison object) {
-        this.location = location;
+    public Node(NodeValueType locationType, Node parent, Comparison object) {
+        this.locationType = locationType;
         this.parent = parent;
         this.comparison = object;
     }
 
-    public Node(NodeValueType location, Node parent) {
-        this.location = location;
+    public Node(NodeValueType locationType, Node parent) {
+        this.locationType = locationType;
         this.parent = parent;
     }
 
@@ -49,13 +49,13 @@ public class Node {
     }
 
     public void addLocation(NodeValueType location) {
-        this.location = location;
+        this.locationType = location;
     }
 
     public List<Node> getSiblings() { return this.siblings; }
 
-    public NodeValueType getLocation() {
-        return this.location;
+    public NodeValueType getLocationType() {
+        return this.locationType;
     }
 
     public Comparison getComparison() { return this.comparison; }
@@ -64,8 +64,8 @@ public class Node {
         this.comparison = comparison;
     }
 
-    public void setLocation(NodeValueType location) {this.location = location; }
+    public void setLocationType(NodeValueType locationType) {this.locationType = locationType; }
 
-    public String toString() { return location != null ? this.location.toString() : ""; }
+    public String toString() { return locationType != null ? this.locationType.toString() : ""; }
 
 }

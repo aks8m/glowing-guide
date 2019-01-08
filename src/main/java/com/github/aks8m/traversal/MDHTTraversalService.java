@@ -3,8 +3,6 @@ package com.github.aks8m.traversal;
 import com.github.aks8m.compare.comparisonobject.Comparison;
 import com.github.aks8m.compare.engine.ComparisonUtility;
 import com.github.aks8m.compare.tree.Node;
-import com.github.aks8m.report.ComparisonLocation;
-import com.github.aks8m.report.result.Result;
 import com.github.aks8m.report.result.TreeResultWrapper;
 import com.github.aks8m.traversal.MethodType.InitializeEnums;
 import com.github.aks8m.traversal.MethodType.NodeValueType;
@@ -13,6 +11,7 @@ import javafx.concurrent.Task;
 import javafx.scene.control.TreeItem;
 import org.eclipse.emf.common.util.EList;
 import org.openhealthtools.mdht.uml.cda.ClinicalDocument;
+import org.openhealthtools.mdht.uml.cda.Component3;
 
 import java.lang.reflect.*;
 import java.util.*;
@@ -66,7 +65,7 @@ public class MDHTTraversalService extends TraversalService {
                 Object childTarget = null;
                 List<Node> siblingNodes = null;
 
-                for (Pair<String, NodeValueType> methodName : rootNode.getLocation().getCallableMethods()) {
+                for (Pair<String, NodeValueType> methodName : rootNode.getLocationType().getCallableMethods()) {
                     switch (methodName.getR().getMethodType()) {
                         case ValueNode:
                             childSource = source.getClass().getMethod(methodName.getL()).invoke(source);
@@ -114,10 +113,20 @@ public class MDHTTraversalService extends TraversalService {
                             for (Object sourcelist : (EList<Object>) source.getClass().getMethod(methodName.getL()).invoke(source)) {
                                 siblingNodes = new ArrayList<>();
                                 for (Object targetlist : (EList<Object>) target.getClass().getMethod(methodName.getL()).invoke(target)) {
-                                    childNode = new Node(methodName.getR(), rootNode);
-                                    siblingNodes.add(childNode);
-                                    rootNode.addChild(childNode);
-                                    reflectiveRecursiveTraversal(sourcelist, targetlist, childNode, null, null);
+                                    if (methodName.getR() == NodeValueType.Component3s) {
+                                        if (((Component3) sourcelist).getSection().getCode().getCode().equals(((Component3) targetlist).getSection().getCode().getCode())) {
+                                            childNode = new Node(methodName.getR(), rootNode);
+                                            siblingNodes.add(childNode);
+                                            rootNode.addChild(childNode);
+                                            reflectiveRecursiveTraversal(sourcelist, targetlist, childNode, null, null);
+                                        }
+                                    } else {
+                                        childNode = new Node(methodName.getR(), rootNode);
+                                        siblingNodes.add(childNode);
+                                        rootNode.addChild(childNode);
+                                        reflectiveRecursiveTraversal(sourcelist, targetlist, childNode, null, null);
+                                    }
+
                                 }
                                 for (int i = 0; i < siblingNodes.size(); i++) {
                                     siblingNodes.get(i).addSiblings(siblingNodes.subList(0, i));

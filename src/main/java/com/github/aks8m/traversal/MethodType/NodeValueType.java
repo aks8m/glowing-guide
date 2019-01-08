@@ -1,7 +1,5 @@
 package com.github.aks8m.traversal.MethodType;
 
-import com.github.aks8m.compare.tree.ValueNode;
-
 import java.util.*;
 
 public enum NodeValueType {

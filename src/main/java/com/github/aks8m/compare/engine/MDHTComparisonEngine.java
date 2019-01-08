@@ -3,7 +3,6 @@ package com.github.aks8m.compare.engine;
 import com.github.aks8m.compare.MDHTComparisonService;
 import com.github.aks8m.report.ComparisonReport;
 import com.github.aks8m.compare.tree.Node;
-import com.github.aks8m.report.result.Result;
 import com.github.aks8m.report.result.TreeResultWrapper;
 import com.github.aks8m.traversal.MDHTTraversalService;
 import javafx.application.Platform;
@@ -56,10 +55,10 @@ public class MDHTComparisonEngine extends CompareEngine {
             @Override
             protected ComparisonReport call() throws Exception {
 
+                //run MDHT pre processing to build traversal tree
                 CountDownLatch traversalLatch = new CountDownLatch(1);
                 Platform.runLater(() -> {
                     try {
-                        //run MDHT Pre processing
                         traversalService.start();
                         traversalService.stateProperty().addListener((observable, oldValue, newValue) -> {
                             switch (newValue) {
@@ -77,16 +76,15 @@ public class MDHTComparisonEngine extends CompareEngine {
 
                 updateProgress(computeProgress(PROGRESS_INCREMENT),PROGRESS_MAX_VALUE);
 
-                //run MDHT main processing
+                //run MDHT main processing by traversing the tree and executing the comparisons
                 CountDownLatch compareLatch = new CountDownLatch(1);
                 Platform.runLater(() -> {
                     try {
-                        //run MDHT Pre processing
                         comparisonService.start();
                         comparisonService.stateProperty().addListener((observable, oldValue, newValue) -> {
                             switch (newValue) {
                                 case SUCCEEDED:
-                                    comparisonReport.addMismatches(comparisonService.getValue());
+                                    comparisonReport.addResults(comparisonService.getValue());
                                     compareLatch.countDown();
                             }
                         });
