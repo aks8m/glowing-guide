@@ -20,9 +20,8 @@ public class MDHTComparisonService extends ComparisonService {
         location = new ComparisonLocation();
     }
 
-    public MDHTComparisonService setRootNode(Node rootNode) {
+    public void setRootNode(Node rootNode) {
         this.rootNode = rootNode;
-        return this;
     }
 
     @Override
@@ -39,7 +38,6 @@ public class MDHTComparisonService extends ComparisonService {
             }
 
         };
-
     }
 
     private List<Result> recursiveComparison(Node topNode) {
@@ -64,7 +62,7 @@ public class MDHTComparisonService extends ComparisonService {
                             }
                         }
                         if (!matched) {
-                            result.setComparison(childNode.getComparison().setComparisonLocation(new ComparisonLocation(location).enter(childNode.getLocation().toString())));
+//                            result.setComparison(childNode.getComparison().setComparisonLocation(new ComparisonLocation(location).enter(childNode.getLocation().toString())));
                             totalRetList.add(result);
                         }
                     }
@@ -96,7 +94,7 @@ public class MDHTComparisonService extends ComparisonService {
                         || childNode.getLocation().getMethodType() == NodeValueType.MethodType.ValueNodeList) {
                     Result result = childNode.getComparison().compare();
                     if (result.getResultType() == ResultType.MISMATCH) {
-                        result.setComparison(childNode.getComparison().setComparisonLocation(new ComparisonLocation(location).enter(childNode.getLocation().toString())));
+//                        result.setComparison(childNode.getComparison().setComparisonLocation(new ComparisonLocation(location).enter(childNode.getLocation().toString())));
                         totalRetList.add(result);
                     }
 

@@ -1,18 +1,15 @@
 package com.github.aks8m.report.result;
 
-import com.github.aks8m.compare.comparisonobject.Comparison;
+import javafx.beans.property.SimpleBooleanProperty;
 
 public class Result {
 
+    private SimpleBooleanProperty isSelected = new SimpleBooleanProperty(false);
     private ResultType resultType;
-    private Comparison comparison;
+    private String output;
 
-    public Result() {
-    }
-
-    public Result(Comparison comparison, ResultType resultType) {
-        this.comparison = comparison;
-        this.resultType = resultType;
+    public Result(String output) {
+        this.output = output;
     }
 
     public void setResultType(ResultType resultType) {
@@ -21,12 +18,16 @@ public class Result {
 
     public ResultType getResultType() { return resultType; }
 
-    public Comparison getComparison() { return comparison; }
-
-    public void setComparison(Comparison comparison) { this.comparison = comparison; }
-
-    public String toString() {
-        return comparison != null ? this.comparison.toString() : null;
+    public boolean isIsSelected() {
+        return isSelected.get();
     }
 
+    public SimpleBooleanProperty isSelectedProperty() {
+        return isSelected;
+    }
+
+    @Override
+    public String toString() {
+        return this.output;
+    }
 }

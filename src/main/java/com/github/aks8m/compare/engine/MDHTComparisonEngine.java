@@ -3,10 +3,13 @@ package com.github.aks8m.compare.engine;
 import com.github.aks8m.compare.MDHTComparisonService;
 import com.github.aks8m.report.ComparisonReport;
 import com.github.aks8m.compare.tree.Node;
+import com.github.aks8m.report.result.Result;
+import com.github.aks8m.report.result.TreeResultWrapper;
 import com.github.aks8m.traversal.MDHTTraversalService;
 import javafx.application.Platform;
 import javafx.concurrent.Task;
 import javafx.fxml.FXML;
+import javafx.scene.control.TreeItem;
 import org.openhealthtools.mdht.uml.cda.ClinicalDocument;
 
 import java.util.concurrent.CountDownLatch;
@@ -16,6 +19,8 @@ public class MDHTComparisonEngine extends CompareEngine {
 
     private ComparisonReport comparisonReport;
     private Node rootNode = null;
+    private final TreeItem<TreeResultWrapper> sourceRoot;
+    private final TreeItem<TreeResultWrapper> targetRoot;
     private final MDHTTraversalService traversalService;
     private final MDHTComparisonService comparisonService;
 
@@ -33,9 +38,12 @@ public class MDHTComparisonEngine extends CompareEngine {
         return this.currentProgressValue;
     }
 
-    public MDHTComparisonEngine(ClinicalDocument sourceClinicalDocument, ClinicalDocument targetClinicalDocument) {
-        this.traversalService = new MDHTTraversalService(sourceClinicalDocument,targetClinicalDocument);
+    public MDHTComparisonEngine(ClinicalDocument sourceClinicalDocument, ClinicalDocument targetClinicalDocument,
+                                TreeItem<TreeResultWrapper> sourceRoot, TreeItem<TreeResultWrapper> targetRoot) {
+        this.traversalService = new MDHTTraversalService(sourceClinicalDocument,targetClinicalDocument, sourceRoot, targetRoot);
         this.comparisonService = new MDHTComparisonService();
+        this.sourceRoot = sourceRoot;
+        this.targetRoot = targetRoot;
     }
 
     @Override

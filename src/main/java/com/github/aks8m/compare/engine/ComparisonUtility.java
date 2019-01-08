@@ -10,100 +10,33 @@ import java.util.function.BiFunction;
 
 public class ComparisonUtility {
 
-    public static BiFunction<String, String, Result> StringComparison() {
+    public static BiFunction<String, String, Boolean> StringComparison() {
         return (sourceString, targetString) -> {
-            Result result = new Result();
+            boolean result;
 
             if (sourceString == null && targetString == null)
-                result.setResultType((ResultType.MATCH));
+                result = true;
             else if (sourceString == null || targetString == null)
-                result.setResultType(ResultType.MISMATCH);
+                result = false;
             else if (sourceString.equals(targetString))
-                result.setResultType(ResultType.MATCH);
+                result = true;
             else
-                result.setResultType(ResultType.MISMATCH);
+                result = false;
 
             return result;
         };
     }
 
-//    public static BiFunction<Boolean, Boolean, Result> BooleanComparison() {
-//        return (sourceBoolean, targetBoolean) -> {
-//            Result result = new Result();
-//
-//            if (sourceBoolean == targetBoolean)
-//                result.setResultType(ResultType.MATCH);
-//            else
-//                result.setResultType(ResultType.MISMATCH);
-//
-//            return result;
-//        };
-//    }
-//
-//    public static BiFunction<Integer, Integer, Result> IntegerComparison() {
-//        return (sourceInt, targetInt) -> {
-//            Result result = new Result();
-//
-//            if (sourceInt == targetInt)
-//                result.setResultType(ResultType.MATCH);
-//            else
-//                result.setResultType(ResultType.MISMATCH);
-//
-//            return result;
-//        };
-//    }
-//
-//    public static BiFunction<BigInteger, BigInteger, Result> BigIntegerComparison() {
-//        return (sourceBigInt, targetBigInt) -> {
-//            Result result = new Result();
-//
-//            if (sourceBigInt.equals(targetBigInt))
-//                result.setResultType(ResultType.MATCH);
-//            else
-//                result.setResultType(ResultType.MISMATCH);
-//
-//            return result;
-//        };
-//    }
-//
-//    public static BiFunction<BigDecimal, BigDecimal, Result> BigDecimalComparison() {
-//        return (sourceBigDec, targetBigDec) -> {
-//            Result result = new Result();
-//
-//            if (sourceBigDec.equals(targetBigDec))
-//                result.setResultType(ResultType.MATCH);
-//            else
-//                result.setResultType(ResultType.MISMATCH);
-//
-//            return result;
-//        };
-//    }
-//
-//    public static BiFunction<List<Object>, List<List<Object>>, Result> ObjectListComparison() {
-//        return (sourceObjects, objectsList) -> {
-//            Result result = new Result();
-//
-//            for (List<Object> list : objectsList) {
-//                if (list.containsAll(sourceObjects)) {
-//                    result.setResultType(ResultType.MATCH);
-//                    return result;
-//                }
-//            }
-//
-//            result.setResultType(ResultType.MISMATCH);
-//            return result;
-//        };
-
-    public static BiFunction<List<Object>, List<Object>, Result> ObjectsListComparison() {
+    public static BiFunction<List<Object>, List<Object>, Boolean> ObjectsListComparison() {
         return (sourceObjects, targetObjects) -> {
-            Result result = new Result();
+            boolean result;
 
             if (targetObjects.containsAll(sourceObjects)) {
-                result.setResultType(ResultType.MATCH);
-                return result;
+                result = true;
+            } else{
+                result = false;
             }
 
-            result.setResultType(ResultType.MISMATCH);
             return result;
         };
     }
