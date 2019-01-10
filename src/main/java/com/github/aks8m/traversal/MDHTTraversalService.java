@@ -3,7 +3,7 @@ package com.github.aks8m.traversal;
 import com.github.aks8m.compare.comparisonobject.Comparison;
 import com.github.aks8m.compare.engine.ComparisonUtility;
 import com.github.aks8m.compare.tree.Node;
-import com.github.aks8m.report.result.TreeResultWrapper;
+import com.github.aks8m.report.result.ResultTreeItem;
 import com.github.aks8m.traversal.MethodType.InitializeEnums;
 import com.github.aks8m.traversal.MethodType.NodeValueType;
 import com.github.aks8m.traversal.MethodType.Pair;
@@ -20,11 +20,11 @@ public class MDHTTraversalService extends TraversalService {
 
     private ClinicalDocument sourceClinicalDocument;
     private ClinicalDocument targetClinicalDocument;
-    private final TreeItem<TreeResultWrapper> sourceRoot;
-    private final TreeItem<TreeResultWrapper> targetRoot;
+    private final ResultTreeItem sourceRoot;
+    private final ResultTreeItem targetRoot;
 
     public MDHTTraversalService(ClinicalDocument sourceClinicalDocument, ClinicalDocument targetClinicalDocument,
-                                TreeItem<TreeResultWrapper> sourceRoot, TreeItem<TreeResultWrapper> targetRoot) {
+                                ResultTreeItem sourceRoot, ResultTreeItem targetRoot) {
         this.sourceClinicalDocument = sourceClinicalDocument;
         this.targetClinicalDocument = targetClinicalDocument;
         this.sourceRoot = sourceRoot;
@@ -44,16 +44,14 @@ public class MDHTTraversalService extends TraversalService {
                 InitializeEnums.initializeEnums();
 
                 //recursive call to enter
-                reflectiveRecursiveTraversal(sourceClinicalDocument,targetClinicalDocument,rootNode, sourceRoot, targetRoot);
+                reflectiveRecursiveTraversal(sourceClinicalDocument,targetClinicalDocument,rootNode);
 
                 return rootNode;
             }
         };
     }
 
-    private void reflectiveRecursiveTraversal(Object source, Object target, Node rootNode,
-                                              TreeItem<TreeResultWrapper> sourceTreeComponent,
-                                              TreeItem<TreeResultWrapper> targetTreeComponent) throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
+    private void reflectiveRecursiveTraversal(Object source, Object target, Node rootNode) throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
         if (source != null) {
             Node childNode = null;
             if (target == null) {
@@ -104,7 +102,7 @@ public class MDHTTraversalService extends TraversalService {
                             if (childSource != null) {
                                 childNode = new Node(methodName.getR(), rootNode);
                                 rootNode.addChild(childNode);
-                                reflectiveRecursiveTraversal(childSource, childTarget, childNode, null, null);
+                                reflectiveRecursiveTraversal(childSource, childTarget, childNode);
                             }
                             break;
 
@@ -118,13 +116,13 @@ public class MDHTTraversalService extends TraversalService {
                                             childNode = new Node(methodName.getR(), rootNode);
                                             siblingNodes.add(childNode);
                                             rootNode.addChild(childNode);
-                                            reflectiveRecursiveTraversal(sourcelist, targetlist, childNode, null, null);
+                                            reflectiveRecursiveTraversal(sourcelist, targetlist, childNode);
                                         }
                                     } else {
                                         childNode = new Node(methodName.getR(), rootNode);
                                         siblingNodes.add(childNode);
                                         rootNode.addChild(childNode);
-                                        reflectiveRecursiveTraversal(sourcelist, targetlist, childNode, null, null);
+                                        reflectiveRecursiveTraversal(sourcelist, targetlist, childNode);
                                     }
 
                                 }

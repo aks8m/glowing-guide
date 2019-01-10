@@ -2,7 +2,8 @@ package com.github.aks8m;
 
 import com.github.aks8m.compare.engine.CompareEngineFactory;
 import com.github.aks8m.compare.engine.CompareEngine;
-import com.github.aks8m.report.result.TreeResultWrapper;
+import com.github.aks8m.report.result.Result;
+import com.github.aks8m.report.result.ResultTreeItem;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
@@ -14,19 +15,19 @@ public class AppController {
     @FXML
     private TextField targetTextField;
     @FXML
-    private ListView comparisonOutput;
+    private ListView<Result> resultsView;
     @FXML
     private ProgressBar compareProgressbar;
     @FXML
     private Button compareButton;
     @FXML
-    private TreeView<TreeResultWrapper> sourceTree;
+    private TreeView<String> sourceTree;
     @FXML
-    private TreeView<TreeResultWrapper> targetTree;
+    private TreeView<String> targetTree;
 
     private CompareEngine compareEngine;
-    private final TreeItem<TreeResultWrapper> sourceRoot = new TreeItem<>();
-    private final TreeItem<TreeResultWrapper> targetRoot = new TreeItem<>();
+    private final ResultTreeItem sourceRoot = new ResultTreeItem("");
+    private final ResultTreeItem targetRoot = new ResultTreeItem("");
 
     @FXML
     void initialize() {
@@ -59,10 +60,24 @@ public class AppController {
 //        this.targetTextField.setText("C:\\Users\\kmaulden\\Documents\\C-CDA Comparison Files\\TestFiles\\HS_CCDA_R1.1_NWHINONE_nodates_gen01042019_test1.xml");
 
 
-        sourceRoot.setValue(new TreeResultWrapper("Source Root", null));
-        targetRoot.setValue(new TreeResultWrapper("Target Root", null));
+        this.sourceTextField.setText("/Users/asills/devops/glowing-guide/xmlComparisons/SSA_CCDACCD1.1_IPOACKIES_QUENTIN_nodates_9072018.xml");
+        this.targetTextField.setText("/Users/asills/devops/glowing-guide/xmlComparisons/HSEP_CCDACCDR1.1_IPOACKIES_QUENTIN_09122018.xml");
+
         this.sourceTree.setRoot(sourceRoot);
+        this.sourceTree.expandedItemCountProperty().addListener((observable, oldValue, newValue) -> {
+
+            System.out.println(newValue);
+
+        });
+
+
         this.targetTree.setRoot(targetRoot);
+
+        this.resultsView.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
+        this.resultsView.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
+            newValue.isSelectedProperty().set(true);
+        });
+
     }
 
 
@@ -80,15 +95,8 @@ public class AppController {
 
                 switch (newValue) {
                     case SUCCEEDED:
-                        this.comparisonOutput.getItems().add("MISMATCHES:" + " (" + this.compareEngine.getValue().getMismatches().size() + ")");
                         this.compareEngine.getValue().getMismatches().stream()
-                                .forEach(mismatch -> this.comparisonOutput.getItems().add(mismatch.toString()));
-                        this.comparisonOutput.getItems().add(" ");
-
-                        this.comparisonOutput.getItems().add("SOURCE SECTION NOT FOUND IN TARGET:" + " (" + this.compareEngine.getValue().getSectionMatchNotFound().size() + ")");
-                        this.comparisonOutput.getItems().add("NOTE: All granular mismatches in each section are suppressed");
-                        this.compareEngine.getValue().getSectionMatchNotFound().stream().forEach(section -> this.comparisonOutput.getItems().add(section.toString()));
-                        this.comparisonOutput.getItems().add(" ");
+                                .forEach(mismatch -> this.resultsView.getItems().add(mismatch));
                 }
             });
 

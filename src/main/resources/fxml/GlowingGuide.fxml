@@ -10,9 +10,9 @@
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.Pane?>
 
-<AnchorPane prefHeight="694.0" prefWidth="1300.0" xmlns="http://javafx.com/javafx/10.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.github.aks8m.AppController">
+<AnchorPane prefHeight="829.0" prefWidth="1635.0" xmlns="http://javafx.com/javafx/10.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.github.aks8m.AppController">
    <children>
-      <SplitPane dividerPositions="0.32841007819287577" prefHeight="694.0" prefWidth="1300.0">
+      <SplitPane dividerPositions="0.32841007819287577" prefHeight="829.0" prefWidth="1642.0">
          <items>
             <Pane prefHeight="692.0" prefWidth="292.0">
                <children>
@@ -22,14 +22,14 @@
                   <Label layoutX="9.0" layoutY="111.0" text="Target" />
                   <Button fx:id="comparisonButton" layoutX="63.0" layoutY="625.0" mnemonicParsing="false" onAction="#runComparison" prefHeight="27.0" prefWidth="336.0" text="Compare" textOverrun="CLIP" />
                   <ProgressBar fx:id="compareProgressbar" layoutX="64.0" layoutY="658.0" prefHeight="20.0" prefWidth="334.0" progress="0.0" />
-                  <ListView fx:id="comparisonOutput" layoutX="60.0" layoutY="201.0" prefHeight="417.0" prefWidth="338.0" />
+                  <ListView fx:id="resultsView" layoutX="60.0" layoutY="201.0" prefHeight="417.0" prefWidth="338.0" />
                   <Label layoutX="7.0" layoutY="209.0" text="Results" />
                </children>
             </Pane>
-            <Pane prefHeight="692.0" prefWidth="801.0">
+            <Pane prefHeight="827.0" prefWidth="962.0">
                <children>
-                  <TreeView fx:id="sourceTree" layoutX="30.0" layoutY="23.0" prefHeight="642.0" prefWidth="374.0" />
-                  <TreeView fx:id="targetTree" layoutX="436.0" layoutY="22.0" prefHeight="642.0" prefWidth="374.0" />
+                  <TreeView fx:id="sourceTree" layoutX="14.0" layoutY="14.0" prefHeight="803.0" prefWidth="530.0" />
+                  <TreeView fx:id="targetTree" layoutX="553.0" layoutY="14.0" prefHeight="803.0" prefWidth="530.0" />
                </children>
             </Pane>
          </items>

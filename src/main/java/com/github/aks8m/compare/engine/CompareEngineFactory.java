@@ -1,6 +1,6 @@
 package com.github.aks8m.compare.engine;
 
-import javafx.scene.control.TreeItem;
+import com.github.aks8m.report.result.ResultTreeItem;
 import org.openhealthtools.mdht.uml.cda.ClinicalDocument;
 import org.openhealthtools.mdht.uml.cda.util.CDAUtil;
 import org.openhealthtools.mdht.uml.cda.util.ValidationResult;
@@ -10,7 +10,7 @@ import java.io.FileNotFoundException;
 
 public class CompareEngineFactory {
 
-    public static CompareEngine CreateMDHTCompareEngine(String sourceFilePath, String targetFilePath, TreeItem sourceRoot, TreeItem targetRoot){
+    public static CompareEngine CreateMDHTCompareEngine(String sourceFilePath, String targetFilePath, ResultTreeItem sourceRoot, ResultTreeItem targetRoot){
 
 
         ClinicalDocument sourceDocument = null;

@@ -4,17 +4,18 @@ import com.github.aks8m.report.ComparisonLocation;
 import com.github.aks8m.report.result.Result;
 import com.github.aks8m.report.result.ResultType;
 
+import java.util.List;
 import java.util.function.BiFunction;
 
-public class Comparison<T,U> {
+public class Comparison<T> {
 
     private final Result result;
     private ComparisonLocation location;
-    private final BiFunction<T,U,Boolean> biFunction;
+    private final BiFunction<T,T,Boolean> biFunction;
     private final T source;
-    private final U target;
+    private final T target;
 
-    public Comparison(ComparisonLocation location, BiFunction<T, U, Boolean> biFunction, T source, U target) {
+    public Comparison(ComparisonLocation location, BiFunction<T, T, Boolean> biFunction, T source, T target) {
         this.location = location;
         this.biFunction = biFunction;
         this.source = source;
@@ -33,8 +34,16 @@ public class Comparison<T,U> {
 
     }
 
-    public String toString() {
-        return "SOURCE value: " + source + "\tTARGET value: " + target + "\t LOCATION: " + location.formattedLocation();
+    public T getSource() {
+        return source;
+    }
+
+    public T getTarget() {
+        return target;
+    }
+
+    public Result getResult() {
+        return this.result;
     }
 
 }
