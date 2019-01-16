@@ -9,7 +9,6 @@ import com.github.aks8m.traversal.MDHTTraversalService;
 import javafx.application.Platform;
 import javafx.concurrent.Task;
 import javafx.fxml.FXML;
-import javafx.scene.control.TreeItem;
 import org.openhealthtools.mdht.uml.cda.ClinicalDocument;
 
 import java.util.concurrent.CountDownLatch;
@@ -18,7 +17,7 @@ import java.util.concurrent.CountDownLatch;
 public class MDHTComparisonEngine extends CompareEngine {
 
     private ComparisonReport comparisonReport;
-    private Node rootNode = null;
+    private Node analysisRoot = null;
     private final ResultTreeItem sourceRoot;
     private final ResultTreeItem targetRoot;
     private final MDHTTraversalService traversalService;
@@ -64,8 +63,8 @@ public class MDHTComparisonEngine extends CompareEngine {
                         traversalService.stateProperty().addListener((observable, oldValue, newValue) -> {
                             switch (newValue) {
                                 case SUCCEEDED:
-                                    rootNode = traversalService.getValue();
-                                    comparisonService.setRootNode(rootNode);
+                                    analysisRoot = traversalService.getValue();
+                                    comparisonService.setRootNode(analysisRoot);
                                     traversalLatch.countDown();
                             }
                         });
@@ -98,7 +97,7 @@ public class MDHTComparisonEngine extends CompareEngine {
                 updateProgress(computeProgress(PROGRESS_INCREMENT),PROGRESS_MAX_VALUE);
 
                 //Build Source and Target Trees
-                AnalysisTreeTransformer.UITransformation(rootNode, sourceRoot, targetRoot);
+                AnalysisTreeTransformer.UITransformation(analysisRoot, sourceRoot, targetRoot);
 
                 return comparisonReport;
             }

@@ -5,12 +5,13 @@ import org.openhealthtools.mdht.uml.cda.ClinicalDocument;
 import org.openhealthtools.mdht.uml.cda.util.CDAUtil;
 import org.openhealthtools.mdht.uml.cda.util.ValidationResult;
 
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 
 public class CompareEngineFactory {
 
-    public static CompareEngine CreateMDHTCompareEngine(String sourceFilePath, String targetFilePath, ResultTreeItem sourceRoot, ResultTreeItem targetRoot){
+    public static CompareEngine CreateMDHTCompareEngine(File sourceFilePath, File targetFilePath, ResultTreeItem sourceRoot, ResultTreeItem targetRoot){
 
 
         ClinicalDocument sourceDocument = null;

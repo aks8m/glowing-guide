@@ -7,9 +7,16 @@ import com.github.aks8m.report.result.ResultTreeItem;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
+import javafx.stage.DirectoryChooser;
+import javafx.stage.FileChooser;
+import javafx.stage.Stage;
+
+import java.io.File;
 
 public class AppController {
 
+    @FXML
+    private SplitPane splitPane;
     @FXML
     private TextField sourceTextField;
     @FXML
@@ -21,56 +28,32 @@ public class AppController {
     @FXML
     private Button compareButton;
     @FXML
+    private Button loadSourceButton;
+    @FXML
+    private Button loadTargetButton;
+    @FXML
     private TreeView<String> sourceTree;
     @FXML
     private TreeView<String> targetTree;
-
     private CompareEngine compareEngine;
-    private final ResultTreeItem sourceRoot = new ResultTreeItem("");
-    private final ResultTreeItem targetRoot = new ResultTreeItem("");
+    private ResultTreeItem sourceRoot;
+    private ResultTreeItem targetRoot;
+    private Stage fileChooseStage = new Stage();
+    private FileChooser fileChooser;
+    private File sourceFile;
+    private File targetFile;
 
     @FXML
     void initialize() {
 
-//        this.sourceTextField.setText("C:\\Users\\kmaulden\\Documents\\C-CDA Comparison Files\\xmlComparisonsNew\\SSA_CCDACCD1.1_IPOACKIES_QUENTIN_nodates_9072018.xml");
-//        this.targetTextField.setText("C:\\Users\\kmaulden\\Documents\\C-CDA Comparison Files\\xmlComparisonsNew\\HSEP_CCDACCDR1.1_IPOACKIES_QUENTIN_09122018.xml");
+        this.fileChooser = new FileChooser();
 
-//        this.sourceTextField.setText("C:\\Users\\kmaulden\\Documents\\C-CDA Comparison Files\\xmlComparisons\\HSEP_CCDACCDR1.1_IPOACKIES_QUENTIN_09122018.xml");
-//        this.targetTextField.setText("C:\\Users\\kmaulden\\Documents\\C-CDA Comparison Files\\xmlComparisons\\HSEP_CCDACCDR1.1_IPOACKIES_QUENTIN_09122018-dif.xml");
+        this.sourceTextField.setDisable(true);
+        this.targetTextField.setDisable(true);
 
-//        this.sourceTextField.setText("C:\\Users\\kmaulden\\Documents\\C-CDA Comparison Files\\xmlComparisons\\SSA_CCDACCD1.1_IAADLAND_JAN_nodates_9072018.xml");
-//        this.targetTextField.setText("C:\\Users\\kmaulden\\Documents\\C-CDA Comparison Files\\xmlComparisons\\HSEP_CCDACCDR1.1_AALAND_JAN_09122018.xml");
-
-//        this.sourceTextField.setText("C:\\Users\\kmaulden\\Documents\\C-CDA Comparison Files\\xmlComparisons\\SampleCDADocument.xml");
-//        this.targetTextField.setText("C:\\Users\\kmaulden\\Documents\\C-CDA Comparison Files\\xmlComparisons\\SampleCDADocument.xml");
-
-//        this.sourceTextField.setText("C:\\Users\\kmaulden\\Documents\\C-CDA Comparison Files\\TestFiles\\HS_CCDA_R2.1_NWHINFIVE_nodates_gen01042019.xml");
-//        this.targetTextField.setText("C:\\Users\\kmaulden\\Documents\\C-CDA Comparison Files\\TestFiles\\EHX_CCDA_R2.1_NWHINFIVE_nodates_gen01042019.xml");
-
-//        this.sourceTextField.setText("C:\\Users\\kmaulden\\Documents\\C-CDA Comparison Files\\TestFiles\\EHX_CCDA_R1.1_NWHINONE_nodates_gen01032019.xml");
-//        this.targetTextField.setText("C:\\Users\\kmaulden\\Documents\\C-CDA Comparison Files\\TestFiles\\HS_CCDA_R1.1_NWHINONE_nodates_gen01042019.xml");
-
-//        this.sourceTextField.setText("C:\\Users\\kmaulden\\Documents\\C-CDA Comparison Files\\TestFiles\\EHX_CCDA_R2.1_NWHINONE_nodates_gen01032019.xml");
-//        this.targetTextField.setText("C:\\Users\\kmaulden\\Documents\\C-CDA Comparison Files\\TestFiles\\HS_CCDA_R2.1_NWHINONE_nodates_gen01042019.xml");
-
-//        this.sourceTextField.setText("C:\\Users\\kmaulden\\Documents\\C-CDA Comparison Files\\TestFiles\\EHX_CCDA_R1.1_NWHINONE_nodates_gen01032019_test.xml");
-//        this.targetTextField.setText("C:\\Users\\kmaulden\\Documents\\C-CDA Comparison Files\\TestFiles\\HS_CCDA_R1.1_NWHINONE_nodates_gen01042019_test.xml");
-
-//        this.sourceTextField.setText("C:\\Users\\kmaulden\\Documents\\C-CDA Comparison Files\\TestFiles\\EHX_CCDA_R1.1_NWHINONE_nodates_gen01032019_test1.xml");
-//        this.targetTextField.setText("C:\\Users\\kmaulden\\Documents\\C-CDA Comparison Files\\TestFiles\\HS_CCDA_R1.1_NWHINONE_nodates_gen01042019_test1.xml");
-
-
-        this.sourceTextField.setText("/Users/asills/devops/glowing-guide/xmlComparisons/SSA_CCDACCD1.1_IPOACKIES_QUENTIN_nodates_9072018.xml");
-        this.targetTextField.setText("/Users/asills/devops/glowing-guide/xmlComparisons/HSEP_CCDACCDR1.1_IPOACKIES_QUENTIN_09122018.xml");
-
+        this.sourceRoot = new ResultTreeItem("");
+        this.targetRoot = new ResultTreeItem("");
         this.sourceTree.setRoot(sourceRoot);
-        this.sourceTree.expandedItemCountProperty().addListener((observable, oldValue, newValue) -> {
-
-            System.out.println(newValue);
-
-        });
-
-
         this.targetTree.setRoot(targetRoot);
 
         this.resultsView.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
@@ -80,14 +63,37 @@ public class AppController {
 
     }
 
+    @FXML
+    public void loadSource(ActionEvent actionEvent){
+
+        this.fileChooser.setTitle("Browse to Source CDA File");
+        this.sourceFile = this.fileChooser.showOpenDialog(this.fileChooseStage);
+
+        if(this.sourceFile != null && this.sourceFile.isFile()){
+            this.sourceTextField.setText(sourceFile.getName());
+        }
+    }
+
+    @FXML
+    public void loadTarget(ActionEvent actionEvent){
+
+        this.fileChooser.setTitle("Browse to Target CDA File");
+        this.targetFile = this.fileChooser.showOpenDialog(this.fileChooseStage);
+
+        if(this.targetFile != null && this.targetFile.isFile()){
+            this.targetTextField.setText(targetFile.getName());
+        }
+    }
+
 
    @FXML
    public void runComparison(ActionEvent actionEvent){
 
+        this.resultsView.getItems().clear();
 
         try {
 
-            compareEngine = CompareEngineFactory.CreateMDHTCompareEngine(this.sourceTextField.getText(), this.targetTextField.getText(),
+            compareEngine = CompareEngineFactory.CreateMDHTCompareEngine(this.sourceFile, this.targetFile,
                     this.sourceRoot , this.targetRoot);
             this.compareEngine.start();
             this.compareProgressbar.progressProperty().bind(this.compareEngine.progressProperty());
