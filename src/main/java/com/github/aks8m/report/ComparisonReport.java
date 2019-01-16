@@ -17,30 +17,9 @@ public class ComparisonReport {
         this.results = new ArrayList<Result>();
     }
 
-    public void addResult(Result match){
-        this.results.add(match);
-    }
-
     public void addResults(List<Result> mismatches) {this.results.addAll(mismatches);}
 
     public List<Result> getMismatches() {
         return results.stream().filter(res -> res.getResultType().equals(ResultType.MISMATCH)).collect(Collectors.toList());
     }
-
-    public List<Result> getMatches() {
-        return results.stream().filter(res -> res.getResultType().equals(ResultType.MATCH)).collect(Collectors.toList());
-    }
-
-    public List<Result> getWarnings() {
-        return results.stream().filter(res -> res.getResultType().equals(ResultType.WARNING)).collect(Collectors.toList());
-    }
-
-    public List<Result> getCompoundMismatches() {
-        return results.stream().filter(res -> res.getResultType().equals(ResultType.COMPOUNDMISMATCH)).collect(Collectors.toList());
-    }
-
-    public List<Result> getSectionMatchNotFound() {
-        return results.stream().filter(res -> res.getResultType().equals(ResultType.SECTIONMATCHNOTFOUND)).collect(Collectors.toList());
-    }
-
 }
