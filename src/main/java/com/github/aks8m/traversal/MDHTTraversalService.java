@@ -1,34 +1,28 @@
 package com.github.aks8m.traversal;
 
 import com.github.aks8m.compare.comparisonobject.Comparison;
-import com.github.aks8m.compare.engine.ComparisonUtility;
+import com.github.aks8m.compare.comparisonobject.ComparisonValue;
 import com.github.aks8m.compare.tree.Node;
-import com.github.aks8m.report.result.ResultTreeItem;
 import com.github.aks8m.traversal.MethodType.InitializeEnums;
 import com.github.aks8m.traversal.MethodType.NodeValueType;
 import com.github.aks8m.traversal.MethodType.Pair;
 import javafx.concurrent.Task;
-import javafx.scene.control.TreeItem;
 import org.eclipse.emf.common.util.EList;
 import org.openhealthtools.mdht.uml.cda.ClinicalDocument;
 import org.openhealthtools.mdht.uml.cda.Component3;
 
-import java.lang.reflect.*;
-import java.util.*;
+import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
+import java.util.List;
 
 public class MDHTTraversalService extends TraversalService {
 
     private ClinicalDocument sourceClinicalDocument;
     private ClinicalDocument targetClinicalDocument;
-    private final ResultTreeItem sourceRoot;
-    private final ResultTreeItem targetRoot;
 
-    public MDHTTraversalService(ClinicalDocument sourceClinicalDocument, ClinicalDocument targetClinicalDocument,
-                                ResultTreeItem sourceRoot, ResultTreeItem targetRoot) {
+    public MDHTTraversalService(ClinicalDocument sourceClinicalDocument, ClinicalDocument targetClinicalDocument) {
         this.sourceClinicalDocument = sourceClinicalDocument;
         this.targetClinicalDocument = targetClinicalDocument;
-        this.sourceRoot = sourceRoot;
-        this.targetRoot = targetRoot;
     }
 
 
@@ -40,6 +34,8 @@ public class MDHTTraversalService extends TraversalService {
             @Override
             protected Node call() throws Exception {
                 Node rootNode = new Node(NodeValueType.ClinicalDocument);
+
+                InitializeEnums.initializeEnums();
 
                 //recursive call to enter
                 reflectiveRecursiveTraversal(sourceClinicalDocument,targetClinicalDocument,rootNode);
@@ -54,7 +50,9 @@ public class MDHTTraversalService extends TraversalService {
             Node childNode = null;
             if (target == null) {
                 //set comparisonobject Object as source is not null but target is Null
-                rootNode.setComparison(new Comparison(null, ComparisonUtility.StringComparison(),"target is null", ""));
+//                rootNode.setComparison(new Comparison(null, ComparisonUtility.StringComparison()));
+                rootNode.setComparison(new Comparison(new ComparisonValue(source,"Value"),
+                        new ComparisonValue("target is null","Value")));
             } else {
                 Object childSource = null;
                 Object childTarget = null;
@@ -87,7 +85,6 @@ public class MDHTTraversalService extends TraversalService {
                                     for (int i = 0; i < siblingNodes.size(); i++) {
                                         siblingNodes.get(i).addSiblings(siblingNodes.subList(0, i));
                                         siblingNodes.get(i).addSiblings(siblingNodes.subList(i + 1, siblingNodes.size()));
-
                                     }
                                 }
                             }
@@ -138,23 +135,32 @@ public class MDHTTraversalService extends TraversalService {
 
     private void setChildComparison(Pair<String, NodeValueType> methodName, Object sourcelist, Object targetlist, Node childNode) throws NoSuchMethodException, IllegalAccessException, InvocationTargetException {
         if (targetlist == null) {
-            childNode.setComparison(new Comparison(null, ComparisonUtility.StringComparison(),"target is null", ""));
+            childNode.setComparison(new Comparison(new ComparisonValue(sourcelist,"Value List"),
+                    new ComparisonValue("target is null","Value List")));
         } else {
-            List<Object> sources = new ArrayList<>();
-            List<Object> targets = new ArrayList<>();
+            List<ComparisonValue> sources = new ArrayList<>();
+            List<ComparisonValue> targets = new ArrayList<>();
             for (List<String> methodList : methodName.getR().getValueMethods()) {
                 Object sourceAdd = sourcelist;
                 Object targetAdd = targetlist;
+                StringBuilder sourceValueNameSB = null;
+                StringBuilder targetValueNameSB = null;
                 for (String method : methodList) {
                     if (sourceAdd != null && targetAdd != null) {
+                        sourceValueNameSB = new StringBuilder();
+                        targetValueNameSB = new StringBuilder();
+
                         sourceAdd = sourceAdd.getClass().getMethod(method).invoke(sourceAdd);
+                        sourceValueNameSB.append(method);
                         targetAdd = targetAdd.getClass().getMethod(method).invoke(targetAdd);
+                        targetValueNameSB.append(method);
                     }
                 }
-                sources.add(sourceAdd);
-                targets.add(targetAdd);
+
+                sources.add(new ComparisonValue(sourceAdd, sourceValueNameSB == null ? "Value" : sourceValueNameSB.toString()));
+                targets.add(new ComparisonValue(targetAdd, targetValueNameSB == null ? "Value" : targetValueNameSB.toString()));
             }
-            childNode.setComparison(new Comparison(null, ComparisonUtility.ObjectsListComparison(),sources,targets));
+            childNode.setComparison(new Comparison(sources,targets));
         }
     }
 

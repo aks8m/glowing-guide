@@ -1,7 +1,9 @@
 package com.github.aks8m.compare.tree;
 
 import com.github.aks8m.compare.comparisonobject.Comparison;
+import com.github.aks8m.compare.comparisonobject.ComparisonValue;
 import com.github.aks8m.report.result.ResultTreeItem;
+import javafx.beans.property.SimpleBooleanProperty;
 import javafx.scene.control.TreeItem;
 
 import java.util.ArrayDeque;
@@ -37,14 +39,19 @@ public class AnalysisTreeTransformer {
                 ResultTreeItem targetChild = new ResultTreeItem(childNode.getLocationType().toString());
 
                 if(childComparison != null) {
-                    ResultTreeItem sourceValue = new ResultTreeItem(childComparison.getSource().toString(),
-                            childComparison.getResult().isSelectedProperty(),
-                            position + 1);
-                    sourceChild.getChildren().add(sourceValue);
-                    ResultTreeItem targetValue = new ResultTreeItem(childComparison.getTarget().toString(),
-                            childComparison.getResult().isSelectedProperty(),
-                            position + 1);
-                    targetChild.getChildren().add(targetValue);
+
+                    if(!childComparison.isListCompare()){
+                        addSubChild(sourceChild, childComparison.getSourceComparisonValue(), childComparison.getResult().isSelectedProperty(), position);
+                        addSubChild(targetChild, childComparison.getSourceComparisonValue(), childComparison.getResult().isSelectedProperty(), position);
+                    } else {
+                        for(ComparisonValue comparisonValue : childComparison.getSourceComparisonValues()){
+                            addSubChild(sourceChild, comparisonValue, childComparison.getResult().isSelectedProperty(), position);
+                        }
+
+                        for(ComparisonValue comparisonValue : childComparison.getTargetComparisonValues()){
+                            addSubChild(targetChild, comparisonValue, childComparison.getResult().isSelectedProperty(), position);
+                        }
+                    }
                 }
 
                 source.getChildren().add(sourceChild);
@@ -56,5 +63,12 @@ public class AnalysisTreeTransformer {
                 position++;
             }
         }
+    }
+
+    private static void addSubChild(ResultTreeItem parent, ComparisonValue comparisonValue,
+                                    SimpleBooleanProperty simpleBooleanProperty, int position){
+        ResultTreeItem tempResultTreeItem = new ResultTreeItem(comparisonValue.getValueName() + ":" + comparisonValue.getValue(),
+                simpleBooleanProperty,position + 1);
+        parent.getChildren().add(tempResultTreeItem);
     }
 }

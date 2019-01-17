@@ -1,14 +1,13 @@
 package com.github.aks8m;
 
-import com.github.aks8m.compare.engine.CompareEngineFactory;
 import com.github.aks8m.compare.engine.CompareEngine;
+import com.github.aks8m.compare.engine.CompareEngineFactory;
 import com.github.aks8m.report.result.Result;
 import com.github.aks8m.report.result.ResultTreeItem;
 import com.github.aks8m.traversal.MethodType.InitializeEnums;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
-import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 

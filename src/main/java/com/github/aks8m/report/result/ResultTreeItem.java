@@ -22,6 +22,8 @@ public class ResultTreeItem extends TreeItem<String> {
 
         simpleBooleanProperty.addListener((observable, oldValue, newValue) -> {
 
+
+
             TreeItem parent = null;
 
             if (newValue) {

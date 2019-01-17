@@ -39,7 +39,7 @@ public class MDHTComparisonEngine extends CompareEngine {
 
     public MDHTComparisonEngine(ClinicalDocument sourceClinicalDocument, ClinicalDocument targetClinicalDocument,
                                 ResultTreeItem sourceRoot, ResultTreeItem targetRoot) {
-        this.traversalService = new MDHTTraversalService(sourceClinicalDocument,targetClinicalDocument, sourceRoot, targetRoot);
+        this.traversalService = new MDHTTraversalService(sourceClinicalDocument,targetClinicalDocument);
         this.comparisonService = new MDHTComparisonService();
         this.sourceRoot = sourceRoot;
         this.targetRoot = targetRoot;

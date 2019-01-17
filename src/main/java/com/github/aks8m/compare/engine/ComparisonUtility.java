@@ -1,5 +1,6 @@
 package com.github.aks8m.compare.engine;
 
+import com.github.aks8m.compare.comparisonobject.ComparisonValue;
 import com.github.aks8m.report.result.Result;
 import com.github.aks8m.report.result.ResultType;
 
@@ -10,9 +11,12 @@ import java.util.function.BiFunction;
 
 public class ComparisonUtility {
 
-    public static BiFunction<String, String, Boolean> StringComparison() {
-        return (sourceString, targetString) -> {
+    public static BiFunction<ComparisonValue, ComparisonValue, Boolean> StringComparison() {
+        return (sourceComparisonValue, targetComparisonValue) -> {
             boolean result;
+
+            String sourceString = (String) sourceComparisonValue.getValue();
+            String targetString = (String) targetComparisonValue.getValue();
 
             if (sourceString == null && targetString == null)
                 result = true;
@@ -27,11 +31,11 @@ public class ComparisonUtility {
         };
     }
 
-    public static BiFunction<List<Object>, List<Object>, Boolean> ObjectsListComparison() {
-        return (sourceObjects, targetObjects) -> {
+    public static BiFunction<List<ComparisonValue>, List<ComparisonValue>, Boolean> ObjectsListComparison() {
+        return (sourceComparisonValues, targetComparisonValues) -> {
             boolean result;
 
-            if (targetObjects.containsAll(sourceObjects)) {
+            if (targetComparisonValues.containsAll(sourceComparisonValues)) {
                 result = true;
             } else{
                 result = false;
