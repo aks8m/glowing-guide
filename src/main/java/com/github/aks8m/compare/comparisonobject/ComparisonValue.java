@@ -26,9 +26,4 @@ public class ComparisonValue {
 
         return stringBuilder.append(splitArray[splitArray.length - 1]).toString();
     }
-
-    @Override
-    public boolean equals(Object obj) {
-        return this.value.equals(obj);
-    }
 }

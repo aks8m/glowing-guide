@@ -2,6 +2,7 @@ package com.github.aks8m.compare.tree;
 
 import com.github.aks8m.compare.comparisonobject.Comparison;
 import com.github.aks8m.compare.comparisonobject.ComparisonValue;
+import com.github.aks8m.report.result.Result;
 import com.github.aks8m.report.result.ResultTreeItem;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.scene.control.TreeItem;
@@ -41,15 +42,19 @@ public class AnalysisTreeTransformer {
                 if(childComparison != null) {
 
                     if(!childComparison.isListCompare()){
-                        addSubChild(sourceChild, childComparison.getSourceComparisonValue(), childComparison.getResult().isSelectedProperty(), position);
-                        addSubChild(targetChild, childComparison.getSourceComparisonValue(), childComparison.getResult().isSelectedProperty(), position);
+                        addSubChild(sourceChild, childComparison.getSourceComparisonValue(), childComparison.getResults().get(0).isSelectedProperty(), position);
+                        addSubChild(targetChild, childComparison.getTargetComparisonValue(), childComparison.getResults().get(0).isSelectedProperty(), position);
                     } else {
                         for(ComparisonValue comparisonValue : childComparison.getSourceComparisonValues()){
-                            addSubChild(sourceChild, comparisonValue, childComparison.getResult().isSelectedProperty(), position);
+                            for(Result result : childComparison.getResults()){
+                                addSubChild(sourceChild, comparisonValue, result.isSelectedProperty(), position);
+                            }
                         }
 
                         for(ComparisonValue comparisonValue : childComparison.getTargetComparisonValues()){
-                            addSubChild(targetChild, comparisonValue, childComparison.getResult().isSelectedProperty(), position);
+                            for(Result result : childComparison.getResults()){
+                                addSubChild(targetChild, comparisonValue, result.isSelectedProperty(), position);
+                            }
                         }
                     }
                 }

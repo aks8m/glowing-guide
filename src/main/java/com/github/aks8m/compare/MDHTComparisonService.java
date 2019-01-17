@@ -7,6 +7,7 @@ import com.github.aks8m.report.result.ResultType;
 import com.github.aks8m.traversal.MethodType.NodeValueType;
 import javafx.concurrent.Task;
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class MDHTComparisonService extends ComparisonService {
 
@@ -53,21 +54,30 @@ public class MDHTComparisonService extends ComparisonService {
 
                     //if it is value nodeList
                     if (childNode.getLocationType().getMethodType() == NodeValueType.MethodType.ValueNodeList) {
-                        Result result = childNode.getComparison().compare();
+                        this.resultList.addAll(childNode.getComparison().compare());
 
-                        if (result.getResultType() == ResultType.MISMATCH) {
-                            Boolean matched = false;
-                            for (Node siblingNode : childNode.getSiblings()) {
-                                if (siblingNode.getComparison().compare().getResultType() == ResultType.MATCH) {
-                                    matched = true;
-                                    break;
-                                }
-                            }
-                            if (!matched) {
-//                            result.setComparison(childNode.getComparison().setComparisonLocation(new ComparisonLocation(location).enter(childNode.getLocationType().toString())));
-                                totalRetList.add(result);
-                            }
-                        }
+//                        this.resultList.addAll(
+//                                tempResults.stream()
+//                                .filter(result -> result.getResultType() == ResultType.MISMATCH)
+//                                .collect(Collectors.toList())
+//                        );
+
+//                        for(Result result : tempResults) {
+//
+//                            if (result.getResultType() == ResultType.MISMATCH) {
+//                                Boolean matched = false;
+//                                for (Node siblingNode : childNode.getSiblings()) {
+//                                    if (siblingNode.getComparison().compare().getResultType() == ResultType.MATCH) {
+//                                        matched = true;
+//                                        break;
+//                                    }
+//                                }
+//                                if (!matched) {
+////                            result.setComparison(childNode.getComparison().setComparisonLocation(new ComparisonLocation(location).enter(childNode.getLocationType().toString())));
+//                                    totalRetList.add(result);
+//                                }
+//                            }
+//                        }
 
                     } else { //(complex location List)
 
@@ -102,11 +112,11 @@ public class MDHTComparisonService extends ComparisonService {
                     //if it is valuenode or valuenodelist without siblings
                     if (childNode.getLocationType().getMethodType() == NodeValueType.MethodType.ValueNode
                             || childNode.getLocationType().getMethodType() == NodeValueType.MethodType.ValueNodeList) {
-                        Result result = childNode.getComparison().compare();
-                        if (result.getResultType() == ResultType.MISMATCH) {
-//                        result.setComparison(childNode.getComparison().setComparisonLocation(new ComparisonLocation(location).enter(childNode.getLocationType().toString())));
-                            totalRetList.add(result);
-                        }
+                        this.resultList.addAll(childNode.getComparison().compare());
+//                        if (result.getResultType() == ResultType.MISMATCH) {
+////                        result.setComparison(childNode.getComparison().setComparisonLocation(new ComparisonLocation(location).enter(childNode.getLocationType().toString())));
+//                            totalRetList.add(result);
+//                        }
 
 
                     } else { //(complexlocation or complexlocationlist without siblings)

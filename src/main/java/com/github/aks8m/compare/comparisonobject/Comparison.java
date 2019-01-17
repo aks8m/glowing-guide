@@ -3,12 +3,12 @@ package com.github.aks8m.compare.comparisonobject;
 import com.github.aks8m.report.result.Result;
 import com.github.aks8m.report.result.ResultType;
 
+import java.util.ArrayList;
 import java.util.List;
-import java.util.function.BiFunction;
 
 public class Comparison {
 
-    private final Result result;
+    private final List<Result> results = new ArrayList<>();
     private ComparisonValue sourceComparisonValue;
     private ComparisonValue targetComparisonValue;
     private List<ComparisonValue> sourceComparisonValues;
@@ -18,42 +18,54 @@ public class Comparison {
     public Comparison(ComparisonValue sourceComparisonValue, ComparisonValue targetComparisonValue) {
         this.sourceComparisonValue = sourceComparisonValue;
         this.targetComparisonValue = targetComparisonValue;
-        this.result = new Result(this.sourceComparisonValue.getValueName() + ": " + this.sourceComparisonValue.getValue()
-                + " vs " + this.targetComparisonValue.getValueName() + ": " + this.targetComparisonValue.getValue());
         this.isListCompare = false;
     }
 
     public Comparison(List<ComparisonValue> sourceComparisonValues, List<ComparisonValue> targetComparisonValues) {
         this.sourceComparisonValues = sourceComparisonValues;
         this.targetComparisonValues = targetComparisonValues;
-        this.result = new Result(this.sourceComparisonValue.getValueName() + ": " + this.sourceComparisonValue.getValue()
-                + " vs " + this.targetComparisonValue.getValueName() + ": " + this.targetComparisonValue.getValue());
         this.isListCompare = true;
     }
 
-    public Result compare(){
+    public List<Result> compare(){
 
         if(isListCompare){
-            String sourceString = (String) this.sourceComparisonValue.getValue();
-            String targetString = (String) this.targetComparisonValue.getValue();
+
+            Result tempResult = new Result(this.sourceComparisonValue.getValueName() + ": " + this.sourceComparisonValue.getValue()
+                    + " vs " + this.targetComparisonValue.getValueName() + ": " + this.targetComparisonValue.getValue());
+
+            String sourceString = this.sourceComparisonValue.getValue().toString();
+            String targetString = this.targetComparisonValue.getValue().toString();
 
             if (sourceString == null && targetString == null)
-                this.result.setResultType(ResultType.MATCH);
+                tempResult.setResultType(ResultType.MATCH);
             else if (sourceString == null || targetString == null)
-                this.result.setResultType(ResultType.MISMATCH);
+                tempResult.setResultType(ResultType.MISMATCH);
             else if (sourceString.equals(targetString))
-                this.result.setResultType(ResultType.MATCH);
+                tempResult.setResultType(ResultType.MATCH);
             else
-                this.result.setResultType(ResultType.MISMATCH);
+                tempResult.setResultType(ResultType.MISMATCH);
+            this.results.add(tempResult);
 
         } else {
-            if (this.targetComparisonValues.containsAll(this.sourceComparisonValues))
-                this.result.setResultType(ResultType.MATCH);
-            else
-                this.result.setResultType(ResultType.MISMATCH);
+
+            for(ComparisonValue sourceCompValue : this.sourceComparisonValues){
+                for (ComparisonValue targetCompValue : this.targetComparisonValues){
+                    Result tempResult = new Result(sourceCompValue.getValueName() + ": " + sourceCompValue.getValue()
+                            + " vs " + targetCompValue.getValueName() + ": " + targetCompValue.getValue());
+
+                    if (targetCompValue.getValue().equals(sourceCompValue.getValue())){
+                        tempResult.setResultType(ResultType.MATCH);
+                    } else {
+                        tempResult.setResultType(ResultType.MISMATCH);
+                    }
+
+                    this.results.add(tempResult);
+                }
+            }
         }
 
-        return this.result;
+        return results;
     }
 
     public ComparisonValue getSourceComparisonValue() {
@@ -76,8 +88,7 @@ public class Comparison {
         return isListCompare;
     }
 
-    public Result getResult() {
-        return this.result;
+    public List<Result> getResults() {
+        return results;
     }
-
 }
