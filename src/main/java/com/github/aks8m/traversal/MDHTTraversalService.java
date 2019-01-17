@@ -41,8 +41,6 @@ public class MDHTTraversalService extends TraversalService {
             protected Node call() throws Exception {
                 Node rootNode = new Node(NodeValueType.ClinicalDocument);
 
-                InitializeEnums.initializeEnums();
-
                 //recursive call to enter
                 reflectiveRecursiveTraversal(sourceClinicalDocument,targetClinicalDocument,rootNode);
 
@@ -56,7 +54,6 @@ public class MDHTTraversalService extends TraversalService {
             Node childNode = null;
             if (target == null) {
                 //set comparisonobject Object as source is not null but target is Null
-//                rootNode.setComparison(new Comparison(null, ComparisonUtility.StringComparison()));
                 rootNode.setComparison(new Comparison(null, ComparisonUtility.StringComparison(),"target is null", ""));
             } else {
                 Object childSource = null;

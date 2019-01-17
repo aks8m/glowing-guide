@@ -24,14 +24,26 @@ public class ResultTreeItem extends TreeItem<String> {
 
             TreeItem parent = null;
 
-            do {
-                if(parent == null)
-                    parent = super.getParent();
-                else
-                    parent = parent.getParent();
+            if (newValue) {
+                do {
+                    if(parent == null)
+                        parent = super.getParent();
+                    else
+                        parent = parent.getParent();
 
-                parent.setExpanded(true);
-            }while (parent.getParent() != null);
+                    parent.setExpanded(true);
+                }while (parent.getParent() != null);
+            } else {
+                do {
+                    if(parent == null)
+                        parent = super.getParent();
+                    else
+                        parent = parent.getParent();
+
+                    parent.setExpanded(false);
+                }while (parent.getParent() != null);
+            }
+
         });
     }
 

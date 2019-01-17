@@ -4,6 +4,7 @@ import com.github.aks8m.compare.engine.CompareEngineFactory;
 import com.github.aks8m.compare.engine.CompareEngine;
 import com.github.aks8m.report.result.Result;
 import com.github.aks8m.report.result.ResultTreeItem;
+import com.github.aks8m.traversal.MethodType.InitializeEnums;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
@@ -56,8 +57,13 @@ public class AppController {
         this.sourceTree.setRoot(sourceRoot);
         this.targetTree.setRoot(targetRoot);
 
+        InitializeEnums.initializeEnums();
+
         this.resultsView.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
         this.resultsView.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
+            for (Result result : resultsView.getItems()) {
+                result.isSelectedProperty().set(false);
+            }
             newValue.isSelectedProperty().set(true);
         });
 
@@ -90,26 +96,31 @@ public class AppController {
    public void runComparison(ActionEvent actionEvent){
 
         this.resultsView.getItems().clear();
+        this.sourceRoot = new ResultTreeItem("");
+        this.targetRoot = new ResultTreeItem("");
+        this.sourceTree.setRoot(sourceRoot);
+        this.targetTree.setRoot(targetRoot);
 
-        try {
+       try {
 
-            compareEngine = CompareEngineFactory.CreateMDHTCompareEngine(this.sourceFile, this.targetFile,
-                    this.sourceRoot , this.targetRoot);
-            this.compareEngine.start();
-            this.compareProgressbar.progressProperty().bind(this.compareEngine.progressProperty());
-            this.compareEngine.stateProperty().addListener((observable, oldValue, newValue) -> {
+           compareEngine = CompareEngineFactory.CreateMDHTCompareEngine(this.sourceFile, this.targetFile,
+                   this.sourceRoot , this.targetRoot);
+           this.compareEngine.start();
+           this.compareProgressbar.progressProperty().bind(this.compareEngine.progressProperty());
+           this.compareEngine.stateProperty().addListener((observable, oldValue, newValue) -> {
 
-                switch (newValue) {
-                    case SUCCEEDED:
-                        this.compareEngine.getValue().getMismatches().stream()
-                                .forEach(mismatch -> this.resultsView.getItems().add(mismatch));
-                }
-            });
+               switch (newValue) {
+                   case SUCCEEDED:
+                       this.compareEngine.getValue().getMismatches().stream()
+                               .forEach(mismatch -> this.resultsView.getItems().add(mismatch));
+               }
+           });
 
 
-        }catch (Exception e){
-            e.printStackTrace();
-        }
+       }catch (Exception e){
+           e.printStackTrace();
+       }
+       
     }
 
 }
