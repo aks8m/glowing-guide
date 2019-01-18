@@ -34,7 +34,8 @@ public class MDHTComparisonService extends ComparisonService {
             @Override
             protected List<Result> call() throws Exception {
 
-                resultList = recursiveComparison(rootNode);
+//                resultList = recursiveComparison(rootNode);
+                recursiveComparison(rootNode);
 
                 return resultList;
             }
@@ -46,6 +47,7 @@ public class MDHTComparisonService extends ComparisonService {
         location.enter(topNode.getLocationType().toString());
         List<Result> totalRetList = new ArrayList<>();
         List<Result> ret = new ArrayList<>();
+        List<Result> addList;
 
         for (Node childNode : topNode.getChildren()) {
             if (!skipList.contains(childNode)) {
@@ -53,7 +55,9 @@ public class MDHTComparisonService extends ComparisonService {
 
                     //if it is value nodeList
                     if (childNode.getLocationType().getMethodType() == NodeValueType.MethodType.ValueNodeList) {
-                        this.resultList.addAll(childNode.getComparison().compare());
+                        addList = childNode.getComparison().compare();
+                        this.resultList.addAll(addList);
+                        totalRetList.addAll(addList);
 
 //                        this.resultList.addAll(
 //                                tempResults.stream()
@@ -100,8 +104,8 @@ public class MDHTComparisonService extends ComparisonService {
                                 Result res = new Result("Source section \"" + new ComparisonLocation(location).enter(childNode.getLocationType().toString()).formattedLocation() + "\" did not have an exact match in the target");
                                 res.setResultType(ResultType.SECTIONMATCHNOTFOUND);
                                 totalRetList.add(res);
+                                this.resultList.add(res);
 
-//                                totalRetList.addAll(complexReturnList);
                             }
                         }
 
@@ -111,7 +115,9 @@ public class MDHTComparisonService extends ComparisonService {
                     //if it is valuenode or valuenodelist without siblings
                     if (childNode.getLocationType().getMethodType() == NodeValueType.MethodType.ValueNode
                             || childNode.getLocationType().getMethodType() == NodeValueType.MethodType.ValueNodeList) {
-                        this.resultList.addAll(childNode.getComparison().compare());
+                        addList = childNode.getComparison().compare();
+                        this.resultList.addAll(addList);
+                        totalRetList.addAll(addList);
 //                        if (result.getResultType() == ResultType.MISMATCH) {
 ////                        result.setComparison(childNode.getComparison().setComparisonLocation(new ComparisonLocation(location).enter(childNode.getLocationType().toString())));
 //                            totalRetList.add(result);

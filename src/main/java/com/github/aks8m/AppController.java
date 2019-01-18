@@ -112,6 +112,8 @@ public class AppController {
                    case SUCCEEDED:
                        this.compareEngine.getValue().getMismatches().stream()
                                .forEach(mismatch -> this.resultsView.getItems().add(mismatch));
+                       this.compareEngine.getValue().getSectionMatchNotFound().stream().
+                               forEach(sectionNotFound -> this.resultsView.getItems().add(sectionNotFound));
                }
            });
 
@@ -119,7 +121,7 @@ public class AppController {
        }catch (Exception e){
            e.printStackTrace();
        }
-       
+
     }
 
 }

@@ -22,4 +22,8 @@ public class ComparisonReport {
     public List<Result> getMismatches() {
         return results.stream().filter(res -> res.getResultType().equals(ResultType.MISMATCH)).collect(Collectors.toList());
     }
+
+    public List<Result> getSectionMatchNotFound() {
+        return results.stream().filter(res -> res.getResultType().equals(ResultType.SECTIONMATCHNOTFOUND)).collect(Collectors.toList());
+    }
 }

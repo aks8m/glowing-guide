@@ -35,8 +35,6 @@ public class MDHTTraversalService extends TraversalService {
             protected Node call() throws Exception {
                 Node rootNode = new Node(NodeValueType.ClinicalDocument);
 
-                InitializeEnums.initializeEnums();
-
                 //recursive call to enter
                 reflectiveRecursiveTraversal(sourceClinicalDocument,targetClinicalDocument,rootNode);
 

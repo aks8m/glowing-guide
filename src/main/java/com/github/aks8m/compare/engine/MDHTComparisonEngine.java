@@ -23,8 +23,8 @@ public class MDHTComparisonEngine extends CompareEngine {
     private final MDHTTraversalService traversalService;
     private final MDHTComparisonService comparisonService;
 
-    private final double PROGRESS_MAX_VALUE = 100.0;
-    private double PROGRESS_INCREMENT = 50.0;
+    private final double PROGRESS_MAX_VALUE = 99.9;
+    private double PROGRESS_INCREMENT = 33.3;
     private double currentProgressValue = 0.0;
 
     @FXML
@@ -73,7 +73,6 @@ public class MDHTComparisonEngine extends CompareEngine {
                     }
                 });
                 traversalLatch.await();
-                System.out.println("Traversal Service Finished");
 
                 updateProgress(computeProgress(PROGRESS_INCREMENT),PROGRESS_MAX_VALUE);
 
@@ -94,13 +93,14 @@ public class MDHTComparisonEngine extends CompareEngine {
                     }
                 });
                 compareLatch.await();
-                System.out.println("Compute Service Finished");
 
                 updateProgress(computeProgress(PROGRESS_INCREMENT),PROGRESS_MAX_VALUE);
 
                 //Build Source and Target Trees
                 AnalysisTreeTransformer.UITransformation(analysisRoot, sourceRoot, targetRoot);
-                System.out.println("UI Service Finished");
+
+                updateProgress(computeProgress(PROGRESS_INCREMENT),PROGRESS_MAX_VALUE);
+
 
                 return comparisonReport;
             }

@@ -21,7 +21,7 @@
                   <ProgressBar fx:id="compareProgressbar" layoutX="121.0" layoutY="96.0" prefHeight="20.0" prefWidth="400.0" progress="0.0" />
                   <ListView fx:id="resultsView" layoutX="15.0" layoutY="127.0" prefHeight="686.0" prefWidth="506.0" />
                   <Button fx:id="loadTargetButton" layoutX="16.0" layoutY="51.0" mnemonicParsing="false" onAction="#loadTarget" prefHeight="27.0" prefWidth="95.0" text="Load Target" />
-                  <Button fx:id="loadSourceButton" layoutX="16.0" layoutY="14.0" mnemonicParsing="false" onAction="#loadSource" text="Load Source" />
+                  <Button fx:id="loadSourceButton" layoutX="16.0" layoutY="14.0" mnemonicParsing="false" onAction="#loadSource" prefHeight="27.0" prefWidth="95.0" text="Load Source" />
                </children>
             </Pane>
             <Pane prefHeight="827.0" prefWidth="962.0">
