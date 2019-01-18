@@ -51,7 +51,6 @@ public class MDHTComparisonService extends ComparisonService {
             if (!skipList.contains(childNode)) {
                 if (childNode.getSiblings().size() > 0) {
 
-
                     //if it is value nodeList
                     if (childNode.getLocationType().getMethodType() == NodeValueType.MethodType.ValueNodeList) {
                         this.resultList.addAll(childNode.getComparison().compare());

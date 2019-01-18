@@ -29,43 +29,55 @@ public class Comparison {
 
     public List<Result> compare(){
 
-        if(isListCompare){
+        try {
 
-            Result tempResult = new Result(this.sourceComparisonValue.getValueName() + ": " + this.sourceComparisonValue.getValue()
-                    + " vs " + this.targetComparisonValue.getValueName() + ": " + this.targetComparisonValue.getValue());
+            if (!isListCompare) {
 
-            String sourceString = this.sourceComparisonValue.getValue().toString();
-            String targetString = this.targetComparisonValue.getValue().toString();
+                Result tempResult = new Result(this.sourceComparisonValue.getValueName() + ": " + this.sourceComparisonValue.getValue()
+                        + " vs " + this.targetComparisonValue.getValueName() + ": " + this.targetComparisonValue.getValue());
 
-            if (sourceString == null && targetString == null)
-                tempResult.setResultType(ResultType.MATCH);
-            else if (sourceString == null || targetString == null)
-                tempResult.setResultType(ResultType.MISMATCH);
-            else if (sourceString.equals(targetString))
-                tempResult.setResultType(ResultType.MATCH);
-            else
-                tempResult.setResultType(ResultType.MISMATCH);
-            this.results.add(tempResult);
+                String sourceString = this.sourceComparisonValue.getValue().toString();
+                String targetString = this.targetComparisonValue.getValue().toString();
 
-        } else {
+                System.out.println(sourceString + " vs " + targetString);
 
-            for(ComparisonValue sourceCompValue : this.sourceComparisonValues){
-                for (ComparisonValue targetCompValue : this.targetComparisonValues){
-                    Result tempResult = new Result(sourceCompValue.getValueName() + ": " + sourceCompValue.getValue()
-                            + " vs " + targetCompValue.getValueName() + ": " + targetCompValue.getValue());
+                if (sourceString == null && targetString == null)
+                    tempResult.setResultType(ResultType.MATCH);
+                else if (sourceString == null || targetString == null)
+                    tempResult.setResultType(ResultType.MISMATCH);
+                else if (sourceString.equals(targetString))
+                    tempResult.setResultType(ResultType.MATCH);
+                else
+                    tempResult.setResultType(ResultType.MISMATCH);
+                this.results.add(tempResult);
 
-                    if (targetCompValue.getValue().equals(sourceCompValue.getValue())){
-                        tempResult.setResultType(ResultType.MATCH);
-                    } else {
-                        tempResult.setResultType(ResultType.MISMATCH);
+            } else {
+
+                for (ComparisonValue sourceCompValue : this.sourceComparisonValues) {
+                    for (ComparisonValue targetCompValue : this.targetComparisonValues) {
+                        Result tempResult = new Result(sourceCompValue.getValueName() + ": " + sourceCompValue.getValue()
+                                + " vs " + targetCompValue.getValueName() + ": " + targetCompValue.getValue());
+
+                        System.out.println(sourceCompValue.getValue() + " vs " + targetCompValue.getValue());
+
+                        if (sourceCompValue.getValue() == null && targetCompValue.getValue() == null)
+                            tempResult.setResultType(ResultType.MATCH);
+                        else if (sourceCompValue.getValue() == null || targetCompValue.getValue() == null)
+                            tempResult.setResultType(ResultType.MISMATCH);
+                        else if (targetCompValue.getValue().equals(sourceCompValue.getValue()))
+                            tempResult.setResultType(ResultType.MATCH);
+                        else
+                            tempResult.setResultType(ResultType.MISMATCH);
+
+                        this.results.add(tempResult);
                     }
-
-                    this.results.add(tempResult);
                 }
             }
+        }catch (Exception e){
+            e.printStackTrace();
         }
 
-        return results;
+        return this.results;
     }
 
     public ComparisonValue getSourceComparisonValue() {

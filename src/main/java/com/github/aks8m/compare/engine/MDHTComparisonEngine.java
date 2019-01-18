@@ -73,6 +73,7 @@ public class MDHTComparisonEngine extends CompareEngine {
                     }
                 });
                 traversalLatch.await();
+                System.out.println("Traversal Service Finished");
 
                 updateProgress(computeProgress(PROGRESS_INCREMENT),PROGRESS_MAX_VALUE);
 
@@ -93,11 +94,13 @@ public class MDHTComparisonEngine extends CompareEngine {
                     }
                 });
                 compareLatch.await();
+                System.out.println("Compute Service Finished");
 
                 updateProgress(computeProgress(PROGRESS_INCREMENT),PROGRESS_MAX_VALUE);
 
                 //Build Source and Target Trees
                 AnalysisTreeTransformer.UITransformation(analysisRoot, sourceRoot, targetRoot);
+                System.out.println("UI Service Finished");
 
                 return comparisonReport;
             }
