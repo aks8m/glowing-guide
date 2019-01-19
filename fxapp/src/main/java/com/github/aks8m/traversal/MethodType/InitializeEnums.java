@@ -1,6 +1,6 @@
 package com.github.aks8m.traversal.MethodType;
 
-import com.github.aks8m.compare.engine.WrapperArray;
+import com.github.aks8m.engine.WrapperArray;
 
 import java.util.ArrayList;
 import java.util.List;

@@ -6,47 +6,24 @@
 
   <groupId>com.github.aks8m</groupId>
   <artifactId>glowing-guide</artifactId>
+  <packaging>pom</packaging>
   <version>1.0</version>
+  <modules>
+    <module>webapp</module>
+    <module>fxapp</module>
+  </modules>
 
   <name>glowing-guide</name>
-  <!-- FIXME change it to the project's website -->
   <url>https://github.com/aks8m/glowing-guide</url>
 
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <maven.compiler.source>1.8</maven.compiler.source>
     <maven.compiler.target>1.8</maven.compiler.target>
+    <java.version>1.8</java.version>
   </properties>
 
   <dependencies>
-    <dependency>
-      <groupId>junit</groupId>
-      <artifactId>junit</artifactId>
-      <version>4.11</version>
-      <scope>test</scope>
-    </dependency>
-      <dependency>
-          <groupId>org.xmlunit</groupId>
-          <artifactId>xmlunit-core</artifactId>
-          <version>2.6.2</version>
-      </dependency>
-      <dependency>
-          <groupId>org.apache.poi</groupId>
-          <artifactId>poi</artifactId>
-          <version>4.0.0</version>
-      </dependency>
-    <!-- https://mvnrepository.com/artifact/org.openehealth.ipf.modules/ipf-modules-cda-mdht -->
-    <dependency>
-      <groupId>org.openehealth.ipf.modules</groupId>
-      <artifactId>ipf-modules-cda-mdht</artifactId>
-      <version>3.5.2</version>
-    </dependency>
-    <!-- https://mvnrepository.com/artifact/org.apache.commons/commons-text -->
-    <dependency>
-      <groupId>org.apache.commons</groupId>
-      <artifactId>commons-text</artifactId>
-      <version>1.6</version>
-    </dependency>
   </dependencies>
 
   <build>
@@ -56,7 +33,6 @@
           <artifactId>maven-clean-plugin</artifactId>
           <version>3.0.0</version>
         </plugin>
-        <!-- see http://maven.apache.org/ref/current/maven-core/default-bindings.html#Plugin_bindings_for_jar_packaging -->
         <plugin>
           <artifactId>maven-resources-plugin</artifactId>
           <version>3.0.2</version>

@@ -1,6 +1,6 @@
 package com.github.aks8m.traversal;
 
-import com.github.aks8m.compare.tree.Node;
+import com.github.aks8m.tree.Node;
 import javafx.concurrent.Service;
 
 

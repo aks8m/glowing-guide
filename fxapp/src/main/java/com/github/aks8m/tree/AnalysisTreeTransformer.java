@@ -1,8 +1,7 @@
-package com.github.aks8m.compare.tree;
+package com.github.aks8m.tree;
 
 import com.github.aks8m.compare.comparisonobject.Comparison;
 import com.github.aks8m.compare.comparisonobject.ComparisonValue;
-import com.github.aks8m.report.result.Result;
 import com.github.aks8m.report.result.ResultTreeItem;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.scene.control.TreeItem;

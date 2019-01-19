@@ -1,4 +1,4 @@
-package com.github.aks8m.compare.tree;
+package com.github.aks8m.tree;
 import com.github.aks8m.traversal.MethodType.NodeValueType;
 
 import java.util.*;

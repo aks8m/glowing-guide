@@ -1,4 +1,4 @@
-package com.github.aks8m.compare.engine;
+package com.github.aks8m.engine;
 
 import java.util.ArrayList;
 

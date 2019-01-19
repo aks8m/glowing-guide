@@ -2,8 +2,7 @@ package com.github.aks8m.traversal;
 
 import com.github.aks8m.compare.comparisonobject.Comparison;
 import com.github.aks8m.compare.comparisonobject.ComparisonValue;
-import com.github.aks8m.compare.tree.Node;
-import com.github.aks8m.traversal.MethodType.InitializeEnums;
+import com.github.aks8m.tree.Node;
 import com.github.aks8m.traversal.MethodType.NodeValueType;
 import com.github.aks8m.traversal.MethodType.Pair;
 import javafx.concurrent.Task;

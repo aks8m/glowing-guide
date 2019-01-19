@@ -5,17 +5,12 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
-import org.openhealthtools.mdht.uml.cda.ClinicalDocument;
-import org.openhealthtools.mdht.uml.cda.util.CDAUtil;
-import org.openhealthtools.mdht.uml.cda.util.ValidationResult;
-
-import java.io.FileInputStream;
 
 /**
- * Main App class for running the glowing guide C-CDA comparisonobject engine
+ * Main AppFX class for running the glowing guide C-CDA comparisonobject engine
  *
  */
-public class App extends Application
+public class AppFX extends Application
 {
     public static void main( String[] args )
     {
@@ -31,5 +26,4 @@ public class App extends Application
         primaryStage.setTitle("Glowing Guide");
         primaryStage.show();
     }
-
 }

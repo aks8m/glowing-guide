@@ -1,4 +1,4 @@
-package com.github.aks8m.compare.engine;
+package com.github.aks8m.engine;
 
 import com.github.aks8m.report.result.ResultTreeItem;
 import org.openhealthtools.mdht.uml.cda.ClinicalDocument;

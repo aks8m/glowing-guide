@@ -1,9 +1,9 @@
-package com.github.aks8m.compare.engine;
+package com.github.aks8m.engine;
 
 import com.github.aks8m.compare.MDHTComparisonService;
-import com.github.aks8m.compare.tree.AnalysisTreeTransformer;
+import com.github.aks8m.tree.AnalysisTreeTransformer;
 import com.github.aks8m.report.ComparisonReport;
-import com.github.aks8m.compare.tree.Node;
+import com.github.aks8m.tree.Node;
 import com.github.aks8m.report.result.ResultTreeItem;
 import com.github.aks8m.traversal.MDHTTraversalService;
 import javafx.application.Platform;

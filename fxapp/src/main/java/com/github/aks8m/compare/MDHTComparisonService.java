@@ -1,13 +1,12 @@
 package com.github.aks8m.compare;
 
-import com.github.aks8m.compare.tree.Node;
+import com.github.aks8m.tree.Node;
 import com.github.aks8m.report.ComparisonLocation;
 import com.github.aks8m.report.result.Result;
 import com.github.aks8m.report.result.ResultType;
 import com.github.aks8m.traversal.MethodType.NodeValueType;
 import javafx.concurrent.Task;
 import java.util.*;
-import java.util.stream.Collectors;
 
 public class MDHTComparisonService extends ComparisonService {
 
