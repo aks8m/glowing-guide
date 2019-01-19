@@ -7,10 +7,10 @@ import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
 
 /**
- * Main AppFX class for running the glowing guide C-CDA comparisonobject engine
+ * Main FXApp class for running the glowing guide C-CDA comparisonobject engine
  *
  */
-public class AppFX extends Application
+public class FXApp extends Application
 {
     public static void main( String[] args )
     {
