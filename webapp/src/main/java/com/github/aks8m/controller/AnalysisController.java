@@ -1,6 +1,6 @@
 package com.github.aks8m.controller;
 
-import com.github.aks8m.service.XodusRepository;
+import com.github.aks8m.service.AnalysisService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -10,25 +10,33 @@ import org.springframework.web.bind.annotation.*;
  */
 @CrossOrigin
 @RestController
-@RequestMapping(value = "analyze")
+@RequestMapping(value = "/analyze")
 public class AnalysisController {
 
     @PostMapping(headers="Accept=application/xml")
-    private ResponseEntity<Void> createXodusTree(@RequestBody String xml){
+    private ResponseEntity<Void> createXodusTree(@RequestBody String xmlData){
 
-        XodusRepository xodusRepository = new XodusRepository();
-        xodusRepository.write();
+        AnalysisService analysisService = new AnalysisService();
+        boolean parseCompleted = analysisService.analyzeAndStoreAsXodusEntities(xmlData);
 
+        return parseCompleted ? ResponseEntity.accepted().build() : ResponseEntity.badRequest().build();
+    }
+
+    @GetMapping(value = "/analysis")
+    private String getAllAnalysis(){
+
+        return "";
+    }
+
+    @GetMapping(value = "/analysis/{id}")
+    private String getAnalysis(@PathVariable String id){
+
+        return "";
+    }
+
+    @DeleteMapping(value = "/analysis")
+    private ResponseEntity deleteAllAnalysis(){
         return ResponseEntity.noContent().build();
     }
-
-    @GetMapping(value = "users")
-    private String getUser(){
-        XodusRepository xodusRepository = new XodusRepository();
-
-        return xodusRepository.read();
-    }
-
-
 
 }
