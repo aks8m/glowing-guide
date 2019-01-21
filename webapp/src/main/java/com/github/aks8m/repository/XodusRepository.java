@@ -1,8 +1,7 @@
-package com.github.aks8m.service;
+package com.github.aks8m.repository;
 
-import jetbrains.exodus.entitystore.PersistentEntityStore;
-import jetbrains.exodus.entitystore.PersistentEntityStores;
-import jetbrains.exodus.entitystore.StoreTransaction;
+import com.github.aks8m.model.Analysis;
+import jetbrains.exodus.entitystore.*;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -18,22 +17,53 @@ public class XodusRepository {
     private final Path dataStorePath;
     private PersistentEntityStore persistentEntityStore;
     private StoreTransaction storeTransaction;
+    private Entity currentEntity;
+    private Entity currentParent;
 
     public XodusRepository() {
-        this.dataStorePath = Paths.get(this.getClass().getProtectionDomain().getCodeSource().getLocation().toString() + "/data");
-
+        this.dataStorePath = Paths.get(this.getClass().getProtectionDomain().getCodeSource()
+                .getLocation().toString() + "/data");
         try {
             if (!dataStorePath.toFile().exists())
                 Files.createDirectory(this.dataStorePath);
         }catch (IOException ioE){
             ioE.printStackTrace();
         }
-
         this.persistentEntityStore = PersistentEntityStores.newInstance(dataStorePath.toFile());
-        this.storeTransaction = this.persistentEntityStore.beginTransaction();
     }
 
-    public StoreTransaction getStoreTransaction() {
-        return storeTransaction;
+    public void beginTransactions(Analysis analysis) {
+        this.storeTransaction = this.persistentEntityStore.beginTransaction();
+        this.currentParent = this.storeTransaction.newEntity("Analysis");
+        this.currentParent.setProperty("name", analysis.getName());
+        this.currentParent.setProperty("localdatettime", analysis.getLocalDateTime().toString());
     }
+
+    public void endTransactions(){
+        this.storeTransaction.commit();
+    }
+
+    public XodusRepository addChild(String name) {
+        this.currentEntity = this.storeTransaction.newEntity(name);
+        this.currentParent.setLink("contains", this.currentEntity);
+        return this;
+    }
+
+    public XodusRepository addAdult(String name) {
+        this.currentEntity = this.storeTransaction.newEntity(name);
+        this.currentParent.setLink("contains", this.currentEntity);
+        this.currentParent = this.currentEntity;
+        return this;
+    }
+
+    public XodusRepository addProperty(String name, String value){
+        this.currentEntity.setProperty(name, value);
+        return this;
+    }
+
+    public long getCurrentEntityID(){
+        return this.currentEntity.getId().getLocalId();
+    }
+
+
 }

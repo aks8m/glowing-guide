@@ -1,8 +1,12 @@
 package com.github.aks8m.controller;
 
+import com.github.aks8m.model.Analysis;
 import com.github.aks8m.service.AnalysisService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * 2019-01-19
@@ -10,32 +14,33 @@ import org.springframework.web.bind.annotation.*;
  */
 @CrossOrigin
 @RestController
-@RequestMapping(value = "/analyze")
+@RequestMapping(value = "/api/analysis")
 public class AnalysisController {
 
-    @PostMapping(headers="Accept=application/xml")
-    private ResponseEntity<Void> createXodusTree(@RequestBody String xmlData){
+    private final AnalysisService analysisService = new AnalysisService();
 
-        AnalysisService analysisService = new AnalysisService();
-        boolean parseCompleted = analysisService.analyzeAndStoreAsXodusEntities(xmlData);
-
-        return parseCompleted ? ResponseEntity.accepted().build() : ResponseEntity.badRequest().build();
+    @PostMapping(value = "/{name}", headers="Content-Type=text/xml")
+    private Analysis performAnalysis(@PathVariable String name, @RequestBody String xmlData){
+        return analysisService.performAnalysis(name, xmlData);
     }
 
-    @GetMapping(value = "/analysis")
-    private String getAllAnalysis(){
-
-        return "";
+    @GetMapping
+    private ResponseEntity<List<Analysis>> getAllAnalysis(){
+        return ResponseEntity.ok(new ArrayList<>());
     }
 
-    @GetMapping(value = "/analysis/{id}")
-    private String getAnalysis(@PathVariable String id){
-
-        return "";
+    @GetMapping(value = "/{id}")
+    private ResponseEntity<Analysis> getAnalysis(@PathVariable String id){
+        return ResponseEntity.ok(null);
     }
 
-    @DeleteMapping(value = "/analysis")
+    @DeleteMapping
     private ResponseEntity deleteAllAnalysis(){
+        return ResponseEntity.noContent().build();
+    }
+
+    @DeleteMapping(value = "/{id}")
+    private ResponseEntity deleteAnalysis(@PathVariable String id){
         return ResponseEntity.noContent().build();
     }
 
