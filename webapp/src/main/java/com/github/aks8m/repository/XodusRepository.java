@@ -7,6 +7,8 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.net.URI;
+import java.net.URL;
 
 /**
  * 2019-01-19
@@ -21,8 +23,17 @@ public class XodusRepository {
     private Entity currentParent;
 
     public XodusRepository() {
-        this.dataStorePath = Paths.get(this.getClass().getProtectionDomain().getCodeSource()
-                .getLocation().toString() + "/data");
+//        this.dataStorePath = Paths.get(this.getClass().getProtectionDomain().getCodeSource()
+//                .getLocation().toString() + "/data");
+        URI uri = null;
+        try {
+            uri = new URL(this.getClass().getProtectionDomain().getCodeSource().getLocation(), "data").toURI();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        this.dataStorePath = Paths.get(uri);
+
         try {
             if (!dataStorePath.toFile().exists())
                 Files.createDirectory(this.dataStorePath);
