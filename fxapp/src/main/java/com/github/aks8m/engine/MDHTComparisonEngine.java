@@ -97,7 +97,7 @@ public class MDHTComparisonEngine extends CompareEngine {
                 updateProgress(computeProgress(PROGRESS_INCREMENT),PROGRESS_MAX_VALUE);
 
                 //Build Source and Target Trees
-                AnalysisTreeTransformer.UITransformation(analysisRoot, sourceRoot, targetRoot);
+                AnalysisTreeTransformer.MDHTUITransformation(analysisRoot, sourceRoot, targetRoot);
 
                 updateProgress(computeProgress(PROGRESS_INCREMENT),PROGRESS_MAX_VALUE);
 

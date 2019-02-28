@@ -31,4 +31,9 @@ public class CompareEngineFactory {
         return new MDHTComparisonEngine(sourceDocument,targetDocument, sourceRoot, targetRoot);
     }
 
+    public static CompareEngine CreateSAXParserCompareEngine(File sourceFilePath, File targetFilePath, ResultTreeItem sourceRoot, ResultTreeItem targetRoot) {
+
+        return new SAXParserCompareEngine(sourceFilePath,targetFilePath, sourceRoot, targetRoot);
+    }
+
 }

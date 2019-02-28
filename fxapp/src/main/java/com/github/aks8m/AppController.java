@@ -8,8 +8,16 @@ import com.github.aks8m.traversal.MethodType.InitializeEnums;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
+import javafx.scene.input.MouseEvent;
+import javafx.scene.paint.Color;
+import javafx.scene.paint.Paint;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
+
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
+import javafx.event.EventHandler;
+import javafx.util.Callback;
 
 import java.io.File;
 
@@ -43,6 +51,7 @@ public class AppController {
     private File sourceFile;
     private File targetFile;
 
+
     @FXML
     void initialize() {
 
@@ -54,6 +63,25 @@ public class AppController {
         this.sourceRoot = new ResultTreeItem("");
         this.targetRoot = new ResultTreeItem("");
         this.sourceTree.setRoot(sourceRoot);
+        this.sourceTree.setEditable(true);
+
+//        this.sourceTree.setCellFactory(param -> new TreeCell<String>() {
+//           @Override
+//           public void updateItem(String item, boolean empty) {
+//               super.updateItem(item, empty);
+//               setText(item);
+//
+////               if (param.getTreeItem(0).isExpanded()) {
+//////                   setText(item);
+//////                   setTextFill(Color.YELLOW);
+////               }
+//           }
+//
+//
+//
+//        });
+
+
         this.targetTree.setRoot(targetRoot);
 
         InitializeEnums.initializeEnums();
@@ -62,11 +90,16 @@ public class AppController {
         this.resultsView.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
             for (Result result : resultsView.getItems()) {
                 result.isSelectedProperty().set(false);
+                result.getSourceNodes().forEach(sourceNode -> sourceNode.getResultTreeItemList().forEach(resultTreeItem -> resultTreeItem.getIsSelected().set(false)));
+                result.getTargetNodes().forEach(targetNode -> targetNode.getResultTreeItemList().forEach(resultTreeItem -> resultTreeItem.getIsSelected().set(false)));
             }
             newValue.isSelectedProperty().set(true);
+            newValue.getSourceNodes().forEach(sourceNode -> sourceNode.getResultTreeItemList().forEach(resultTreeItem -> resultTreeItem.getIsSelected().set(true)));
+            newValue.getTargetNodes().forEach(targetNode -> targetNode.getResultTreeItemList().forEach(resultTreeItem -> resultTreeItem.getIsSelected().set(true)));
         });
 
     }
+
 
     @FXML
     public void loadSource(ActionEvent actionEvent){
@@ -102,8 +135,7 @@ public class AppController {
 
        try {
 
-           compareEngine = CompareEngineFactory.CreateMDHTCompareEngine(this.sourceFile, this.targetFile,
-                   this.sourceRoot , this.targetRoot);
+           this.compareEngine = CompareEngineFactory.CreateSAXParserCompareEngine(this.sourceFile,this.targetFile, this.sourceRoot, this.targetRoot);
            this.compareEngine.start();
            this.compareProgressbar.progressProperty().bind(this.compareEngine.progressProperty());
            this.compareEngine.stateProperty().addListener((observable, oldValue, newValue) -> {

@@ -11,12 +11,56 @@ import java.util.Queue;
 
 public class AnalysisTreeTransformer {
 
+    private static Queue<ParserNode> saxTreeQueue = new ArrayDeque<>();
     private static Queue<Node> analyticTreeQueue = new ArrayDeque<>();
     private static Queue<ResultTreeItem> sourceTreeQueue = new ArrayDeque<>();
     private static Queue<ResultTreeItem> targetTreeQueue = new ArrayDeque<>();
 
-    public static void UITransformation(Node analysisRoot, ResultTreeItem sourceUIRoot,
-                                        ResultTreeItem targetUIRoot){
+
+    public static void SAXUITransformation(ParserNode saxTreeRoot, ResultTreeItem uiRoot) {
+        saxTreeQueue.add(saxTreeRoot);
+
+        uiRoot.setValue(saxTreeRoot.getName());
+        addAttributeSubChildren(saxTreeRoot, uiRoot);
+        sourceTreeQueue.add(uiRoot);
+        saxTreeRoot.addResultTreeItem(uiRoot);
+
+        while (!saxTreeQueue.isEmpty()) {
+
+            ParserNode node = saxTreeQueue.remove();
+            TreeItem source = sourceTreeQueue.remove();
+
+
+            for (ParserNode childNode : node.getChildren()) {
+                try {
+                    ResultTreeItem treeChild;
+                    if (childNode.getValue() != null && !childNode.getValue().equals("")) {
+                        treeChild = new ResultTreeItem(childNode.getName()+ ": " + childNode.getValue(), childNode.getResult().isSelectedProperty());
+                        addAttributeSubChildren(childNode, treeChild);
+                    } else {
+                        treeChild = new ResultTreeItem(childNode.getName(), new SimpleBooleanProperty(false));
+                        addAttributeSubChildren(childNode, treeChild);
+                    }
+
+                    childNode.addResultTreeItem(treeChild);
+
+                    source.getChildren().add(treeChild);
+
+                    saxTreeQueue.add(childNode);
+                    sourceTreeQueue.add(treeChild);
+
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+    }
+
+
+
+
+    public static void MDHTUITransformation(Node analysisRoot, ResultTreeItem sourceUIRoot,
+                                            ResultTreeItem targetUIRoot){
 
         analyticTreeQueue.add(analysisRoot);
 
@@ -26,7 +70,7 @@ public class AnalysisTreeTransformer {
         targetTreeQueue.add(targetUIRoot);
 
         int position = 0;
-        while(!analyticTreeQueue.isEmpty()){
+        while(!saxTreeQueue.isEmpty()){
 
                 Node node = analyticTreeQueue.remove();
                 TreeItem source = sourceTreeQueue.remove();
@@ -94,4 +138,14 @@ public class AnalysisTreeTransformer {
                 simpleBooleanProperty,position + 1);
         parent.getChildren().add(tempResultTreeItem);
     }
+
+    private static void addAttributeSubChildren(ParserNode childNode, ResultTreeItem treeChild) {
+        for (ParserNode childAttribute : childNode.getAttributes()) {
+            ResultTreeItem tempTreeItem = new ResultTreeItem(childAttribute.getName() + ": " + childAttribute.getValue(), childAttribute.getResult().isSelectedProperty());
+            childAttribute.addResultTreeItem(tempTreeItem);
+            treeChild.getChildren().add(tempTreeItem);
+        }
+    }
+
+
 }
