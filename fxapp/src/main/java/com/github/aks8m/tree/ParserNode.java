@@ -7,16 +7,14 @@ import java.util.*;
 public class ParserNode {
     private ParserNode parent = null;
 
-    private String name = null;
+    private String name;
     private String value = null;
     private List<ParserNode> children = new ArrayList<ParserNode>();
     private List<ParserNode> attributes = new ArrayList<ParserNode>();
 
     private Result result = new Result();
 
-    private List<ResultTreeItem> resultTreeItemList = new ArrayList<>();
-
-    public ParserNode() {}
+    private ResultTreeItem resultTreeItem = null;
 
     public ParserNode(String name) {
         this.name = name;
@@ -43,9 +41,9 @@ public class ParserNode {
         return this.attributes;
     }
 
-    public List<ResultTreeItem> getResultTreeItemList() { return this.resultTreeItemList; }
+    public ResultTreeItem getResultTreeItem() { return this.resultTreeItem; }
 
-    public void addResultTreeItem(ResultTreeItem resultTreeItem) { this.resultTreeItemList.add(resultTreeItem); }
+    public void addResultTreeItem(ResultTreeItem resultTreeItem) { this.resultTreeItem = resultTreeItem; }
 
     public ParserNode getParent() {
         return parent;
@@ -79,9 +77,8 @@ public class ParserNode {
 
     public Result getResult() { return result; }
 
-    public void addResult(Result result) { this.result = result; }
+    public void setResult(Result result) { this.result = result; }
 
-    public String toString() { return "Name:  " + this.name + "   Value:  " + this.value; }
-
+    public String toString() { return "Name: " + this.name + "   Value: " + this.value; }
 
 }

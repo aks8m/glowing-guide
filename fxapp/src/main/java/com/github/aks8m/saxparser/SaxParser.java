@@ -47,7 +47,7 @@ public class SaxParser extends DefaultHandler {
     }
 
     public void characters(char ch[], int start, int length) throws SAXException {
-        currentNode.setValue(new String(ch, start, length).replace("\n", "").replace("\t", ""));
+        currentNode.setValue(new String(ch, start, length).replace("\n", "").replace("\t", "").trim());
     }
 
 

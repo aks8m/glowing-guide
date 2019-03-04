@@ -56,6 +56,21 @@ public class AnalysisTreeTransformer {
         }
     }
 
+    private static void addSubChild(ResultTreeItem parent, ComparisonValue comparisonValue,
+                                    SimpleBooleanProperty simpleBooleanProperty, int position){
+        ResultTreeItem tempResultTreeItem = new ResultTreeItem(comparisonValue.getValueName() + ":" + comparisonValue.getValue(),
+                simpleBooleanProperty,position + 1);
+        parent.getChildren().add(tempResultTreeItem);
+    }
+
+    private static void addAttributeSubChildren(ParserNode childNode, ResultTreeItem treeChild) {
+        for (ParserNode childAttribute : childNode.getAttributes()) {
+            ResultTreeItem tempTreeItem = new ResultTreeItem(childAttribute.getName() + ": " + childAttribute.getValue(), new SimpleBooleanProperty(false));
+            childAttribute.addResultTreeItem(tempTreeItem);
+            treeChild.getChildren().add(tempTreeItem);
+        }
+    }
+
 
 
 
@@ -132,20 +147,7 @@ public class AnalysisTreeTransformer {
         }
     }
 
-    private static void addSubChild(ResultTreeItem parent, ComparisonValue comparisonValue,
-                                    SimpleBooleanProperty simpleBooleanProperty, int position){
-        ResultTreeItem tempResultTreeItem = new ResultTreeItem(comparisonValue.getValueName() + ":" + comparisonValue.getValue(),
-                simpleBooleanProperty,position + 1);
-        parent.getChildren().add(tempResultTreeItem);
-    }
 
-    private static void addAttributeSubChildren(ParserNode childNode, ResultTreeItem treeChild) {
-        for (ParserNode childAttribute : childNode.getAttributes()) {
-            ResultTreeItem tempTreeItem = new ResultTreeItem(childAttribute.getName() + ": " + childAttribute.getValue(), childAttribute.getResult().isSelectedProperty());
-            childAttribute.addResultTreeItem(tempTreeItem);
-            treeChild.getChildren().add(tempTreeItem);
-        }
-    }
 
 
 }

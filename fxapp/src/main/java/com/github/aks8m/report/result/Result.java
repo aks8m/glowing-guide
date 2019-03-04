@@ -23,17 +23,27 @@ public class Result {
 
     public Result() { }
 
+    public Result(String output, ResultType resultType, ParserNode sourceNode, List<ParserNode> targetNode) {
+        this.output = output;
+        this.resultType = resultType;
+        this.sourceNodes.add(sourceNode);
+        this.targetNodes.addAll(targetNode);
+    }
+
+    public Result(String output, ResultType resultType, ParserNode sourceNode, ParserNode targetNode) {
+        this.output = output;
+        this.resultType = resultType;
+        this.sourceNodes.add(sourceNode);
+        this.targetNodes.add(targetNode);
+    }
+
     public void setResultType(ResultType resultType) {
         this.resultType = resultType;
     }
 
     public List<ParserNode> getSourceNodes() { return sourceNodes; }
 
-    public void addSourceNode(ParserNode sourceNodes) { this.sourceNodes.add(sourceNodes); }
-
     public List<ParserNode> getTargetNodes() { return targetNodes; }
-
-    public void addTargetNodes(ParserNode targetNodes) { this.targetNodes.add(targetNodes); }
 
     public ResultType getResultType() { return resultType; }
 

@@ -30,14 +30,16 @@ public class SAXComparisonService extends ComparisonService {
             @Override
             protected List<Result> call() throws Exception {
 
-                if (sourceNode.getName().equals(targetNode.getName())) {
-                    resultList.addAll(recursiveComparison(sourceNode, targetNode));
-                } else {
-                    Result addRes = new Result("Source and Target Documents did not have a matching root document type", ResultType.MISMATCH);
-                    addRes.addSourceNode(sourceNode);
-                    addRes.addTargetNodes(targetNode);
-                    resultList.add(addRes);
-                }
+//                if (sourceNode.getName().equals(targetNode.getName())) {
+//                    resultList.addAll(recursiveComparison(sourceNode, targetNode));
+//                } else {
+//                    Result addRes = new Result("Source and Target Documents did not have a matching root document type", ResultType.MISMATCH);
+//                    addRes.setSourceNodes(sourceNode);
+//                    addRes.setTargetNodes(targetNode);
+//                    resultList.add(addRes);
+//                }
+
+                resultList = recursiveComparison(sourceNode,targetNode);
 
                 return resultList;
             }
@@ -46,19 +48,43 @@ public class SAXComparisonService extends ComparisonService {
     }
 
     private List<Result> recursiveComparison(ParserNode sourceNode, ParserNode targetNode) {
+        List<Result> retList = new ArrayList<>();
+        Result addRes;
 
-        List<Result> totalRet = new ArrayList<>();
+        //compare attributes
+        for (ParserNode attribute : sourceNode.getAttributes()) {
+            List<ParserNode> targetMatches = getTargetAttributeMatches(attribute.getName(),targetNode);
 
-        //check all node ATTRIBUTES
-        totalRet.addAll(checkAttributes(sourceNode, targetNode));
+            boolean matched = false;
 
-        //check node VALUE
-        totalRet.addAll(checkValue(sourceNode,targetNode));
+            for (ParserNode targetAttribute : targetMatches) {
+                if (attribute.getValue().equals(targetAttribute.getValue())) {
+                    matched = true;
+                    break;
+                }
+            }
 
-        //check all CHILDREN
-        totalRet.addAll(checkChildren(sourceNode,targetNode));
+            if (!matched) {
+                addRes = new Result("ATTRIBUTE MISMATCH: Source attribute " + attribute.getName() + " in " + attribute.getParent().getName(), ResultType.MISMATCH, attribute, targetMatches);
+                retList.add(addRes);
+            }
 
-        return (List<Result>) ((ArrayList<Result>) totalRet).clone();
+        }
+
+        //compare value
+        if (sourceNode.getValue() != null && !sourceNode.getValue().equals("")) {
+            if (!sourceNode.getValue().equals(targetNode.getValue())) {
+                addRes = new Result("VALUE MISMATCH: " + sourceNode.getName() + " Source Value: " + sourceNode.getValue() + " VS Target Value: " + targetNode.getValue(), ResultType.MISMATCH, sourceNode, targetNode);
+                retList.add(addRes);
+            }
+        }
+
+        //recursively compare children in the order that they appear in the document
+        for (int i=0; i<Math.min(sourceNode.getChildren().size(), targetNode.getChildren().size()); i++) {
+            retList.addAll(recursiveComparison(sourceNode.getChildren().get(i),targetNode.getChildren().get(i)));
+        }
+
+        return retList;
     }
 
     private List<ParserNode> getTargetChildMatches(String name, ParserNode targetNode) {
@@ -85,103 +111,4 @@ public class SAXComparisonService extends ComparisonService {
         return targetAttributeMatches;
     }
 
-
-    private List<Result> checkAttributes(ParserNode sourceNode, ParserNode targetNode) {
-
-        List<Result> totalRet = new ArrayList<>();
-
-        for (ParserNode nodeAttribute : sourceNode.getAttributes()) {
-            Boolean attributeMatch = false;
-            List<ParserNode> targetAttributeMatches = getTargetAttributeMatches(nodeAttribute.getName(), targetNode);
-
-            if (targetAttributeMatches.size() == 0) {
-                Result addRes = new Result("Attribute Not Present in Target Document: " + sourceNode.getName() + ": " + nodeAttribute.getName() + " -> " + nodeAttribute.getValue(), ResultType.MISMATCH);
-                addRes.addSourceNode(nodeAttribute);
-                addRes.addTargetNodes(targetNode);
-                totalRet.add(addRes);
-
-            } else if (targetAttributeMatches.size() == 1) {
-                if (nodeAttribute.getValue().equals(targetAttributeMatches.get(0).getValue())) {
-                    attributeMatch = true;
-                } else {
-                    Result addRes = new Result(nodeAttribute.getName() + ": " + nodeAttribute.getValue()
-                            + " VS " + targetAttributeMatches.get(0).getName() + ": " + targetAttributeMatches.get(0).getValue(), ResultType.MISMATCH);
-                    addRes.addSourceNode(nodeAttribute);
-                    addRes.addTargetNodes(targetAttributeMatches.get(0));
-                    totalRet.add(addRes);
-                }
-            } else {
-                for (ParserNode targetAttribute : targetAttributeMatches) {
-                    if (nodeAttribute.getValue().equals(targetAttribute.getValue())) {
-                        attributeMatch = true;
-                        break;
-                    }
-                }
-
-                if (!attributeMatch) {
-                    Result addRes = new Result("Attribute Match Not Found in Target Document: " + nodeAttribute.getName() + ": " + nodeAttribute.getValue(), ResultType.MISMATCH);
-                    addRes.addSourceNode(nodeAttribute);
-                    targetAttributeMatches.forEach(tA -> addRes.addTargetNodes(tA));
-                    totalRet.add(addRes);
-                }
-            }
-
-        }
-        return totalRet;
-    }
-
-    private List<Result> checkValue(ParserNode sourceNode, ParserNode targetNode) {
-
-        List<Result> totalRet = new ArrayList<>();
-
-        if (sourceNode.getValue() != null && !sourceNode.getValue().equals("")) {
-            if (!sourceNode.getValue().equals(targetNode.getValue())) {
-                Result addRes = new Result(sourceNode.getName() + ": " + sourceNode.getValue()
-                        + " VS " + targetNode.getName() + ": " + targetNode.getValue(), ResultType.MISMATCH);
-                addRes.addSourceNode(sourceNode);
-                addRes.addTargetNodes(targetNode);
-                totalRet.add(addRes);
-            }
-        }
-
-        return totalRet;
-    }
-
-    private List<Result> checkChildren(ParserNode sourceNode, ParserNode targetNode) {
-
-        List<Result> totalRet = new ArrayList<>();
-
-        for (ParserNode sourceChildNode : sourceNode.getChildren()) {
-            List<ParserNode> targetNameMatches = getTargetChildMatches(sourceChildNode.getName(), targetNode);
-
-            if (targetNameMatches.size() == 0) {
-                Result addRes = new Result("Section Match Not Found: Section Name Does not Exist in Target Document -> " + sourceChildNode.getName(), ResultType.SECTIONMATCHNOTFOUND);
-                addRes.addSourceNode(sourceChildNode);
-                addRes.addTargetNodes(targetNode);
-                totalRet.add(addRes);
-            } else if (targetNameMatches.size() == 1) {
-                totalRet.addAll(recursiveComparison(sourceChildNode, targetNameMatches.get(0)));
-            } else {
-                boolean sectionMatchFound = false;
-                List<Result> returnedResults = new ArrayList<>();
-                for (ParserNode possibleTarget : targetNameMatches) {
-                    returnedResults = recursiveComparison(sourceChildNode, possibleTarget);
-                    if (returnedResults.size() == 0) {
-                        sectionMatchFound = true;
-                        break;
-                    }
-                }
-
-                if (!sectionMatchFound) {
-                    Result addRes = new Result("Section Match Not Found: All matching section types have errors -> " + sourceChildNode.getName(), ResultType.SECTIONMATCHNOTFOUND);
-                    addRes.addSourceNode(sourceChildNode);
-                    targetNameMatches.forEach(pT -> addRes.addTargetNodes(pT));
-                    totalRet.add(addRes);
-                }
-            }
-
-        }
-
-        return totalRet;
-    }
 }

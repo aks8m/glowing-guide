@@ -4,20 +4,12 @@ import com.github.aks8m.engine.CompareEngine;
 import com.github.aks8m.engine.CompareEngineFactory;
 import com.github.aks8m.report.result.Result;
 import com.github.aks8m.report.result.ResultTreeItem;
-import com.github.aks8m.traversal.MethodType.InitializeEnums;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
-import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
-import javafx.scene.paint.Paint;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
-
-import javafx.scene.input.KeyCode;
-import javafx.scene.input.KeyEvent;
-import javafx.event.EventHandler;
-import javafx.util.Callback;
 
 import java.io.File;
 
@@ -70,13 +62,9 @@ public class AppController {
 //           public void updateItem(String item, boolean empty) {
 //               super.updateItem(item, empty);
 //               setText(item);
+//               setTextFill(Color.YELLOW);
 //
-////               if (param.getTreeItem(0).isExpanded()) {
-//////                   setText(item);
-//////                   setTextFill(Color.YELLOW);
-////               }
 //           }
-//
 //
 //
 //        });
@@ -84,18 +72,16 @@ public class AppController {
 
         this.targetTree.setRoot(targetRoot);
 
-        InitializeEnums.initializeEnums();
-
         this.resultsView.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
         this.resultsView.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
             for (Result result : resultsView.getItems()) {
                 result.isSelectedProperty().set(false);
-                result.getSourceNodes().forEach(sourceNode -> sourceNode.getResultTreeItemList().forEach(resultTreeItem -> resultTreeItem.getIsSelected().set(false)));
-                result.getTargetNodes().forEach(targetNode -> targetNode.getResultTreeItemList().forEach(resultTreeItem -> resultTreeItem.getIsSelected().set(false)));
+                result.getSourceNodes().forEach(sourceNode -> sourceNode.getResultTreeItem().getIsSelected().set(false));
+                result.getTargetNodes().forEach(targetNode -> targetNode.getResultTreeItem().getIsSelected().set(false));
             }
             newValue.isSelectedProperty().set(true);
-            newValue.getSourceNodes().forEach(sourceNode -> sourceNode.getResultTreeItemList().forEach(resultTreeItem -> resultTreeItem.getIsSelected().set(true)));
-            newValue.getTargetNodes().forEach(targetNode -> targetNode.getResultTreeItemList().forEach(resultTreeItem -> resultTreeItem.getIsSelected().set(true)));
+            newValue.getSourceNodes().forEach(sourceNode -> sourceNode.getResultTreeItem().getIsSelected().set(true));
+            newValue.getTargetNodes().forEach(targetNode -> targetNode.getResultTreeItem().getIsSelected().set(true));
         });
 
     }
