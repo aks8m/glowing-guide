@@ -1,39 +1,16 @@
 package com.github.aks8m.engine;
 
-import com.github.aks8m.report.result.ResultTreeItem;
-import org.openhealthtools.mdht.uml.cda.ClinicalDocument;
-import org.openhealthtools.mdht.uml.cda.util.CDAUtil;
-import org.openhealthtools.mdht.uml.cda.util.ValidationResult;
+import javafx.scene.control.TreeItem;
 
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
+import java.util.HashMap;
 
 public class CompareEngineFactory {
 
-    public static CompareEngine CreateMDHTCompareEngine(File sourceFilePath, File targetFilePath, ResultTreeItem sourceRoot, ResultTreeItem targetRoot){
+    public static CompareEngine CreateSAXParserFileCompareEngine(File sourceFilePath, File targetFilePath, HashMap<TreeItem<String>, TreeItem<String>> nodemap) {
 
-
-        ClinicalDocument sourceDocument = null;
-        ClinicalDocument targetDocument = null;
-
-        try {
-
-            sourceDocument = CDAUtil.load(new FileInputStream(sourceFilePath), (ValidationResult) null);
-            targetDocument = CDAUtil.load(new FileInputStream(targetFilePath), (ValidationResult) null);
-
-        }catch (FileNotFoundException fnfE){
-            fnfE.printStackTrace();
-        }catch (Exception e){
-            e.printStackTrace();
-        }
-
-        return new MDHTComparisonEngine(sourceDocument,targetDocument, sourceRoot, targetRoot);
+        return new SAXParserFileCompareEngine(sourceFilePath,targetFilePath, nodemap);
     }
 
-    public static CompareEngine CreateSAXParserCompareEngine(File sourceFilePath, File targetFilePath, ResultTreeItem sourceRoot, ResultTreeItem targetRoot) {
-
-        return new SAXParserCompareEngine(sourceFilePath,targetFilePath, sourceRoot, targetRoot);
-    }
 
 }

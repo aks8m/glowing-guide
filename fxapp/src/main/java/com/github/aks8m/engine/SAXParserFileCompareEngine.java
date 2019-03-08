@@ -1,32 +1,27 @@
 package com.github.aks8m.engine;
 
+import com.github.aks8m.compare.SAXUnorderedLexicographicalComparisonService;
+import com.github.aks8m.compare.SAXOrderedLexicographicalComparisonService;
+
+import com.github.aks8m.compare.ComparisonService;
 import com.github.aks8m.report.ComparisonReport;
-import com.github.aks8m.report.result.ResultTreeItem;
-import com.github.aks8m.saxparser.SaxParser;
 import com.github.aks8m.traversal.SAXTraversalService;
-import com.github.aks8m.compare.SAXComparisonService;
-import com.github.aks8m.tree.AnalysisTreeTransformer;
-import com.github.aks8m.tree.ParserNode;
 import javafx.application.Platform;
 import javafx.concurrent.Task;
 import javafx.fxml.FXML;
+import javafx.scene.control.TreeItem;
 
 import java.io.File;
-
+import java.util.HashMap;
 import java.util.concurrent.CountDownLatch;
 
-public class SAXParserCompareEngine extends CompareEngine {
+public class SAXParserFileCompareEngine extends CompareEngine {
     private ComparisonReport comparisonReport;
-    private ParserNode sourceRoot = null;
-    private ParserNode targetRoot = null;
+    private TreeItem<String> sourceRoot = null;
+    private TreeItem<String> targetRoot = null;
     private SAXTraversalService sourceTraversalService;
     private SAXTraversalService targetTraversalService;
-    private SAXComparisonService comparisonService;
-
-    private final ResultTreeItem sourceUIRoot;
-    private final ResultTreeItem targetUIRoot;
-
-
+    private ComparisonService comparisonService;
 
     private final double PROGRESS_MAX_VALUE = 99.9;
     private double PROGRESS_INCREMENT = 33.3;
@@ -42,14 +37,11 @@ public class SAXParserCompareEngine extends CompareEngine {
         return this.currentProgressValue;
     }
 
-    public SAXParserCompareEngine(File sourceFilePath, File targetFilePath, ResultTreeItem sourceUIRoot, ResultTreeItem targetUIRoot) {
-        SaxParser sparser = new SaxParser();
-        this.sourceTraversalService = new SAXTraversalService(sparser,sourceFilePath);
-        this.targetTraversalService = new SAXTraversalService(sparser,targetFilePath);
-        this.comparisonService = new SAXComparisonService();
-        this.sourceUIRoot = sourceUIRoot;
-        this.targetUIRoot = targetUIRoot;
-
+    public SAXParserFileCompareEngine(File sourceFilePath, File targetFilePath, HashMap<TreeItem<String>, TreeItem<String>> nodemap) {
+        this.sourceTraversalService = new SAXTraversalService(sourceFilePath);
+        this.targetTraversalService = new SAXTraversalService(targetFilePath);
+//        this.comparisonService = new SAXOrderedLexicographicalComparisonService();
+        this.comparisonService = new SAXUnorderedLexicographicalComparisonService(nodemap);
 
     }
 
@@ -62,7 +54,7 @@ public class SAXParserCompareEngine extends CompareEngine {
 
             @Override
             protected ComparisonReport call() throws Exception {
-                //run MDHT pre processing to build traversal tree
+
                 CountDownLatch sourceTraversalLatch = new CountDownLatch(1);
                 Platform.runLater(() -> {
                     try {
@@ -119,12 +111,11 @@ public class SAXParserCompareEngine extends CompareEngine {
 
                 updateProgress(computeProgress(PROGRESS_INCREMENT),PROGRESS_MAX_VALUE);
 
-                AnalysisTreeTransformer.SAXUITransformation(sourceRoot, sourceUIRoot);
                 updateProgress(computeProgress(PROGRESS_INCREMENT/2),PROGRESS_MAX_VALUE);
+                comparisonReport.setSourceRoot(sourceRoot);
 
-                AnalysisTreeTransformer.SAXUITransformation(targetRoot, targetUIRoot);
                 updateProgress(computeProgress(PROGRESS_INCREMENT/2),PROGRESS_MAX_VALUE);
-
+                comparisonReport.setTargetRoot(targetRoot);
 
 
                 return comparisonReport;

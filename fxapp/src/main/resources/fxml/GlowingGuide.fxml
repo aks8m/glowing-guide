@@ -8,7 +8,15 @@
 <?import javafx.scene.control.TreeView?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.Pane?>
+<?import javafx.collections.FXCollections?>
+<?import java.lang.String?>
+<?import javafx.scene.control.ChoiceBox?>
 
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.shape.Rectangle?>
+<?import javafx.scene.shape.Circle?>
+<?import javafx.scene.control.Separator?>
 <AnchorPane prefHeight="829.0" prefWidth="1635.0" xmlns="http://javafx.com/javafx/10.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.github.aks8m.AppController">
    <children>
       <SplitPane dividerPositions="0.32841007819287577" prefHeight="829.0" prefWidth="1642.0">
@@ -17,18 +25,40 @@
                <children>
                   <TextField fx:id="targetTextField" layoutX="121.0" layoutY="51.0" prefHeight="27.0" prefWidth="400.0" promptText="Target CDA" />
                   <TextField fx:id="sourceTextField" layoutX="121.0" layoutY="14.0" prefHeight="27.0" prefWidth="400.0" promptText="Source CDA" />
-                  <Button fx:id="comparisonButton" layoutX="16.0" layoutY="92.0" mnemonicParsing="false" onAction="#runComparison" prefHeight="27.0" prefWidth="95.0" text="Compare" textOverrun="CLIP" />
-                  <ProgressBar fx:id="compareProgressbar" layoutX="121.0" layoutY="96.0" prefHeight="20.0" prefWidth="400.0" progress="0.0" />
-                  <ListView fx:id="resultsView" layoutX="15.0" layoutY="127.0" prefHeight="686.0" prefWidth="506.0" />
+                  <Button fx:id="comparisonButton" layoutX="16.0" layoutY="92.0" mnemonicParsing="false" onAction="#runComparison" prefHeight="27.0" prefWidth="150.0" text="Compare Documents" textOverrun="CLIP" />
+                  <ProgressBar fx:id="compareProgressbar" layoutX="176.0" layoutY="96.0" prefHeight="20.0" prefWidth="345.0" progress="0.0" />
+                  <ChoiceBox fx:id="choiceBox" layoutX="16.0" layoutY="125" prefWidth="400.0" prefHeight="20" value="All Results">
+                     <items>
+                        <FXCollections fx:factory="observableArrayList">
+                           <String fx:value="All Results"/>
+                           <String fx:value="Attribute Mismatches"/>
+                           <String fx:value="Value Mismatches"/>
+                           <String fx:value="Section Mismatches"/>
+                        </FXCollections>
+                     </items>
+                  </ChoiceBox>
+                  <ListView fx:id="resultsView" layoutX="15.0" layoutY="157.0" prefHeight="646.0" prefWidth="506.0" />
                   <Button fx:id="loadTargetButton" layoutX="16.0" layoutY="51.0" mnemonicParsing="false" onAction="#loadTarget" prefHeight="27.0" prefWidth="95.0" text="Load Target" />
                   <Button fx:id="loadSourceButton" layoutX="16.0" layoutY="14.0" mnemonicParsing="false" onAction="#loadSource" prefHeight="27.0" prefWidth="95.0" text="Load Source" />
                </children>
             </Pane>
             <Pane prefHeight="827.0" prefWidth="962.0">
-               <children>
-                  <TreeView fx:id="sourceTree" layoutX="14.0" layoutY="14.0" prefHeight="803.0" prefWidth="530.0" />
-                  <TreeView fx:id="targetTree" layoutX="553.0" layoutY="14.0" prefHeight="803.0" prefWidth="530.0" />
-               </children>
+               <SplitPane dividerPositions="0.90" orientation="VERTICAL">
+                  <Pane>
+                     <children>
+                        <TreeView fx:id="sourceTree" layoutX="14.0" layoutY="14.0" prefHeight="803.0" prefWidth="530.0" />
+                        <TreeView fx:id="targetTree" layoutX="553.0" layoutY="14.0" prefHeight="803.0" prefWidth="530.0" />
+                     </children>
+                  </Pane>
+                  <Pane>
+                     <Button fx:id="sectionComparisonButton" layoutX="10.0" layoutY="10.0" onAction="#runSectionComparison" prefHeight="27.0" prefWidth="200.0" text="Compare Selected Sections"/>
+                     <Label fx:id="keyLabel" layoutX="650" layoutY="10" text="Symbol Key:"/>
+                     <Circle fx:id="elementImage" layoutX="760" layoutY="20" radius="6" stroke="yellowgreen" fill="snow"/>
+                     <Label fx:id="elementTextField" layoutX="770" layoutY="10"/>
+                     <Rectangle id="attributeImage" layoutX="910" layoutY="14.0" height="12" width="12" stroke="lightblue" fill="snow"/>
+                     <Label fx:id="attributeTextField" layoutX="925" layoutY="10"/>
+                  </Pane>
+               </SplitPane>
             </Pane>
          </items>
       </SplitPane>

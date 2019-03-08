@@ -1,31 +1,29 @@
 package com.github.aks8m.traversal;
 
-import com.github.aks8m.saxparser.SaxParser;
-import com.github.aks8m.tree.ParserNode;
 import javafx.concurrent.Task;
-import javafx.concurrent.Service;
+import javafx.scene.control.TreeItem;
 
 import java.io.File;
 
-public class SAXTraversalService extends Service<ParserNode> {
+public class SAXTraversalService extends TraversalService {
 
     private String filePath;
     private SaxParser saxParser;
 
-    public SAXTraversalService(SaxParser sparser, File filePath) {
+    public SAXTraversalService(File filePath) {
         this.filePath = filePath.getPath();
-        this.saxParser = sparser;
+        this.saxParser = new SaxParser();
 
     }
 
 
     @Override
-    protected Task<ParserNode> createTask() {
+    protected Task<TreeItem<String>> createTask() {
 
-        return new Task<ParserNode>() {
+        return new Task<TreeItem<String>>() {
 
             @Override
-            protected ParserNode call() throws Exception {
+            protected TreeItem<String> call() throws Exception {
                 return saxParser.parse(filePath);
             }
         };

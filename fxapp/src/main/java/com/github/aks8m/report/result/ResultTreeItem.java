@@ -1,35 +1,75 @@
 package com.github.aks8m.report.result;
 
+import com.github.aks8m.tree.XMLElement;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.scene.control.TreeItem;
 
-import java.util.concurrent.atomic.AtomicInteger;
+import java.util.ArrayList;
+import java.util.List;
 
 public class ResultTreeItem extends TreeItem<String> {
 
-    private final String label;
-    private final AtomicInteger position = new AtomicInteger();
-    private SimpleBooleanProperty isSelected = new SimpleBooleanProperty(false);
+//    private SimpleBooleanProperty isSelected;
+
+    private List<SimpleBooleanProperty> isSelectedList = new ArrayList<>();
 
     public ResultTreeItem(String label) {
-        super(label);
-        this.label = label;
+        this(label, new SimpleBooleanProperty(false));
     }
 
 
     public ResultTreeItem(String label, SimpleBooleanProperty simpleBooleanProperty) {
-        this(label,simpleBooleanProperty,0);
+        super(label);
+//        this.isSelected = simpleBooleanProperty;
+        this.isSelectedList.add(simpleBooleanProperty);
+    }
+
+//    public SimpleBooleanProperty getIsSelected(){ return this.isSelected; }
+    public SimpleBooleanProperty getIsSelected(){
+        for (SimpleBooleanProperty sbp : isSelectedList) {
+            if (sbp.getValue()) {
+                return sbp;
+            }
+        }
+        return (isSelectedList == null)? null : isSelectedList.get(0);
     }
 
 
+    public void setIsSelected(SimpleBooleanProperty isSelected) {
+//        this.isSelected = isSelected;
+//        this.isSelected.addListener((observable, oldValue, newValue) -> {
+//
+//            TreeItem parent = null;
+//
+//            if (newValue) {
+//                do {
+//                    this.setExpanded(true);
+//
+//                    if(parent == null)
+//                        parent = super.getParent();
+//                    else
+//                        parent = parent.getParent();
+//
+//                    parent.setExpanded(true);
+//                }while (parent.getParent() != null);
+//            } else {
+//                do {
+//                    this.setExpanded(false);
+//
+//                    if(parent == null)
+//                        parent = super.getParent();
+//                    else
+//                        parent = parent.getParent();
+//
+//                    parent.setExpanded(false);
+//
+//                }while (parent.getParent() != null);
+//            }
+//
+//        });
 
-    public ResultTreeItem(String label, SimpleBooleanProperty simpleBooleanProperty, int position) {
-        super(label);
-        this.label = label;
-        this.position.set(position);
-        this.isSelected = simpleBooleanProperty;
-
-        simpleBooleanProperty.addListener((observable, oldValue, newValue) -> {
+        this.isSelectedList.add(isSelected);
+        isSelected.addListener((observable, oldValue, newValue) -> {
 
             TreeItem parent = null;
 
@@ -59,17 +99,10 @@ public class ResultTreeItem extends TreeItem<String> {
             }
 
         });
-
     }
 
-    public AtomicInteger getPosition() {
-        return position;
-    }
+    //    public void setItSelected(SimpleBooleanProperty sbp) {
+//        this.isSelected = sbp;
+//    }
 
-    public SimpleBooleanProperty getIsSelected(){ return this.isSelected; }
-
-    @Override
-    public String toString() {
-        return this.label;
-    }
 }
