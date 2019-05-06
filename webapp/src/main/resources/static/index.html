@@ -86,25 +86,41 @@
         <!--{{ results }}-->
     <!--</div>-->
     <div class="row" id="resultList">
-        <h3 class = "list-group-item-heading">Results:</h3>
-        <div class="dropdown show">
-            <a class="btn btn-secondary dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                Display Results
-            </a>
-
-            <div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
-                <a class="dropdown-item" href="#">All Mismatches</a>
-                <a class="dropdown-item" href="#">Attribute Mismatches</a>
-                <a class="dropdown-item" href="#">Value Mismatches</a>
-                <a class="dropdown-item" href="#">Section Mismatches</a>
+        <form>
+            <div class="form-check form-check-inline select-all">
+                <input id="all" type="checkbox" class="form-check-input" v-model="all"/>
+                <label for="all" class="form-check-label">Select All Mismatches</label>
             </div>
-        </div>
-        <div class="list-group" id="displayListResults"></div>
-        <!--<div class="list-group" v-for="res in activeUsers">-->
-            <!--<button type="button" class="list-group-item list-group-item-action"> {{ res.name }}</button>-->
-        <!--</div>-->
+            <div class="form-check form-check-inline rows">
+                <input id="box1" type="checkbox" class="form-check-input" v-model="value"/>
+                <label for="box1" class="form-check-label">Value Mismatches</label>
+            </div>
+            <div class="form-check form-check-inline rows">
+                <input id="box2" type="checkbox" class="form-check-input" v-model="section"/>
+                <label for="box2" class="form-check-label">Section Mismatches</label>
+            </div>
+            <div class="form-check form-check-inline rows">
+                <input id="box3" type="checkbox" class="form-check-input" v-model="attribute"/>
+                <label for="box3" class="form-check-label">Attribute Mismatches</label>
+            </div>
+
+            <!--{{ this.all }}-->
+            <!--{{ this.value }}-->
+            <!--{{ this.section }}-->
+            <!--{{ this.attribute }}-->
+            <!--{{ this.ifcountflag }}-->
+            <!--{{ this.elsecountflag }}-->
+        </form>
+
+        <ul class="list-group">
+            <button type="button" class="list-group-item list-group-item-action" v-for="res in getResults">{{ res.output }}</button>
+        </ul>
+
     </div>
+
 </div>
+
+
 
 <!-- item template -->
 <script type="text/x-template" id="item-template">
