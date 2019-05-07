@@ -24,7 +24,7 @@ import java.util.List;
 public class Controller {
 
     private AnalysisService analysisService = new AnalysisService();
-    private CompareService compareService = new CompareService();
+//    private CompareService compareService = new CompareService();
 
 //    @PostMapping(value = "/{name}", headers="Content-Type=text/xml")
 //    private Analysis performAnalysis(@PathVariable String name, @RequestBody String xmlData){
@@ -51,15 +51,17 @@ public class Controller {
     @GetMapping(value = "/compare")
 //    @ResponseBody
     private String compareDocuments() {
+        CompareService compareService = new CompareService();
+
         Gson gson = new Gson();
         System.out.println("Compared on back end");
-        this.compareService.setSourceNode(this.analysisService.getSourceNode());
-        this.compareService.setTargetNode(this.analysisService.getTargetNode());
+        compareService.setSourceNode(this.analysisService.getSourceNode());
+        compareService.setTargetNode(this.analysisService.getTargetNode());
         List<Result> retList = new ArrayList<>();
         retList.add(new Result("Test 2"));
         retList.add(new Result("Test 3"));
 //        return gson.toJson(retList);
-        return gson.toJson(this.compareService.compare());
+        return gson.toJson(compareService.compare());
 
     }
 

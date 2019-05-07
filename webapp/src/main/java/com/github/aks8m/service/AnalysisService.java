@@ -120,12 +120,20 @@ public class AnalysisService {
 
     public NodePOJO getSourceNode() {
         Gson gson = new Gson();
-        return gson.fromJson(this.sourceJSON.toString(), NodePOJO.class);
+        if (this.sourceJSON != null) {
+            return gson.fromJson(this.sourceJSON.toString(), NodePOJO.class);
+        } else {
+            return null;
+        }
     }
 
     public NodePOJO getTargetNode() {
         Gson gson = new Gson();
-        return gson.fromJson(this.targetJSON.toString(), NodePOJO.class);
+        if (this.targetJSON != null) {
+            return gson.fromJson(this.targetJSON.toString(), NodePOJO.class);
+        } else {
+            return null;
+        }
     }
 
 }

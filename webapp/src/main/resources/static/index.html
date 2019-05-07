@@ -13,6 +13,7 @@
     <!-- Required Stylesheets -->
     <link type="text/css" rel="stylesheet" href="https://unpkg.com/bootstrap/dist/css/bootstrap.min.css"/>
     <link type="text/css" rel="stylesheet" href="https://unpkg.com/bootstrap-vue@latest/dist/bootstrap-vue.css"/>
+    <link rel="stylesheet" href="app.css"/>
 
     <!-- Required scripts -->
     <script src="https://unpkg.com/vue"></script>
@@ -25,67 +26,89 @@
 
 </head>
 <body>
-<div id="exampleHello" class="container text-center">
-    <p>{{ hello }}</p>
-</div>
+<!--<div id="exampleHello" class="container text-center">-->
+    <!--<p>{{ hello }}</p>-->
+<!--</div>-->
 
 <div class="container text-center">
     <h1>Welcome to the C-CDA Comparison tool!!</h1>
-    <p>To get started select your source (EHX) and target (HS) documents.</p>
+    <p>To get started select your source (EHX) and target (HS) documents. Click <a class="modallink text-primary" data-toggle="modal" data-target="#exampleModal">here</a> for instructions.</p>
 </div>
+<hr style="width: 100%; color: black; height: 1px; background-color:black;"/>
 
-<div class="container text-center" id="compareButton">
-    <button type="button" v-on:click="compareDocuments()" class="btn btn-success" :disabled="isEnabled == 1 ? false : true">Compare Documents</button>
+<!-- Modal -->
+<div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Instructions</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <p>1. Select source document</p>
+                <p>2. Select target document</p>
+                <p>3. Compare documents</p>
+                <p>4. Filter results</p>
+
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
 </div>
-
 
 <div class="container text-center">
     <div class="row">
-        <div class="col">
-            <b-container id="exampleSource" class="text-left">
-                <h2 align="center">Select Source Document</h2>
-                <b-form-file
-                        v-model="file"
-                        :state="Boolean(file)"
-                        placeholder="Choose a file..."
-                        drop-placeholder="Drop file here..."
-                        accept=".xml"
-                        @change="onFileChange">
-                </b-form-file>
-
-                <ul>
-                    <item
-                            class="item"
-                            :model="xml">
-                    </item>
-                </ul>
-            </b-container>
+        <div class="col-md-auto">
+            <div class="container" id="compareButton">
+                <button type="button" v-on:click="compareDocuments()" class="btn btn-success" :disabled="isEnabled == 1 ? false : true">Compare Documents</button>
+            </div>
         </div>
         <div class="col">
-            <b-container id="exampleTarget" class="text-left">
-                <h2 align="center">Select Target Document</h2>
-                <b-form-file
-                        v-model="file"
-                        :state="Boolean(file)"
-                        placeholder="Choose a file..."
-                        drop-placeholder="Drop file here..."
-                        accept=".xml"
-                        @change="onFileChange">
-                </b-form-file>
+                <b-container id="exampleSource" class="text-left">
+                    <b-form-file
+                            v-model="file"
+                            :state="Boolean(file)"
+                            placeholder="Select Source Document..."
+                            drop-placeholder="Drop Source Document here..."
+                            accept=".xml"
+                            @change="onFileChange"
+                            class="item":model="xml">
 
-                <ul>
-                    <item
-                            class="item"
-                            :model="xml">
-                    </item>
-                </ul>
-            </b-container>
+                    </b-form-file>
+
+                    <!--&lt;!&ndash;<ul>&ndash;&gt;-->
+                    <!--<item-->
+                    <!--class="item"-->
+                    <!--:model="xml">-->
+                    <!--</item>-->
+                    <!--&lt;!&ndash;</ul>&ndash;&gt;-->
+                </b-container>
+        </div>
+        <div class="col">
+                <b-container id="exampleTarget" class="text-left">
+                    <b-form-file
+                            v-model="file"
+                            :state="Boolean(file)"
+                            placeholder="Select Target Document..."
+                            drop-placeholder="Drop Target Document here..."
+                            accept=".xml"
+                            @change="onFileChange"
+                            class="item":model="xml">
+                    </b-form-file>
+
+                </b-container>
         </div>
     </div>
-    <!--<div class="row" id="resultList">-->
-        <!--{{ results }}-->
-    <!--</div>-->
-    <div class="row" id="resultList">
+    <hr/>
+    <div class="row" style="padding:2px">
+        <h4>Comparison Results:</h4>
+    </div>
+    <div id="resultList">
+    <div class="row" style="padding:2px">
         <form>
             <div class="form-check form-check-inline select-all">
                 <input id="all" type="checkbox" class="form-check-input" v-model="all"/>
@@ -103,7 +126,6 @@
                 <input id="box3" type="checkbox" class="form-check-input" v-model="attribute"/>
                 <label for="box3" class="form-check-label">Attribute Mismatches</label>
             </div>
-
             <!--{{ this.all }}-->
             <!--{{ this.value }}-->
             <!--{{ this.section }}-->
@@ -111,35 +133,39 @@
             <!--{{ this.ifcountflag }}-->
             <!--{{ this.elsecountflag }}-->
         </form>
+    </div>
+    <div class="row">
 
         <ul class="list-group">
             <button type="button" class="list-group-item list-group-item-action" v-for="res in getResults">{{ res.output }}</button>
         </ul>
 
     </div>
+    </div>
 
 </div>
 
 
 
-<!-- item template -->
-<script type="text/x-template" id="item-template">
-    <li>
-        <div :class="{bold: isFolder}" v-on:click="toggle">
-            <span v-if="isAttribute">[ATT]  </span>
-            {{model.name}}
-            <span v-if="isAttribute">{{model.value}}</span>
-            <span v-if="isFolder">[{{open ? '-' : '+'}}]</span>
-        </div>
-        <ul v-show="open" v-if="isFolder">
-            <item
-                    class="item"
-                    v-for="model in model.children"
-                    :model="model">
-            </item>
-        </ul>
-    </li>
-</script>
+<!--&lt;!&ndash; item template &ndash;&gt;-->
+<!--<script type="text/x-template" id="item-template">-->
+    <!--<li>-->
+        <!--<div :class="{bold: isFolder}" v-on:click="toggle">-->
+            <!--<span v-if="isAttribute">[ATT]  </span>-->
+            <!--{{model.name}}-->
+            <!--<span v-if="isAttribute">{{model.value}}</span>-->
+            <!--<span v-if="isFolder">[{{open ? '-' : '+'}}]</span>-->
+        <!--</div>-->
+        <!--<ul v-show="open" v-if="isFolder">-->
+            <!--<item-->
+                    <!--class="item"-->
+                    <!--v-for="model in model.children"-->
+                    <!--:model="model">-->
+            <!--</item>-->
+        <!--</ul>-->
+    <!--</li>-->
+<!--</script>-->
+
 
 
 
