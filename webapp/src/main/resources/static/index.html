@@ -80,6 +80,9 @@
 
                     </b-form-file>
 
+                    {{ xml }}
+                    {{ pre }}
+
                     <!--&lt;!&ndash;<ul>&ndash;&gt;-->
                     <!--<item-->
                     <!--class="item"-->
@@ -99,6 +102,11 @@
                             @change="onFileChange"
                             class="item":model="xml">
                     </b-form-file>
+
+                    {{ xml }}
+                    {{ pre }}
+
+
 
                 </b-container>
         </div>
@@ -170,7 +178,8 @@
 
 
 
-<script src="app.js"></script>
+<!--<script src="app.js"></script>-->
+<script src="appFile.js"></script>
 <script src="https://unpkg.com/vue/dist/vue.min.js"></script>
 <script src="https://unpkg.com/bootstrap-vue@latest/dist/bootstrap-vue.min.js"></script>
 

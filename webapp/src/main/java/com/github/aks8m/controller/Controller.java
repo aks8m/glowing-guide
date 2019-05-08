@@ -6,6 +6,7 @@ import com.github.aks8m.service.AnalysisService;
 import com.github.aks8m.service.CompareService;
 import com.google.gson.Gson;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import org.xml.sax.SAXException;
 
 import javax.xml.parsers.ParserConfigurationException;
@@ -31,16 +32,28 @@ public class Controller {
 //        return analysisService.performAnalysis(name, xmlData);
 //    }
 
+//    @PostMapping(value = "/readSource")
+//    private String readSource(@RequestBody String contents) throws IOException, ParserConfigurationException, SAXException {
+//        String decodedContents = URLDecoder.decode(contents, "UTF-8");
+//        return this.analysisService.getSourceJSON(decodedContents);
+//    }
+
+//    @PostMapping(value = "/readTarget")
+//    private String readTarget(@RequestBody String contents) throws IOException, ParserConfigurationException, SAXException {
+//        String decodedContents = URLDecoder.decode(contents, "UTF-8");
+//        return this.analysisService.getTargetJSON(decodedContents);
+//    }
+
     @PostMapping(value = "/readSource")
-    private String readSource(@RequestBody String contents) throws IOException, ParserConfigurationException, SAXException {
-        String decodedContents = URLDecoder.decode(contents, "UTF-8");
-        return this.analysisService.getSourceJSON(decodedContents);
+    private String readSource(@RequestParam(value = "file") MultipartFile contents) throws IOException, ParserConfigurationException, SAXException {
+        return contents.getOriginalFilename();
     }
 
+
+
     @PostMapping(value = "/readTarget")
-    private String readTarget(@RequestBody String contents) throws IOException, ParserConfigurationException, SAXException {
-        String decodedContents = URLDecoder.decode(contents, "UTF-8");
-        return this.analysisService.getTargetJSON(decodedContents);
+    private String readTarget(@RequestParam(value = "file") MultipartFile contents) throws IOException, ParserConfigurationException, SAXException {
+        return contents.getOriginalFilename();
     }
 
     @PostMapping(value = "/hello")

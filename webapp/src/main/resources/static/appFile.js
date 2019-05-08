@@ -7,15 +7,28 @@ new Vue({
 
 new Vue({
     el: '#exampleSource',
-    data: { xml: 'Hello World! Source' },
+    data: { xml: 'Hello World! Source NEW', pre: 'Hello World! Source Pre' },
     methods: {
         onFileChange(e) {
             var file = e.target.files[0];
             this.xml = file;
-            axios
-                .post('/api/analysis/readSource', this.xml, null)
-                .then(response => {this.xml = response.data})
-                .catch(error => console.log(error));
+            this.pre = file;
+            var formData = new FormData();
+            formData.append('file', this.xml);
+//            axios
+//                .post('/api/analysis/readSource', this.xml, null)
+//                .then(response => {this.xml = response.data})
+//                .catch(error => console.log(error));
+            axios.post('/api/analysis/readSource',
+                      formData, {
+                        headers: {
+                          'Content-Type': 'multipart/form-data'
+                        }
+                      }
+                    ).then(response => {this.xml = response.data})
+                    .catch(function () {
+                      console.log('FAILURE!!');
+                    });
             compareButton.sourceReceived = 1;
         }
     }
@@ -23,15 +36,28 @@ new Vue({
 
 new Vue({
     el: '#exampleTarget',
-    data: { xml: 'Hello World! Target' },
+    data: { xml: 'Hello World! Target NEW', pre: 'Hello World! Target Pre' },
     methods: {
         onFileChange(e) {
             var file = e.target.files[0];
             this.xml = file;
-            axios
-                .post('/api/analysis/readTarget', this.xml, null)
-                .then(response => {this.xml = response.data})
-                .catch(error => console.log(error));
+            this.pre = file;
+//            axios
+//                .post('/api/analysis/readTarget', this.xml, null)
+//                .then(response => {this.xml = response.data})
+//                .catch(error => console.log(error));
+            var formData = new FormData();
+            formData.append('file', this.xml);
+            axios.post('/api/analysis/readSource',
+                      formData, {
+                        headers: {
+                          'Content-Type': 'multipart/form-data'
+                        }
+                      }
+                    ).then(response => {this.xml = response.data})
+                    .catch(function () {
+                      console.log('FAILURE!!');
+                    });
             compareButton.targetReceived = 1;
         }
     }
