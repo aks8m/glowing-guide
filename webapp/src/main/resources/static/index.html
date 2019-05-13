@@ -24,11 +24,13 @@
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js"></script>
 
 
+
 </head>
 <body>
 <!--<div id="exampleHello" class="container text-center">-->
     <!--<p>{{ hello }}</p>-->
 <!--</div>-->
+
 
 <div class="container text-center">
     <h1>Welcome to the C-CDA Comparison tool!!</h1>
@@ -68,6 +70,7 @@
             </div>
         </div>
         <div class="col">
+                <!--<file-load></file-load>-->
                 <b-container id="exampleSource" class="text-left">
                     <b-form-file
                             v-model="file"
@@ -79,9 +82,6 @@
                             class="item":model="xml">
 
                     </b-form-file>
-
-                    {{ xml }}
-                    {{ pre }}
 
                     <!--&lt;!&ndash;<ul>&ndash;&gt;-->
                     <!--<item-->
@@ -103,10 +103,6 @@
                             class="item":model="xml">
                     </b-form-file>
 
-                    {{ xml }}
-                    {{ pre }}
-
-
 
                 </b-container>
         </div>
@@ -117,6 +113,8 @@
     </div>
     <div id="resultList">
     <div class="row" style="padding:2px">
+        <div class="col">
+        <div class="row">
         <form>
             <div class="form-check form-check-inline select-all">
                 <input id="all" type="checkbox" class="form-check-input" v-model="all"/>
@@ -141,6 +139,7 @@
             <!--{{ this.ifcountflag }}-->
             <!--{{ this.elsecountflag }}-->
         </form>
+
     </div>
     <div class="row">
 
@@ -148,6 +147,10 @@
             <button type="button" class="list-group-item list-group-item-action" v-for="res in getResults">{{ res.output }}</button>
         </ul>
 
+    </div>
+    </div>
+    <div class="col"><div id="sourceTreeDisplay"></div></div>
+    <div class="col"><div id="targetTreeDisplay" class="treeview"></div></div>
     </div>
     </div>
 
@@ -179,7 +182,7 @@
 
 
 <!--<script src="app.js"></script>-->
-<script src="appFile.js"></script>
+<script src="app.js"></script>
 <script src="https://unpkg.com/vue/dist/vue.min.js"></script>
 <script src="https://unpkg.com/bootstrap-vue@latest/dist/bootstrap-vue.min.js"></script>
 

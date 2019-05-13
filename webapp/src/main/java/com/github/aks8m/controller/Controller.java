@@ -5,11 +5,13 @@ import com.github.aks8m.model.result.Result;
 import com.github.aks8m.service.AnalysisService;
 import com.github.aks8m.service.CompareService;
 import com.google.gson.Gson;
+import org.apache.commons.compress.utils.IOUtils;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.xml.sax.SAXException;
 
 import javax.xml.parsers.ParserConfigurationException;
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.net.URLDecoder;
 import java.util.ArrayList;
@@ -46,14 +48,15 @@ public class Controller {
 
     @PostMapping(value = "/readSource")
     private String readSource(@RequestParam(value = "file") MultipartFile contents) throws IOException, ParserConfigurationException, SAXException {
-        return contents.getOriginalFilename();
-    }
+        return this.analysisService.getSourceJSON(new String(contents.getBytes()));
 
+    }
 
 
     @PostMapping(value = "/readTarget")
     private String readTarget(@RequestParam(value = "file") MultipartFile contents) throws IOException, ParserConfigurationException, SAXException {
-        return contents.getOriginalFilename();
+        return this.analysisService.getTargetJSON(new String(contents.getBytes()));
+
     }
 
     @PostMapping(value = "/hello")

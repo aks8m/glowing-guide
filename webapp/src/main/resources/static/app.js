@@ -1,18 +1,19 @@
 
 
-new Vue({
-    el: '#exampleHello',
-    data: { hello: 'Hello World!' }
-});
+//new Vue({
+//    el: '#exampleHello',
+//    data: { hello: 'Hello World!' }
+//});
 
-new Vue({
+
+
+var exampleSource = new Vue({
     el: '#exampleSource',
-    data: { xml: 'Hello World! Source NEW', pre: 'Hello World! Source Pre' },
+    data: { xml: 'Hello World! Source NEW' },
     methods: {
         onFileChange(e) {
-            var file = e.target.files[0];
-            this.xml = file;
-            this.pre = file;
+//            var fileInput = e.target.files[0];
+            this.xml = e.target.files[0];
             var formData = new FormData();
             formData.append('file', this.xml);
 //            axios
@@ -34,20 +35,21 @@ new Vue({
     }
 });
 
-new Vue({
-    el: '#exampleTarget',
-    data: { xml: 'Hello World! Target NEW', pre: 'Hello World! Target Pre' },
+Vue.component("file-load", {
+    el: '#exampleSource',
+    data: function() {
+        return { xml: 'Hello World! Source NEW' }
+    },
     methods: {
         onFileChange(e) {
-            var file = e.target.files[0];
-            this.xml = file;
-            this.pre = file;
-//            axios
-//                .post('/api/analysis/readTarget', this.xml, null)
-//                .then(response => {this.xml = response.data})
-//                .catch(error => console.log(error));
+//            var fileInput = e.target.files[0];
+            this.xml = e.target.files[0];
             var formData = new FormData();
             formData.append('file', this.xml);
+//            axios
+//                .post('/api/analysis/readSource', this.xml, null)
+//                .then(response => {this.xml = response.data})
+//                .catch(error => console.log(error));
             axios.post('/api/analysis/readSource',
                       formData, {
                         headers: {
@@ -55,6 +57,31 @@ new Vue({
                         }
                       }
                     ).then(response => {this.xml = response.data})
+                    .catch(function () {
+                      console.log('FAILURE!!');
+                    });
+            compareButton.sourceReceived = 1;
+        }
+    },
+    template: '<b-container class="text-left"><b-form-file v-model="file" :state="Boolean(file)" placeholder="Select Source Document..." drop-placeholder="Drop Source Document here..." accept=".xml" @change="onFileChange" class="item":model="xml"></b-form-file></b-container>'
+});
+
+var exampleTarget = new Vue({
+    el: '#exampleTarget',
+    data: { xml: 'Hello World! Target NEW' },
+    methods: {
+        onFileChange(e) {
+//            this.fileInput = e.target.files[0];
+            this.xml = e.target.files[0];
+            var formData = new FormData();
+            formData.append('file', this.xml);
+            axios.post('/api/analysis/readTarget',
+                      formData, {
+                        headers: {
+                          'Content-Type': 'multipart/form-data'
+                        }
+                      }
+                    ).then(response => { this.xml = response.data })
                     .catch(function () {
                       console.log('FAILURE!!');
                     });
@@ -77,10 +104,8 @@ var compareButton = new Vue({
                 .get('/api/analysis/compare')
                 .then(response => {
                     resultList.results = response.data;
-//                    resultList.displayResults(response.data);
                  })
                 .catch(error => console.log(error));
-//             resultList.displayResults();
         }
     }
 });
@@ -90,6 +115,8 @@ var resultList = new Vue({
     data: { results: null, all: false, value: false, section: false, attribute: false, ifcountflag: 0, elsecountflag: 0 },
     computed: {
         getResults: function() {
+
+
             if (this.all) {
                 return this.results;
             } else {
@@ -117,21 +144,17 @@ var resultList = new Vue({
 
         }
     },
-//    methods: {
-//        displayResults: function(response) {
-////            this.results = response;
-//            var newsTest = document.getElementById("displayListResults");
-//            var itemsTest = response;
-//            for(var i = 0; i < itemsTest.length; i++) {
-//                var listItem = document.createElement("button");
-//                listItem.setAttribute('type', 'button');
-//                listItem.setAttribute('class','list-group-item list-group-item-action');
-//                listItem.innerHTML = itemsTest[i].output;
-//                newsTest.appendChild(listItem);
-//               }
-//        },
-//    }
 });
+
+//var sourceTreeDisplay = new Vue({
+//    el: '#sourceTreeDisplay',
+//    data: { tree: getTree() }
+//});
+//
+//var targetTreeDisplay = new Vue({
+//    el: '#targetTreeDisplay',
+//    data: { tree: getTree() }
+//});
 
 // define the item component
 Vue.component('item', {
@@ -169,7 +192,6 @@ Vue.component('item', {
 });
 
 
-
 //jQuery////////////////////////////////////////////////////////
 $('#all').change(function(e) {
   if (e.currentTarget.checked) {
@@ -178,4 +200,3 @@ $('#all').change(function(e) {
     $('.rows').find('input[type="checkbox"]').prop('checked', false);
   }
 });
-
