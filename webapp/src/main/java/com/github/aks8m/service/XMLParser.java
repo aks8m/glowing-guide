@@ -63,6 +63,7 @@ public class XMLParser extends DefaultHandler {
             childrenArray.put(attribute);
         }
         jsonObject.put("children", childrenArray);
+        jsonObject.put("attribute", 0);
 
         if (rootObj == null) {
             rootObj = jsonObject;

@@ -1,3 +1,5 @@
+
+
 <html>
 <head>
     <!--<script src="https://unpkg.com/vue"></script>-->
@@ -5,186 +7,117 @@
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
     <link type="text/css" rel="stylesheet" href="https://unpkg.com/bootstrap/dist/css/bootstrap.min.css"/>
     <link type="text/css" rel="stylesheet" href="https://unpkg.com/bootstrap-vue@latest/dist/bootstrap-vue.min.css"/>
-    <script src="//code.jquery.com/jquery-1.11.1.min.js"></script>
+    <!--<script src="//code.jquery.com/jquery-1.11.1.min.js"></script>-->
 
 
     <title>C-CDA Comparison Tool</title>
 
     <!-- Required Stylesheets -->
-    <link type="text/css" rel="stylesheet" href="https://unpkg.com/bootstrap/dist/css/bootstrap.min.css"/>
-    <link type="text/css" rel="stylesheet" href="https://unpkg.com/bootstrap-vue@latest/dist/bootstrap-vue.css"/>
-    <link rel="stylesheet" href="app.css"/>
+    <!--<link type="text/css" rel="stylesheet" href="https://unpkg.com/bootstrap/dist/css/bootstrap.min.css"/>-->
+    <!--<link type="text/css" rel="stylesheet" href="https://unpkg.com/bootstrap-vue@latest/dist/bootstrap-vue.css"/>-->
+    <link rel="stylesheet" href="appNew2.css"/>
 
     <!-- Required scripts -->
     <script src="https://unpkg.com/vue"></script>
     <script src="https://unpkg.com/babel-polyfill@latest/dist/polyfill.min.js"></script>
     <script src="https://unpkg.com/bootstrap-vue@latest/dist/bootstrap-vue.js"></script>
 
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js"></script>
+    <!--<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js"></script>-->
+    <!--<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js"></script>-->
 
 
 
 </head>
 <body>
-<!--<div id="exampleHello" class="container text-center">-->
-    <!--<p>{{ hello }}</p>-->
-<!--</div>-->
 
-
-<div class="container text-center">
-    <h1>Welcome to the C-CDA Comparison tool!!</h1>
-    <p>To get started select your source (EHX) and target (HS) documents. Click <a class="modallink text-primary" data-toggle="modal" data-target="#exampleModal">here</a> for instructions.</p>
-</div>
-<hr style="width: 100%; color: black; height: 1px; background-color:black;"/>
-
-<!-- Modal -->
-<div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-    <div class="modal-dialog" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="exampleModalLabel">Instructions</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-            <div class="modal-body">
-                <p>1. Select source document</p>
-                <p>2. Select target document</p>
-                <p>3. Compare documents</p>
-                <p>4. Filter results</p>
-
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-            </div>
-        </div>
-    </div>
-</div>
-
-<div class="container text-center">
-    <div class="row">
-        <div class="col-md-auto">
-            <div class="container" id="compareButton">
-                <button type="button" v-on:click="compareDocuments()" class="btn btn-success" :disabled="isEnabled == 1 ? false : true">Compare Documents</button>
-            </div>
-        </div>
-        <div class="col">
-                <!--<file-load></file-load>-->
-                <b-container id="exampleSource" class="text-left">
-                    <b-form-file
-                            v-model="file"
-                            :state="Boolean(file)"
-                            placeholder="Select Source Document..."
-                            drop-placeholder="Drop Source Document here..."
-                            accept=".xml"
-                            @change="onFileChange"
-                            class="item":model="xml">
-
-                    </b-form-file>
-
-                    <!--&lt;!&ndash;<ul>&ndash;&gt;-->
-                    <!--<item-->
-                    <!--class="item"-->
-                    <!--:model="xml">-->
-                    <!--</item>-->
-                    <!--&lt;!&ndash;</ul>&ndash;&gt;-->
-                </b-container>
-        </div>
-        <div class="col">
-                <b-container id="exampleTarget" class="text-left">
-                    <b-form-file
-                            v-model="file"
-                            :state="Boolean(file)"
-                            placeholder="Select Target Document..."
-                            drop-placeholder="Drop Target Document here..."
-                            accept=".xml"
-                            @change="onFileChange"
-                            class="item":model="xml">
-                    </b-form-file>
-
-
-                </b-container>
-        </div>
-    </div>
-    <hr/>
-    <div class="row" style="padding:2px">
-        <h4>Comparison Results:</h4>
-    </div>
-    <div id="resultList">
-    <div class="row" style="padding:2px">
-        <div class="col">
-        <div class="row">
-        <form>
-            <div class="form-check form-check-inline select-all">
-                <input id="all" type="checkbox" class="form-check-input" v-model="all"/>
-                <label for="all" class="form-check-label">Select All Mismatches</label>
-            </div>
-            <div class="form-check form-check-inline rows">
-                <input id="box1" type="checkbox" class="form-check-input" v-model="value"/>
-                <label for="box1" class="form-check-label">Value Mismatches</label>
-            </div>
-            <div class="form-check form-check-inline rows">
-                <input id="box2" type="checkbox" class="form-check-input" v-model="section"/>
-                <label for="box2" class="form-check-label">Section Mismatches</label>
-            </div>
-            <div class="form-check form-check-inline rows">
-                <input id="box3" type="checkbox" class="form-check-input" v-model="attribute"/>
-                <label for="box3" class="form-check-label">Attribute Mismatches</label>
-            </div>
-            <!--{{ this.all }}-->
-            <!--{{ this.value }}-->
-            <!--{{ this.section }}-->
-            <!--{{ this.attribute }}-->
-            <!--{{ this.ifcountflag }}-->
-            <!--{{ this.elsecountflag }}-->
-        </form>
-
-    </div>
-    <div class="row">
-
-        <ul class="list-group">
-            <button type="button" class="list-group-item list-group-item-action" v-for="res in getResults">{{ res.output }}</button>
-        </ul>
-
-    </div>
-    </div>
-    <div class="col"><div id="sourceTreeDisplay"></div></div>
-    <div class="col"><div id="targetTreeDisplay" class="treeview"></div></div>
-    </div>
-    </div>
-
-</div>
-
-
-
-<!--&lt;!&ndash; item template &ndash;&gt;-->
-<!--<script type="text/x-template" id="item-template">-->
-    <!--<li>-->
-        <!--<div :class="{bold: isFolder}" v-on:click="toggle">-->
+<!-- item template -->
+<script type="text/x-template" id="item-template">
+    <li>
+        <div :class="{bold: isFolder}" v-on:click="toggle">
             <!--<span v-if="isAttribute">[ATT]  </span>-->
-            <!--{{model.name}}-->
-            <!--<span v-if="isAttribute">{{model.value}}</span>-->
-            <!--<span v-if="isFolder">[{{open ? '-' : '+'}}]</span>-->
-        <!--</div>-->
-        <!--<ul v-show="open" v-if="isFolder">-->
-            <!--<item-->
-                    <!--class="item"-->
-                    <!--v-for="model in model.children"-->
-                    <!--:model="model">-->
-            <!--</item>-->
-        <!--</ul>-->
-    <!--</li>-->
-<!--</script>-->
+            {{item.name}}
+            <span v-if="isAttribute">{{item.value}}</span>
+            <span v-if="isFolder">[{{isOpen ? '-' : '+'}}]</span>
+        </div>
+        <ul v-show="isOpen" v-if="isFolder">
+            <tree-item class="item" v-for="(child, index) in item.children":key="index":item="child"></tree-item>
+        </ul>
+    </li>
+</script>
 
+<div id="app">
+    <div class="container text-center">
+        <h1>Welcome to the C-CDA Comparison tool!!</h1>
+        <p>To get started select your source (EHX) and target (HS) documents. Click <a v-b-modal.modal-1 class="modallink text-primary">here</a> for instructions.</p>
 
+        <b-modal id="modal-1" title="Instructions">
+            <p>1. Select Source Document</p>
+            <p>2. Select Target Document</p>
+            <p>3. Click Compare to compare the source and target documents</p>
+            <p>4. Analyze results using filtering functionality and tree views</p>
 
+        </b-modal>
+    </div>
 
+    <!--<p>{{ sourceTreeData }}</p>-->
+    <!--<p>{{ targetTreeData }}</p>-->
 
-<!--<script src="app.js"></script>-->
-<script src="app.js"></script>
-<script src="https://unpkg.com/vue/dist/vue.min.js"></script>
-<script src="https://unpkg.com/bootstrap-vue@latest/dist/bootstrap-vue.min.js"></script>
+    <hr style="width: 100%; color: black; height: 1px; background-color:black;"/>
+
+    <div class="container text-center">
+        <div class="row">
+            <div class="col-md-auto">
+                <compare-button></compare-button>
+            </div>
+            <div class="col">
+                <file-input path='/api/analysis/readSource' name="sourceTree"></file-input>
+            </div>
+            <div class="col">
+                <file-input path='/api/analysis/readTarget' name="targetTree"></file-input>
+            </div>
+
+        </div>
+
+        <hr/>
+
+        <div class="row text-left">
+            <div class="col right">
+                <h4>Source Tree:</h4>
+                <ul>
+                    <tree-item class="item" :item="sourceTreeData"></tree-item>
+                </ul>
+            </div>
+            <div class="col">
+                <h4>Target Tree:</h4>
+                <ul>
+                    <tree-item class="item" :item="targetTreeData"></tree-item>
+                </ul>
+            </div>
+        </div>
+
+        <hr/>
+
+        <div class="row">
+            <h4>Comparison Results:</h4>
+        </div>
+        <div class="row">
+            <div class="form-check form-check-inline"><input id="checkBoxFilterAll" type="checkbox" class="form-check-input" v-model="all"/><label for="checkBoxFilterAll" class="form-check-label">All Mismatches</label></div>
+            <div class="form-check form-check-inline"><input id="checkBoxFilterValue" type="checkbox" class="form-check-input" v-model="value"/><label for="checkBoxFilterValue" class="form-check-label">Value Mismatches</label></div>
+            <div class="form-check form-check-inline"><input id="checkBoxFilterAttribute" type="checkbox" class="form-check-input" v-model="attribute"/><label for="checkBoxFilterAttribute" class="form-check-label">Attribute Mismatches</label></div>
+            <div class="form-check form-check-inline"><input id="checkBoxFilterSection" type="checkbox" class="form-check-input" v-model="section"/><label for="checkBoxFilterSection" class="form-check-label">Section Mismatches</label></div>
+        </div>
+        <div class="row" style="padding-top:5px">
+            <div class="col">
+            <ul class="list-group">
+                <result-list v-for="(result, index) in getResults":key="index":output="result.output"></result-list>
+            </ul>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<script src="appNew2.js"></script>
 
 </body>
 </html>
