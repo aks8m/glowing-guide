@@ -34,13 +34,12 @@
 <script type="text/x-template" id="item-template">
     <li>
         <div :class="{bold: isFolder}" v-on:click="toggle">
-            <!--<span v-if="isAttribute">[ATT]  </span>-->
-            {{item.name}}
-            <span v-if="isAttribute">{{item.value}}</span>
-            <span v-if="isFolder">[{{isOpen ? '-' : '+'}}]</span>
+            {{item.name}} {{ item.value }}
+            <!--<span v-if="isAttribute">{{item.value}}</span>-->
+            <span v-if="isFolder">[{{item.open ? '-' : '+'}}]</span>
         </div>
-        <ul v-show="isOpen" v-if="isFolder">
-            <tree-item class="item" v-for="(child, index) in item.children":key="index":item="child"></tree-item>
+        <ul v-show="item.open" v-if="isFolder">
+            <tree-item class="item" v-for="child in item.children":key="child.id":item="child":open="child.open"></tree-item>
         </ul>
     </li>
 </script>
@@ -109,7 +108,7 @@
         <div class="row" style="padding-top:5px">
             <div class="col">
             <ul class="list-group">
-                <result-list v-for="(result, index) in getResults":key="index":output="result.output"></result-list>
+                <result-list v-for="(result, index) in getResults":key="index":output="result.output":sourceid="result.sourceid":targetid="result.targetid"></result-list>
             </ul>
             </div>
         </div>
@@ -117,7 +116,7 @@
     </div>
 </div>
 
-<script src="appNew2.js"></script>
+<script src="appNew3.js"></script>
 
 </body>
 </html>

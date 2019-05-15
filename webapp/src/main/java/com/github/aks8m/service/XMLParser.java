@@ -15,6 +15,7 @@ import java.io.IOException;
 import java.io.StringReader;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.UUID;
 
 /**
  * 4/29/2019
@@ -60,10 +61,14 @@ public class XMLParser extends DefaultHandler {
             attribute.put("name", attributes.getQName(i));
             attribute.put("value", attributes.getValue(i));
             attribute.put("attribute", 1);
+            attribute.put("id", UUID.randomUUID());
+            attribute.put("open", false);
             childrenArray.put(attribute);
         }
         jsonObject.put("children", childrenArray);
         jsonObject.put("attribute", 0);
+        jsonObject.put("id", UUID.randomUUID());
+        jsonObject.put("open", false);
 
         if (rootObj == null) {
             rootObj = jsonObject;

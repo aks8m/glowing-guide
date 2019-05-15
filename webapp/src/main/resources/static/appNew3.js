@@ -1,14 +1,3 @@
-// Define a new component called button-counter
-Vue.component('button-counter', {
-  data: function () {
-    return {
-      count: 0,
-    }
-  },
-  props: ['path'],
-  template: '<button v-on:click="count++">You clicked me {{ count }} times.</button>'
-});
-
 Vue.component('file-input', {
   data: function () {
     return {
@@ -62,8 +51,38 @@ Vue.component('compare-button', {
 });
 
 Vue.component('result-list', {
-  props: ['output'],
-  template: '<button type="button" class="list-group-item list-group-item-action">{{ output }}</button>'
+  props: ['output', 'sourceid', 'targetid'],
+  template: '<button type="button" class="list-group-item list-group-item-action" v-on:click="openTrees()">{{ output }}</button>',
+  methods: {
+    openTrees() {
+
+        //go through source data recursively
+        var source = [app.sourceTreeData]
+        while(source.length > 0) {
+            var node = source.shift();
+            if (node.id == this.sourceid) {
+                node.open = !node.open;
+            }
+            if (node.children) {
+                for (var j=0; j<node.children.length; j++) {
+                    source.push(node.children[j]);
+                }
+            }
+        }
+
+        //go through target data recursively
+//        for (var i=0; i<app.results.length; i++) {
+//            if (app.results[i].sourceid == this.sourceid) {
+//                app.results[i].open = !app.results[i].open;
+//            }
+//            if (app.results[i].targetid == this.targetid) {
+//                app.results[i].open = !app.results[i].open;
+//            }
+//        }
+        console.log(this.sourceid + " vs " + this.targetid);
+
+    }
+  }
 
 });
 
@@ -71,12 +90,8 @@ Vue.component('result-list', {
 Vue.component('tree-item', {
   template: '#item-template',
   props: {
-    item: Object
-  },
-  data: function () {
-    return {
-      isOpen: false
-    }
+    item: Object,
+    open: Boolean
   },
   computed: {
     isFolder: function () {
@@ -90,7 +105,7 @@ Vue.component('tree-item', {
   methods: {
     toggle: function () {
       if (this.isFolder) {
-        this.isOpen = !this.isOpen
+        this.item.open = !this.item.open
       }
     }
     }

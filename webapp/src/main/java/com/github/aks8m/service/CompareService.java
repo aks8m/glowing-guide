@@ -99,7 +99,7 @@ public class CompareService {
     private void compareNodeValues(NodePOJO sourceNode, NodePOJO targetNode) {
         if (sourceNode.getValue() != null) {
             if (!sourceNode.getValue().equals(targetNode.getValue())) {
-                this.resultList.add(new Result("VALUE MISMATCH: " + sourceNode.getName() + " Source Value: " + sourceNode.getValue() + " VS Target Value: " + targetNode.getValue(), ResultType.VALUEMISMATCH));
+                this.resultList.add(new Result("VALUE MISMATCH: " + sourceNode.getName() + " Source Value: " + sourceNode.getValue() + " VS Target Value: " + targetNode.getValue(), ResultType.VALUEMISMATCH, sourceNode.getId(), targetNode.getId()));
             }
         }
     }
@@ -118,7 +118,7 @@ public class CompareService {
             }
 
             if (!matched) {
-                this.resultList.add(new Result("ATTRIBUTE MISMATCH: Source attribute " + sourceNodeAttribute.getName() + " in " + sourceNode.getName(), ResultType.ATTRIBUTEMISMATCH));
+                this.resultList.add(new Result("ATTRIBUTE MISMATCH: Source attribute " + sourceNodeAttribute.getName() + " in " + sourceNode.getName(), ResultType.ATTRIBUTEMISMATCH, sourceNodeAttribute.getId(), targetNode.getId()));
             }
         }
     }
