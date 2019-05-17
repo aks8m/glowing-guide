@@ -4,6 +4,7 @@ import com.github.aks8m.model.NodePOJO;
 import com.github.aks8m.model.result.Result;
 import com.github.aks8m.service.AnalysisService;
 import com.github.aks8m.service.CompareService;
+import com.github.aks8m.service.UnorderedCompareService;
 import com.google.gson.Gson;
 import org.apache.commons.compress.utils.IOUtils;
 import org.springframework.web.bind.annotation.*;
@@ -67,16 +68,26 @@ public class Controller {
     @GetMapping(value = "/compare")
 //    @ResponseBody
     private String compareDocuments() {
-        CompareService compareService = new CompareService();
+//        CompareService compareService = new CompareService();
+//
+//        Gson gson = new Gson();
+//        System.out.println("Compared on back end");
+//        compareService.setSourceNode(this.analysisService.getSourceNode());
+//        compareService.setTargetNode(this.analysisService.getTargetNode());
+////        System.out.println("SOURCENODE: " + this.analysisService.getSourceNode().getId());
+////        System.out.println("TARGETNODE: " + this.analysisService.getTargetNode().getId());
+//
+//        return gson.toJson(compareService.compare());
+
+        UnorderedCompareService compareService = new UnorderedCompareService();
 
         Gson gson = new Gson();
         System.out.println("Compared on back end");
         compareService.setSourceNode(this.analysisService.getSourceNode());
         compareService.setTargetNode(this.analysisService.getTargetNode());
-        List<Result> retList = new ArrayList<>();
-        retList.add(new Result("Test 2"));
-        retList.add(new Result("Test 3"));
-//        return gson.toJson(retList);
+//        System.out.println("SOURCENODE: " + this.analysisService.getSourceNode().getId());
+//        System.out.println("TARGETNODE: " + this.analysisService.getTargetNode().getId());
+
         return gson.toJson(compareService.compare());
 
     }

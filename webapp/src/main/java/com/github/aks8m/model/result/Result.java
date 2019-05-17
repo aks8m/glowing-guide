@@ -4,6 +4,23 @@ public class Result {
 
     private ResultType resultType;
     private String output;
+
+    public String getSourceid() {
+        return sourceid;
+    }
+
+    public void setSourceid(String sourceid) {
+        this.sourceid = sourceid;
+    }
+
+    public String getTargetid() {
+        return targetid;
+    }
+
+    public void setTargetid(String targetid) {
+        this.targetid = targetid;
+    }
+
     private String sourceid;
     private String targetid;
 
@@ -13,6 +30,8 @@ public class Result {
     }
 
     public Result(String output, ResultType resultType) { this.output = output; this.resultType = resultType; }
+
+    public Result(String output, ResultType resultType, String sourceid) { this.output = output; this.resultType = resultType; this.sourceid = sourceid; }
 
     public Result(String output, ResultType resultType, String sourceid, String targetid) { this.output = output; this.resultType = resultType; this.sourceid = sourceid; this.targetid = targetid; }
 

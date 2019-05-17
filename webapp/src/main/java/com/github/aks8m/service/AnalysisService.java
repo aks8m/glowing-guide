@@ -121,7 +121,9 @@ public class AnalysisService {
     public NodePOJO getSourceNode() {
         Gson gson = new Gson();
         if (this.sourceJSON != null) {
-            return gson.fromJson(this.sourceJSON.toString(), NodePOJO.class);
+            NodePOJO rootNode = gson.fromJson(this.sourceJSON.toString(), NodePOJO.class);
+            addParents(rootNode);
+            return rootNode;
         } else {
             return null;
         }
@@ -130,10 +132,22 @@ public class AnalysisService {
     public NodePOJO getTargetNode() {
         Gson gson = new Gson();
         if (this.targetJSON != null) {
-            return gson.fromJson(this.targetJSON.toString(), NodePOJO.class);
+            NodePOJO rootNode = gson.fromJson(this.targetJSON.toString(), NodePOJO.class);
+            addParents(rootNode);
+            return rootNode;
         } else {
             return null;
         }
+    }
+
+    private void addParents(NodePOJO rootNode) {
+        if (rootNode.getChildren() != null) {
+            for (NodePOJO node : rootNode.getChildren()) {
+                node.setParent(rootNode);
+                addParents(node);
+            }
+        }
+
     }
 
 }

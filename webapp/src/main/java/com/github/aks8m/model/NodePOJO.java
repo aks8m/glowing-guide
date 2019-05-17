@@ -57,4 +57,14 @@ public class NodePOJO {
     private String value;
     private String id;
     private boolean open;
+
+    public NodePOJO getParent() {
+        return parent;
+    }
+
+    public void setParent(NodePOJO parent) {
+        this.parent = parent;
+    }
+
+    private NodePOJO parent;
 }

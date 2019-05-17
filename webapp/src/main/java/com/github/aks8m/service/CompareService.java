@@ -6,10 +6,7 @@ import com.github.aks8m.model.result.ResultType;
 import javafx.scene.control.TreeItem;
 
 import javax.xml.soap.Node;
-import java.util.ArrayDeque;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Queue;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -22,6 +19,7 @@ public class CompareService {
     private NodePOJO sourceNode;
     private NodePOJO targetNode;
     private List<Result> resultList = new ArrayList<>();
+
 
 //    public CompareService(NodePOJO sourceNode, NodePOJO targetNode) {
 //        this.sourceNode = sourceNode;
@@ -46,6 +44,12 @@ public class CompareService {
             orderedCompare();
         } else {
             this.resultList.add(new Result("Source and Root Nodes were not initialized correctly", ResultType.SECTIONMATCHNOTFOUND));
+        }
+
+        for(Result res : this.resultList) {
+            System.out.println("RESULT SOURCE: " + res.getSourceid());
+            System.out.println("RESULT TARGET: " + res.getTargetid());
+
         }
 
         return this.resultList;
@@ -95,6 +99,7 @@ public class CompareService {
 
 //        return results;
     }
+
 
     private void compareNodeValues(NodePOJO sourceNode, NodePOJO targetNode) {
         if (sourceNode.getValue() != null) {

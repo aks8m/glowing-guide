@@ -15,7 +15,7 @@
     <!-- Required Stylesheets -->
     <!--<link type="text/css" rel="stylesheet" href="https://unpkg.com/bootstrap/dist/css/bootstrap.min.css"/>-->
     <!--<link type="text/css" rel="stylesheet" href="https://unpkg.com/bootstrap-vue@latest/dist/bootstrap-vue.css"/>-->
-    <link rel="stylesheet" href="appNew2.css"/>
+    <link rel="stylesheet" href="appNew3.css"/>
 
     <!-- Required scripts -->
     <script src="https://unpkg.com/vue"></script>
@@ -33,12 +33,11 @@
 <!-- item template -->
 <script type="text/x-template" id="item-template">
     <li>
-        <div :class="{bold: isFolder}" v-on:click="toggle">
-            {{item.name}} {{ item.value }}
-            <!--<span v-if="isAttribute">{{item.value}}</span>-->
-            <span v-if="isFolder">[{{item.open ? '-' : '+'}}]</span>
+        <div v-on:click="toggle">
+            <span v-bind:class="{ openelement : isOpen }">{{item.name}} {{ item.value }}</span>
+            <span v-if="isFolder">[{{isOpen ? '-' : '+'}}]</span>
         </div>
-        <ul v-show="item.open" v-if="isFolder">
+        <ul v-show="isOpen" v-if="isFolder">
             <tree-item class="item" v-for="child in item.children":key="child.id":item="child":open="child.open"></tree-item>
         </ul>
     </li>
@@ -100,15 +99,15 @@
             <h4>Comparison Results:</h4>
         </div>
         <div class="row">
-            <div class="form-check form-check-inline"><input id="checkBoxFilterAll" type="checkbox" class="form-check-input" v-model="all"/><label for="checkBoxFilterAll" class="form-check-label">All Mismatches</label></div>
-            <div class="form-check form-check-inline"><input id="checkBoxFilterValue" type="checkbox" class="form-check-input" v-model="value"/><label for="checkBoxFilterValue" class="form-check-label">Value Mismatches</label></div>
-            <div class="form-check form-check-inline"><input id="checkBoxFilterAttribute" type="checkbox" class="form-check-input" v-model="attribute"/><label for="checkBoxFilterAttribute" class="form-check-label">Attribute Mismatches</label></div>
-            <div class="form-check form-check-inline"><input id="checkBoxFilterSection" type="checkbox" class="form-check-input" v-model="section"/><label for="checkBoxFilterSection" class="form-check-label">Section Mismatches</label></div>
+            <div class="form-check form-check-inline"><input id="checkBoxFilterAll" type="checkbox" class="form-check-input":checked="true" v-on:click="getAll ? deselectAll() : selectAll()"><label for="checkBoxFilterAll" class="form-check-label">All Mismatches  <span class="badge badge-light"> {{ results.length }}</span></label></div>
+            <div class="form-check form-check-inline"><input id="checkBoxFilterValue" type="checkbox" class="form-check-input" v-model="value"/><label for="checkBoxFilterValue" class="form-check-label">Value Mismatches  <span class="badge badge-light"> {{ valueresults.length }}</span></label></div>
+            <div class="form-check form-check-inline"><input id="checkBoxFilterAttribute" type="checkbox" class="form-check-input" v-model="attribute"/><label for="checkBoxFilterAttribute" class="form-check-label">Attribute Mismatches  <span class="badge badge-light"> {{ attributeresults.length }}</span></label></div>
+            <div class="form-check form-check-inline"><input id="checkBoxFilterSection" type="checkbox" class="form-check-input" v-model="section"/><label for="checkBoxFilterSection" class="form-check-label">Section Mismatches  <span class="badge badge-light"> {{ sectionresults.length }}</span></label></div>
         </div>
         <div class="row" style="padding-top:5px">
             <div class="col">
             <ul class="list-group">
-                <result-list v-for="(result, index) in getResults":key="index":output="result.output":sourceid="result.sourceid":targetid="result.targetid"></result-list>
+                <result-list v-for="(result, index) in getResults":key="index":output="result.output":sourceid="result.sourceid":targetid="result.targetid":type="result.resultType"></result-list>
             </ul>
             </div>
         </div>
@@ -116,7 +115,7 @@
     </div>
 </div>
 
-<script src="appNew3.js"></script>
+<script src="appNew5.js"></script>
 
 </body>
 </html>
