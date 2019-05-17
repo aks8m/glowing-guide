@@ -160,9 +160,9 @@ public class UnorderedCompareService {
 
             if (!matched) {
                 if (targetMatches.size() == 1) {
-                    retList.add(new Result("ATTRIBUTE MISMATCH: Source attribute " + attribute.getName() + " " + attribute.getValue() + " VS " + targetMatches.get(0).getValue(), ResultType.ATTRIBUTEMISMATCH, sourceNode.getId(), targetNode.getId()));
+                    retList.add(new Result("ATTRIBUTE MISMATCH: Source attribute " + attribute.getName() + " " + attribute.getValue() + " VS " + targetMatches.get(0).getValue(), ResultType.ATTRIBUTEMISMATCH, attribute.getId(), targetMatches.get(0).getId()));
                 } else {
-                    retList.add(new Result("ATTRIBUTE MISMATCH: Source attribute " + attribute.getName() + " in " + sourceNode.getValue(), ResultType.ATTRIBUTEMISMATCH, sourceNode.getId(), this.nodeMap.get(sourceNode).getId()));
+                    retList.add(new Result("ATTRIBUTE MISMATCH: Source attribute " + attribute.getName() + " in " + sourceNode.getValue(), ResultType.ATTRIBUTEMISMATCH, attribute.getId()));
                 }
             }
 
