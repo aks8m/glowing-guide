@@ -20,13 +20,6 @@ public class CompareService {
     private NodePOJO targetNode;
     private List<Result> resultList = new ArrayList<>();
 
-
-//    public CompareService(NodePOJO sourceNode, NodePOJO targetNode) {
-//        this.sourceNode = sourceNode;
-//        this.targetNode = targetNode;
-//    }
-
-
     public void setSourceNode(NodePOJO sourceNode) {
         this.sourceNode = sourceNode;
     }
@@ -36,28 +29,23 @@ public class CompareService {
     }
 
     public List<Result> compare() {
-//        List<Result> results = new ArrayList<>();
         if (this.sourceNode!= null && this.targetNode != null) {
-//            results.add(new Result("Test 1"));
-//            results.add(new Result("Test 2"));
-//            results.add(new Result("Test 3"));
             orderedCompare();
         } else {
             this.resultList.add(new Result("Source and Root Nodes were not initialized correctly", ResultType.SECTIONMATCHNOTFOUND));
         }
 
-        for(Result res : this.resultList) {
-            System.out.println("RESULT SOURCE: " + res.getSourceid());
-            System.out.println("RESULT TARGET: " + res.getTargetid());
-
-        }
+//        for(Result res : this.resultList) {
+//            System.out.println("RESULT SOURCE: " + res.getSourceid());
+//            System.out.println("RESULT TARGET: " + res.getTargetid());
+//
+//        }
 
         return this.resultList;
 
     }
 
     private void orderedCompare() {
-//        List<Result> results = new ArrayList<>();
 
         Queue<NodePOJO> sourceQueue = new ArrayDeque<>();
         Queue<NodePOJO> targetQueue = new ArrayDeque<>();

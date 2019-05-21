@@ -66,11 +66,15 @@ Vue.component('compare-button', {
 });
 
 Vue.component('result-list', {
+  data: function () {
+    return {
+      resultStyle: false
+    }
+  },
   props: ['output', 'sourceid', 'targetid', 'type'],
-  template: '<button type="button" class="list-group-item list-group-item-action" v-on:click="openTrees()">{{ output }}<b-badge class="badge-default float-right m-2" v-on:click.stop="testClick()">4</b-badge></button>',
+  template: '<li type="button" class="list-group-item list-group-item-action" v-bind:class="{ resultbackground: this.resultStyle}" v-on:click="openTrees()">{{ output }}<b-badge class="badge-default float-right m-2" v-on:click.stop="addDefect()"><i class="fas fa-exclamation"></i></i></b-badge><b-badge class="badge-default float-right m-2" v-on:click.stop="removeResult()"><i class="fas fa-times"></i></b-badge></li>',
   methods: {
     openTrees() {
-
         //go through source data recursively
         var objectSourceList = [];
         var objectTargetList = [];
@@ -85,8 +89,7 @@ Vue.component('result-list', {
         openNodes(objectTargetList);
 
     },
-    testClick() {
-        console.log("wahoo!");
+    removeResult() {
         for (var i=0; i<app.results.length; i++) {
             if (app.results[i].sourceid == this.sourceid && app.results[i].targetid == this.targetid) {
                 app.results.splice(i,1);
@@ -105,14 +108,16 @@ Vue.component('result-list', {
         }
 
         for (var j=0;j<arr.length;j++) {
-            if (arr[j].sourceid == this.sourceid && arr[j] == this.targetid) {
+            if (arr[j].sourceid == this.sourceid && arr[j].targetid == this.targetid) {
                 arr.splice(j,1);
                 break;
             }
         }
-
-
-
+    },
+    addDefect() {
+//        this.removeResult();
+        this.resultStyle = !this.resultStyle;
+        app.defectresults.push(this);
     }
   }
 
@@ -157,6 +162,7 @@ var app = new Vue({
     valueresults: [],
     sectionresults: [],
     attributeresults: [],
+    defectresults: [],
     sourceTreeData: {name: "Please load the source document", children: [], attribute: 0},
     targetTreeData: {name: "Please load the target document", children: [], attribute: 0}
   },
@@ -176,19 +182,23 @@ var app = new Vue({
         },
         getAll: function() {
             return this.attribute && this.value && this.section
+        },
+        selectAll: {
+            get: function(value) {
+                return this.value && this.section && this.attribute;
+            },
+            set: function(value) {
+                if (value) {
+                    this.value = true;
+                    this.section = true;
+                    this.attribute = true;
+                } else {
+                    this.value = false;
+                    this.section = false;
+                    this.attribute = false;
+                }
+            }
         }
-  },
-  methods: {
-    selectAll: function() {
-        this.value = true;
-        this.section = true;
-        this.attribute = true;
-    },
-    deselectAll: function() {
-        this.value = false;
-        this.section = false;
-        this.attribute = false;
-    }
   }
 });
 

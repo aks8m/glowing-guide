@@ -2,30 +2,21 @@
 
 <html>
 <head>
-    <!--<script src="https://unpkg.com/vue"></script>-->
     <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
     <link type="text/css" rel="stylesheet" href="https://unpkg.com/bootstrap/dist/css/bootstrap.min.css"/>
     <link type="text/css" rel="stylesheet" href="https://unpkg.com/bootstrap-vue@latest/dist/bootstrap-vue.min.css"/>
-    <!--<script src="//code.jquery.com/jquery-1.11.1.min.js"></script>-->
-
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.0/css/all.css" integrity="sha384-lZN37f5QGtY3VHgisS14W3ExzMWZxybE1SJSEsQp9S+oqd12jhcu+A56Ebc1zFSJ" crossorigin="anonymous">
 
     <title>C-CDA Comparison Tool</title>
 
     <!-- Required Stylesheets -->
-    <!--<link type="text/css" rel="stylesheet" href="https://unpkg.com/bootstrap/dist/css/bootstrap.min.css"/>-->
-    <!--<link type="text/css" rel="stylesheet" href="https://unpkg.com/bootstrap-vue@latest/dist/bootstrap-vue.css"/>-->
-    <link rel="stylesheet" href="appNew3.css"/>
+    <link rel="stylesheet" href="appNew4.css"/>
 
     <!-- Required scripts -->
     <script src="https://unpkg.com/vue"></script>
     <script src="https://unpkg.com/babel-polyfill@latest/dist/polyfill.min.js"></script>
     <script src="https://unpkg.com/bootstrap-vue@latest/dist/bootstrap-vue.js"></script>
-
-    <!--<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js"></script>-->
-    <!--<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js"></script>-->
-
-
 
 </head>
 <body>
@@ -46,19 +37,23 @@
 <div id="app">
     <div class="container text-center">
         <h1>Welcome to the C-CDA Comparison tool!!</h1>
-        <p>To get started select your source (EHX) and target (HS) documents. Click <a v-b-modal.modal-1 class="modallink text-primary">here</a> for instructions.</p>
+        <p>To get started select your source (EHX) and target (HS) documents. Click <a v-b-modal.modal-1 class="modallink text-primary">here</a> for more instructions.</p>
 
-        <b-modal id="modal-1" title="Instructions">
-            <p>1. Select Source Document</p>
-            <p>2. Select Target Document</p>
-            <p>3. Click Compare to compare the source and target documents</p>
-            <p>4. Analyze results using filtering functionality and tree views</p>
+        <b-modal id="modal-1" title="Instructions and Information" ok-only>
+            <strong>To compare two documents, follow the steps below: </strong>
+            <p>1. Load source document from your local file explorer, by clicking on "Select Document" or "Browse"</p>
+            <p>2. Load target document from your local file explorer, by clicking on "Select Document" or "Browse"</p>
+            <p>3. Once the documents have been loaded, the "Compare Documents" button should become enabled.
+            <p>4. Click the "Compare Documents" button to compare the source and target documents</p>
+            <p>5. Address each result, by removing the result with the "X" button or flagging it as a defect with the "!" button. </p>
+            <p/>
+            <strong>Results are categorized into 3 categories:</strong>
+            <p>1. Value Mistmatch: the value of the XML tags is mismatched</p>
+            <p>2. Section Mistmatch: no parent xml tag exists in the target document that has the same attribtues and values as the specified source tag</p>
+            <p>3. Attribute Mistmatch: the attribute of the XML tag is mismatched</p>
 
         </b-modal>
     </div>
-
-    <!--<p>{{ sourceTreeData }}</p>-->
-    <!--<p>{{ targetTreeData }}</p>-->
 
     <hr style="width: 100%; color: black; height: 1px; background-color:black;"/>
 
@@ -95,11 +90,27 @@
 
         <hr/>
 
-        <div class="row">
-            <h4>Comparison Results:</h4>
+        <div class="row text-left">
+            <div class="col">
+                <h4>Comparison Results:</h4>
+            </div>
+            <div class="col-md-auto">
+                <button type="button" class="btn btn-secondary sm" v-b-modal.modal-2 style="float: right;">Display {{ defectresults.length }} Flagged Defects</button>
+
+                <b-modal id="modal-2" title="Defects" ok-only>
+                    <ol class="list-group">
+                        <li v-for="(result, index) in defectresults":key="index">{{result.output}}</li>
+                    </ol>
+                </b-modal>
+
+            </div>
         </div>
         <div class="row">
-            <div class="form-check form-check-inline"><input id="checkBoxFilterAll" type="checkbox" class="form-check-input":checked="true" v-on:click="getAll ? deselectAll() : selectAll()"><label for="checkBoxFilterAll" class="form-check-label">All Mismatches  <span class="badge badge-light"> {{ results.length }}</span></label></div>
+            <!--<div class="form-check form-check-inline"><input id="checkBoxFilterAll" type="checkbox" class="form-check-input":checked="true" v-on:click="getAll ? deselectAll() : selectAll()"><label for="checkBoxFilterAll" class="form-check-label">All Mismatches  <span class="badge badge-light"> {{ results.length }}</span></label></div>-->
+            <!--<div class="form-check form-check-inline"><input id="checkBoxFilterValue" type="checkbox" class="form-check-input" v-model="value"/><label for="checkBoxFilterValue" class="form-check-label">Value Mismatches  <span class="badge badge-light"> {{ valueresults.length }}</span></label></div>-->
+            <!--<div class="form-check form-check-inline"><input id="checkBoxFilterAttribute" type="checkbox" class="form-check-input" v-model="attribute"/><label for="checkBoxFilterAttribute" class="form-check-label">Attribute Mismatches  <span class="badge badge-light"> {{ attributeresults.length }}</span></label></div>-->
+            <!--<div class="form-check form-check-inline"><input id="checkBoxFilterSection" type="checkbox" class="form-check-input" v-model="section"/><label for="checkBoxFilterSection" class="form-check-label">Section Mismatches  <span class="badge badge-light"> {{ sectionresults.length }}</span></label></div>-->
+            <div class="form-check form-check-inline"><input id="checkBoxFilterAll" type="checkbox" class="form-check-input":checked="true" v-model="selectAll"><label for="checkBoxFilterAll" class="form-check-label">All Mismatches  <span class="badge badge-light"> {{ results.length }}</span></label></div>
             <div class="form-check form-check-inline"><input id="checkBoxFilterValue" type="checkbox" class="form-check-input" v-model="value"/><label for="checkBoxFilterValue" class="form-check-label">Value Mismatches  <span class="badge badge-light"> {{ valueresults.length }}</span></label></div>
             <div class="form-check form-check-inline"><input id="checkBoxFilterAttribute" type="checkbox" class="form-check-input" v-model="attribute"/><label for="checkBoxFilterAttribute" class="form-check-label">Attribute Mismatches  <span class="badge badge-light"> {{ attributeresults.length }}</span></label></div>
             <div class="form-check form-check-inline"><input id="checkBoxFilterSection" type="checkbox" class="form-check-input" v-model="section"/><label for="checkBoxFilterSection" class="form-check-label">Section Mismatches  <span class="badge badge-light"> {{ sectionresults.length }}</span></label></div>
@@ -115,7 +126,7 @@
     </div>
 </div>
 
-<script src="appNew5.js"></script>
+<script src="appNew7.js"></script>
 
 </body>
 </html>

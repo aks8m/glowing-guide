@@ -30,20 +30,10 @@ public class UnorderedCompareService {
     }
 
     public List<Result> compare() {
-//        List<Result> results = new ArrayList<>();
         if (this.sourceNode!= null && this.targetNode != null) {
-//            results.add(new Result("Test 1"));
-//            results.add(new Result("Test 2"));
-//            results.add(new Result("Test 3"));
             unorderedCompare();
         } else {
             this.resultList.add(new Result("Source and Root Nodes were not initialized correctly", ResultType.SECTIONMATCHNOTFOUND));
-        }
-
-        for(Result res : this.resultList) {
-            System.out.println("RESULT SOURCE: " + res.getSourceid());
-            System.out.println("RESULT TARGET: " + res.getTargetid());
-
         }
 
         return this.resultList;
