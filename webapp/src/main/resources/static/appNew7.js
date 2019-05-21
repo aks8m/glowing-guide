@@ -68,7 +68,8 @@ Vue.component('compare-button', {
 Vue.component('result-list', {
   data: function () {
     return {
-      resultStyle: false
+      resultStyle: false,
+      defect: false
     }
   },
   props: ['output', 'sourceid', 'targetid', 'type'],
@@ -115,9 +116,20 @@ Vue.component('result-list', {
         }
     },
     addDefect() {
-//        this.removeResult();
         this.resultStyle = !this.resultStyle;
-        app.defectresults.push(this);
+        if (!this.defect) {
+            app.defectresults.push(this);
+            this.defect = true;
+        } else {
+            for (var j=0;j<app.defectresults.length;j++) {
+                if (app.defectresults[j].sourceid == this.sourceid && app.defectresults[j].targetid == this.targetid) {
+                    app.defectresults.splice(j,1);
+                    this.defect = false;
+                    break;
+                }
+            }
+        }
+
     }
   }
 
