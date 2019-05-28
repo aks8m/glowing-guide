@@ -78,16 +78,17 @@ Vue.component('result-list', {
     openTrees() {
         //go through source data recursively
         var objectSourceList = [];
-        var objectTargetList = [];
-
         getParentNodes(objectSourceList, app.sourceTreeData, this.sourceid);
-        getParentNodes(objectTargetList, app.targetTreeData, this.targetid);
-
         closeAllNodes(app.sourceTreeData);
-        closeAllNodes(app.targetTreeData);
-
         openNodes(objectSourceList);
-        openNodes(objectTargetList);
+
+        closeAllNodes(app.targetTreeData);
+        for (var i=0; i<this.targetid.length;i++) {
+            var objectTargetList = [];
+            getParentNodes(objectTargetList, app.targetTreeData, this.targetid[i]);
+            openNodes(objectTargetList);
+        }
+
 
 
     },
@@ -178,7 +179,6 @@ var app = new Vue({
   el: '#app',
   data: {
     message: 'Hello Vue.js!',
-//    all: true,
     value: true,
     section: true,
     attribute: true,
@@ -210,11 +210,7 @@ var app = new Vue({
             var list = this.getResults;
             var self = this;
             return list.filter(function(cust){return cust.output.toLowerCase().indexOf(self.search.toLowerCase())>=0;});
-//            return [];
         },
-//        getAll: function() {
-//            return this.attribute && this.value && this.section
-//        },
         selectAll: {
             get: function(value) {
                 return this.value && this.section && this.attribute;

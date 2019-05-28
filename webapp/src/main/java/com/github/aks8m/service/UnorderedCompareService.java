@@ -81,8 +81,7 @@ public class UnorderedCompareService {
                             targetQueue.addAll(getChilds(targetNode));
                         }
                     } else {
-                        this.resultList.add(new Result("ATTRIBUTE MISMATCH: Source attribute " + sourceNode.getName() + " in " + sourceNode.getValue(), ResultType.ATTRIBUTEMISMATCH, sourceNode.getId(), this.nodeMap.get(sourceNode.getParent()).getId()));
-
+                        this.resultList.add(new Result("ATTRIBUTE MISMATCH: Source attribute " + sourceNode.getName() + " in " + sourceNode.getValue(), ResultType.ATTRIBUTEMISMATCH, sourceNode.getId(), targetNodes.stream().map(node -> node.getId()).collect(Collectors.toList())));
                     }
 
                 } catch (Exception e) {
