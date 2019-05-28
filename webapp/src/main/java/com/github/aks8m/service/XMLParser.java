@@ -63,12 +63,14 @@ public class XMLParser extends DefaultHandler {
             attribute.put("attribute", 1);
             attribute.put("id", UUID.randomUUID());
             attribute.put("open", false);
+            attribute.put("error", false);
             childrenArray.put(attribute);
         }
         jsonObject.put("children", childrenArray);
         jsonObject.put("attribute", 0);
         jsonObject.put("id", UUID.randomUUID());
         jsonObject.put("open", false);
+        jsonObject.put("error", false);
 
         if (rootObj == null) {
             rootObj = jsonObject;

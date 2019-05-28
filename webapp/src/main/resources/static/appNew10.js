@@ -89,10 +89,12 @@ Vue.component('result-list', {
         openNodes(objectSourceList);
         openNodes(objectTargetList);
 
+
     },
     removeResult() {
         for (var i=0; i<app.results.length; i++) {
             if (app.results[i].sourceid == this.sourceid && app.results[i].targetid == this.targetid) {
+                app.deletedresults.push(app.results[i]);
                 app.results.splice(i,1);
                 break;
             }
@@ -111,6 +113,13 @@ Vue.component('result-list', {
         for (var j=0;j<arr.length;j++) {
             if (arr[j].sourceid == this.sourceid && arr[j].targetid == this.targetid) {
                 arr.splice(j,1);
+                break;
+            }
+        }
+
+        for (var t=0; t<app.defectresults.length; t++) {
+            if (app.defectresults[t].sourceid == this.sourceid && app.defectresults[t].targetid == this.targetid) {
+                app.defectresults.splice(t,1);
                 break;
             }
         }
@@ -138,8 +147,7 @@ Vue.component('result-list', {
 Vue.component('tree-item', {
   template: '#item-template',
   props: {
-    item: Object,
-    open: Boolean
+    item: Object
   },
   computed: {
     isFolder: function () {
@@ -151,12 +159,16 @@ Vue.component('tree-item', {
     },
     isOpen: function() {
       return this.item.open
+    },
+    isError: function() {
+      return this.item.error
     }
   },
   methods: {
     toggle: function () {
       if (this.isFolder) {
         this.item.open = !this.item.open
+        this.item.res = !this.item.res
       }
     }
     }
@@ -171,10 +183,12 @@ var app = new Vue({
     section: true,
     attribute: true,
     results: [],
+    search: "",
     valueresults: [],
     sectionresults: [],
     attributeresults: [],
     defectresults: [],
+    deletedresults: [],
     sourceTreeData: {name: "Please load the source document", children: [], attribute: 0},
     targetTreeData: {name: "Please load the target document", children: [], attribute: 0}
   },
@@ -192,9 +206,15 @@ var app = new Vue({
             }
             return retList;
         },
-        getAll: function() {
-            return this.attribute && this.value && this.section
+        getFilteredResults: function() {
+            var list = this.getResults;
+            var self = this;
+            return list.filter(function(cust){return cust.output.toLowerCase().indexOf(self.search.toLowerCase())>=0;});
+//            return [];
         },
+//        getAll: function() {
+//            return this.attribute && this.value && this.section
+//        },
         selectAll: {
             get: function(value) {
                 return this.value && this.section && this.attribute;
@@ -211,17 +231,34 @@ var app = new Vue({
                 }
             }
         }
+  },
+  methods: {
+    addDeleted: function() {
+        for (var i=0; i<this.deletedresults.length; i++) {
+            this.results.push(this.deletedresults[i]);
+            if (this.deletedresults[i].resultType == "VALUEMISMATCH") {
+                this.valueresults.push(this.deletedresults[i]);
+            } else if (this.deletedresults[i].resultType == "SECTIONMISMATCH") {
+                this.sectionresults.push(this.deletedresults[i]);
+            } else if (this.deletedresults[i].resultType == "ATTRIBUTEMISMATCH") {
+                this.attributeresults.push(this.deletedresults[i]);
+            }
+        }
+        this.deletedresults = []
+    }
   }
 });
 
 function openNodes(nodeList) {
     for (var i=0; i<nodeList.length; i++) {
-        nodeList[i].open = !nodeList[i].open
+        nodeList[i].open = true;
     }
+    nodeList[nodeList.length-1].error=true;
 };
 
 function closeAllNodes(node) {
     node.open = false;
+    node.error = false;
     for (var i=0;node.children && i<node.children.length; i++) {
         closeAllNodes(node.children[i]);
     }

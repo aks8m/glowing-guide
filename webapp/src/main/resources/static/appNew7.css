@@ -8,7 +8,11 @@
 }
 
 .openelement {
-    color: red;
+    font-weight:bold;
+}
+
+.reselement {
+    color:red;
 }
 
 .resultbackground {

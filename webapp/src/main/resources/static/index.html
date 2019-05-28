@@ -11,7 +11,7 @@
     <title>C-CDA Comparison Tool</title>
 
     <!-- Required Stylesheets -->
-    <link rel="stylesheet" href="appNew5.css"/>
+    <link rel="stylesheet" href="appNew7.css"/>
 
     <!-- Required scripts -->
     <script src="https://unpkg.com/vue"></script>
@@ -25,7 +25,7 @@
 <script type="text/x-template" id="item-template">
     <li>
         <div v-on:click="toggle">
-            <span v-bind:class="{ openelement : isOpen }">{{item.name}} {{ item.value }}</span>
+            <span v-bind:class="{ openelement : isOpen, reselement : isError }">{{item.name}} {{ item.value }}</span>
             <span v-if="isFolder">[{{isOpen ? '-' : '+'}}]</span>
         </div>
         <ul v-show="isOpen" v-if="isFolder">
@@ -88,14 +88,22 @@
             </div>
         </div>
 
-        <hr/>
+        <!--<hr/>-->
+        <hr style="width: 100%; color: black; height: 1px; background-color:black;"/>
 
         <div class="row text-left">
             <div class="col">
                 <h4>Comparison Results:</h4>
             </div>
+            <div id="main">
+                <b-form-input type="text" v-model="search" placeholder="Filter Results..."></b-form-input>
+                <!--Filter: <input type="text" v-model="search"/>-->
+            </div>
             <div class="col-md-auto">
-                <button type="button" class="btn btn-secondary sm" v-b-modal.modal-2 style="float: right;">Display {{ defectresults.length }} Flagged Defects</button>
+                <button type="button" class="btn btn-secondary btn-sm" v-on:click="addDeleted()">Add {{ deletedresults.length }} Deleted Results back to Result List</button>
+            </div>
+            <div class="col-md-auto">
+                <button type="button" class="btn btn-secondary btn-sm" v-b-modal.modal-2>Display {{ defectresults.length }} Flagged Defects</button>
 
                 <b-modal id="modal-2" title="Defects" ok-only>
                     <ol class="list-group">
@@ -111,10 +119,11 @@
             <div class="form-check form-check-inline"><input id="checkBoxFilterAttribute" type="checkbox" class="form-check-input" v-model="attribute"/><label for="checkBoxFilterAttribute" class="form-check-label">Attribute Mismatches  <span class="badge badge-light"> {{ attributeresults.length }}</span></label></div>
             <div class="form-check form-check-inline"><input id="checkBoxFilterSection" type="checkbox" class="form-check-input" v-model="section"/><label for="checkBoxFilterSection" class="form-check-label">Section Mismatches  <span class="badge badge-light"> {{ sectionresults.length }}</span></label></div>
         </div>
-        <div class="row" style="padding-top:5px">
+        <hr/>
+        <div class="row" style="padding-top:10px">
             <div class="col">
             <ul class="list-group">
-                <result-list v-for="(result, index) in getResults":key="index":output="result.output":sourceid="result.sourceid":targetid="result.targetid":type="result.resultType"></result-list>
+                <result-list v-for="result in getFilteredResults":key="result.sourceid":output="result.output":sourceid="result.sourceid":targetid="result.targetid":type="result.resultType":class="{resultbackground: this.resultStyle}"></result-list>
             </ul>
             </div>
         </div>
@@ -122,7 +131,7 @@
     </div>
 </div>
 
-<script src="appNew7.js"></script>
+<script src="appNew10.js"></script>
 
 </body>
 </html>
