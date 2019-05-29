@@ -190,7 +190,9 @@ var app = new Vue({
     defectresults: [],
     deletedresults: [],
     sourceTreeData: {name: "Please load the source document", children: [], attribute: 0},
-    targetTreeData: {name: "Please load the target document", children: [], attribute: 0}
+    targetTreeData: {name: "Please load the target document", children: [], attribute: 0},
+    displayInstructions: true,
+    displayCompare: false
   },
   computed: {
         getResults: function() {
@@ -241,6 +243,14 @@ var app = new Vue({
             }
         }
         this.deletedresults = []
+    },
+    clickInstructions: function() {
+        this.displayInstructions = true;
+        this.displayCompare = false;
+    },
+    clickCompare: function() {
+        this.displayInstructions = false;
+        this.displayCompare = true;
     }
   }
 });

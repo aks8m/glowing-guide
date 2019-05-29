@@ -11,7 +11,7 @@
     <title>C-CDA Comparison Tool</title>
 
     <!-- Required Stylesheets -->
-    <link rel="stylesheet" href="appNew7.css"/>
+    <link rel="stylesheet" href="app.css"/>
 
     <!-- Required scripts -->
     <script src="https://unpkg.com/vue"></script>
@@ -43,233 +43,113 @@
 </script>
 
 <div id="app" class="container text-center">
-    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
         <a class="navbar-brand" href="#">C-CDA Comparison Tool</a>
-        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-            <span class="navbar-toggler-icon"></span>
-        </button>
-        <div class="collapse navbar-collapse" id="navbarSupportedContent">
-            <ul class="navbar-nav mr-auto">
-                <li class="nav-item active">
-                    <a class="nav-link" id="headingOne" href="#collapseOne" role="button" data-toggle="collapse" aria-expanded="true" aria-controls="collapseOne">Instructions</a>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav">
+                <li class="nav-item">
+                    <a class="nav-link" href="#" v-on:click="clickInstructions()">Instructions</a>
                 </li>
-                <li class="nav-item active">
-                    <a class="nav-link" id="headingTwo" href="#collapseTwo" role="button" data-toggle="collapse" aria-expanded="false" aria-controls="collapseTwo">Compare</a>
+                <li class="nav-item">
+                    <a class="nav-link" href="#" v-on:click="clickCompare()">Compare</a>
                 </li>
             </ul>
         </div>
     </nav>
 
-    <div id="accordionExample">
-        <div id="collapseOne" class="collapse show" aria-labelledby="headingOne" data-parent="#accordionExample">
-            <h1>Welcome to the C-CDA Comparison tool!!</h1>
-            <p>To get started select your source (EHX) and target (HS) documents.</p>
+    <div v-if="displayInstructions">
+        <h1>Welcome to the C-CDA Comparison tool!!</h1>
+        <p>To get started select your source (EHX) and target (HS) documents.</p>
 
-            <p>1. Load source document from your local file explorer, by clicking on "Select Document" or "Browse"</p>
-            <p>2. Load target document from your local file explorer, by clicking on "Select Document" or "Browse"</p>
-            <p>3. Once the documents have been loaded, the "Compare Documents" button should become enabled.
-            <p>4. Click the "Compare Documents" button to compare the source and target documents</p>
-            <p>5. Address each result, by removing the result with the "X" button or flagging it as a defect with the "!" button. </p>
-            <p/>
-            <strong>Results are categorized into 3 categories:</strong>
-            <p>1. Value Mistmatch: the value of the XML tags is mismatched</p>
-            <p>2. Section Mistmatch: no parent xml tag exists in the target document that has the same attribtues and values as the specified source tag</p>
-            <p>3. Attribute Mistmatch: the attribute of the XML tag is mismatched</p>
-        </div>
-
-        <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionExample">
-            <div class="row">
-                <div class="col-md-auto">
-                    <compare-button></compare-button>
-                </div>
-                <div class="col">
-                    <file-input path='/api/analysis/readSource' name="sourceTree"></file-input>
-                </div>
-                <div class="col">
-                    <file-input path='/api/analysis/readTarget' name="targetTree"></file-input>
-                </div>
-
-            </div>
-
-            <hr/>
-
-            <div class="row text-left">
-                <div class="col right">
-                    <h4>Source Tree:</h4>
-                    <ul>
-                        <tree-item class="item" :item="sourceTreeData"></tree-item>
-                    </ul>
-                </div>
-                <div class="col">
-                    <h4>Target Tree:</h4>
-                    <ul>
-                        <tree-item class="item" :item="targetTreeData"></tree-item>
-                    </ul>
-                </div>
-            </div>
-
-            <!--<hr/>-->
-            <hr style="width: 100%; color: black; height: 1px; background-color:black;"/>
-
-            <div class="row text-left">
-                <div class="col">
-                    <h4>Comparison Results:</h4>
-                </div>
-                <div id="main">
-                    <b-form-input type="text" v-model="search" placeholder="Filter Results..."></b-form-input>
-                    <!--Filter: <input type="text" v-model="search"/>-->
-                </div>
-                <div class="col-md-auto">
-                    <button type="button" class="btn btn-secondary btn-sm" v-on:click="addDeleted()">Add {{ deletedresults.length }} Deleted Results back to Result List</button>
-                </div>
-                <div class="col-md-auto">
-                    <button type="button" class="btn btn-secondary btn-sm" v-b-modal.modal-2>Display {{ defectresults.length }} Flagged Defects</button>
-
-                    <b-modal id="modal-2" title="Defects" ok-only>
-                        <ol class="list-group">
-                            <li type="button" class="list-group-item list-group-item-action" v-for="(result, index) in defectresults":key="index">{{result.output}}</li>
-                        </ol>
-                    </b-modal>
-
-                </div>
-            </div>
-            <div class="row">
-                <div class="form-check form-check-inline"><input id="checkBoxFilterAll" type="checkbox" class="form-check-input":checked="true" v-model="selectAll"><label for="checkBoxFilterAll" class="form-check-label">All Mismatches  <span class="badge badge-light"> {{ results.length }}</span></label></div>
-                <div class="form-check form-check-inline"><input id="checkBoxFilterValue" type="checkbox" class="form-check-input" v-model="value"/><label for="checkBoxFilterValue" class="form-check-label">Value Mismatches  <span class="badge badge-light"> {{ valueresults.length }}</span></label></div>
-                <div class="form-check form-check-inline"><input id="checkBoxFilterAttribute" type="checkbox" class="form-check-input" v-model="attribute"/><label for="checkBoxFilterAttribute" class="form-check-label">Attribute Mismatches  <span class="badge badge-light"> {{ attributeresults.length }}</span></label></div>
-                <div class="form-check form-check-inline"><input id="checkBoxFilterSection" type="checkbox" class="form-check-input" v-model="section"/><label for="checkBoxFilterSection" class="form-check-label">Section Mismatches  <span class="badge badge-light"> {{ sectionresults.length }}</span></label></div>
-            </div>
-            <hr/>
-            <div class="row" style="padding-top:10px">
-                <div class="col">
-                    <ul class="list-group">
-                        <result-list v-for="result in getFilteredResults":key="result.sourceid":output="result.output":sourceid="result.sourceid":targetid="result.targetid":type="result.resultType":class="{resultbackground: this.resultStyle}"></result-list>
-                    </ul>
-                </div>
-            </div>
-        </div>
-
+        <p>1. Load source document from your local file explorer, by clicking on "Select Document" or "Browse"</p>
+        <p>2. Load target document from your local file explorer, by clicking on "Select Document" or "Browse"</p>
+        <p>3. Once the documents have been loaded, the "Compare Documents" button should become enabled.
+        <p>4. Click the "Compare Documents" button to compare the source and target documents</p>
+        <p>5. Address each result, by removing the result with the "X" button or flagging it as a defect with the "!" button. </p>
+        <p/>
+        <strong>Results are categorized into 3 categories:</strong>
+        <p>1. Value Mistmatch: the value of the XML tags is mismatched</p>
+        <p>2. Section Mistmatch: no parent xml tag exists in the target document that has the same attribtues and values as the specified source tag</p>
+        <p>3. Attribute Mistmatch: the attribute of the XML tag is mismatched</p>
     </div>
-    <!--<nav class="navbar navbar-expand-lg navbar-light bg-light mb-4">-->
-        <!--<a class="navbar-brand" href="#">C-CDA Comparison Tool</a>-->
-        <!--<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">-->
-            <!--<span class="navbar-toggler-icon"></span>-->
-        <!--</button>-->
-        <!--<div class="collapse navbar-collapse" id="navbarSupportedContent">-->
-            <!--<ul class="navbar-nav mr-auto">-->
-                <!--<li class="nav-item active">-->
-                    <!--<a class="nav-link" id="headingInstructions" href="#instructions" role="button" data-toggle="collapse" aria-expanded="true" aria-controls="instructions">Table 1</a>-->
-                <!--</li>-->
-                <!--<li class="nav-item active">-->
-                    <!--<a class="nav-link" id="headingCompare" href="#compare" role="button" data-toggle="collapse" aria-expanded="false" aria-controls="compare">Table 2</a>-->
-                <!--</li>-->
-            <!--</ul>-->
-        <!--</div>-->
-    <!--</nav>-->
-    <!--&lt;!&ndash;<ul class="nav nav-tabs">&ndash;&gt;-->
-        <!--&lt;!&ndash;<li class="active"><a data-toggle="tab" href="#instructions">Instructions</a></li>&ndash;&gt;-->
-        <!--&lt;!&ndash;<li><a data-toggle="tab" href="#compare">Compare</a></li>&ndash;&gt;-->
-    <!--&lt;!&ndash;</ul>&ndash;&gt;-->
-    <!--&lt;!&ndash;<div class="tab-content">&ndash;&gt;-->
-    <!--&lt;!&ndash;<div class="tab-pane fade in active" id="instructions">&ndash;&gt;-->
-    <!--<div id="siteMenu">-->
-    <!--<div id="instruction" class="collapse show" aria-labelledby="headingInstruction" data-parent="#siteMenu">-->
-        <!--<h1>Welcome to the C-CDA Comparison tool!!</h1>-->
-        <!--<p>To get started select your source (EHX) and target (HS) documents.</p>-->
 
-            <!--<p>1. Load source document from your local file explorer, by clicking on "Select Document" or "Browse"</p>-->
-            <!--<p>2. Load target document from your local file explorer, by clicking on "Select Document" or "Browse"</p>-->
-            <!--<p>3. Once the documents have been loaded, the "Compare Documents" button should become enabled.-->
-            <!--<p>4. Click the "Compare Documents" button to compare the source and target documents</p>-->
-            <!--<p>5. Address each result, by removing the result with the "X" button or flagging it as a defect with the "!" button. </p>-->
-            <!--<p/>-->
-            <!--<strong>Results are categorized into 3 categories:</strong>-->
-            <!--<p>1. Value Mistmatch: the value of the XML tags is mismatched</p>-->
-            <!--<p>2. Section Mistmatch: no parent xml tag exists in the target document that has the same attribtues and values as the specified source tag</p>-->
-            <!--<p>3. Attribute Mistmatch: the attribute of the XML tag is mismatched</p>-->
-    <!--</div>-->
+    <div v-if="displayCompare">
+        <div class="row">
+            <div class="col-md-auto">
+                <compare-button></compare-button>
+            </div>
+            <div class="col">
+                <file-input path='/api/analysis/readSource' name="sourceTree"></file-input>
+            </div>
+            <div class="col">
+                <file-input path='/api/analysis/readTarget' name="targetTree"></file-input>
+            </div>
 
-    <!--&lt;!&ndash;<hr style="width: 100%; color: black; height: 1px; background-color:black;"/>&ndash;&gt;-->
+        </div>
 
-    <!--&lt;!&ndash;<div class="tab-pane fade" id="compare">&ndash;&gt;-->
-    <!--<div id="compare" class="collapse" aria-labelledby="headingCompare" data-parent="#siteMenu">-->
+        <hr/>
 
-        <!--<div class="row">-->
-            <!--<div class="col-md-auto">-->
-                <!--<compare-button></compare-button>-->
-            <!--</div>-->
-            <!--<div class="col">-->
-                <!--<file-input path='/api/analysis/readSource' name="sourceTree"></file-input>-->
-            <!--</div>-->
-            <!--<div class="col">-->
-                <!--<file-input path='/api/analysis/readTarget' name="targetTree"></file-input>-->
-            <!--</div>-->
-
-        <!--</div>-->
+        <div class="row text-left">
+            <div class="col right">
+                <h4>Source Tree:</h4>
+                <ul>
+                    <tree-item class="item" :item="sourceTreeData"></tree-item>
+                </ul>
+            </div>
+            <div class="col">
+                <h4>Target Tree:</h4>
+                <ul>
+                    <tree-item class="item" :item="targetTreeData"></tree-item>
+                </ul>
+            </div>
+        </div>
 
         <!--<hr/>-->
+        <hr style="width: 100%; color: black; height: 1px; background-color:black;"/>
 
-        <!--<div class="row text-left">-->
-            <!--<div class="col right">-->
-                <!--<h4>Source Tree:</h4>-->
-                <!--<ul>-->
-                    <!--<tree-item class="item" :item="sourceTreeData"></tree-item>-->
-                <!--</ul>-->
-            <!--</div>-->
-            <!--<div class="col">-->
-                <!--<h4>Target Tree:</h4>-->
-                <!--<ul>-->
-                    <!--<tree-item class="item" :item="targetTreeData"></tree-item>-->
-                <!--</ul>-->
-            <!--</div>-->
-        <!--</div>-->
+        <div class="row text-left">
+            <div class="col">
+                <h4>Comparison Results:</h4>
+            </div>
+            <div id="main">
+                <b-form-input type="text" v-model="search" placeholder="Filter Results..."></b-form-input>
+                <!--Filter: <input type="text" v-model="search"/>-->
+            </div>
+            <div class="col-md-auto">
+                <button type="button" class="btn btn-secondary btn-sm" v-on:click="addDeleted()">Add {{ deletedresults.length }} Deleted Results back to Result List</button>
+            </div>
+            <div class="col-md-auto">
+                <button type="button" class="btn btn-secondary btn-sm" v-b-modal.modal-2>Display {{ defectresults.length }} Flagged Defects</button>
 
-        <!--&lt;!&ndash;<hr/>&ndash;&gt;-->
-        <!--<hr style="width: 100%; color: black; height: 1px; background-color:black;"/>-->
+                <b-modal id="modal-2" title="Defects" ok-only>
+                    <ol class="list-group">
+                        <li type="button" class="list-group-item list-group-item-action" v-for="(result, index) in defectresults":key="index">{{result.output}}</li>
+                    </ol>
+                </b-modal>
 
-        <!--<div class="row text-left">-->
-            <!--<div class="col">-->
-                <!--<h4>Comparison Results:</h4>-->
-            <!--</div>-->
-            <!--<div id="main">-->
-                <!--<b-form-input type="text" v-model="search" placeholder="Filter Results..."></b-form-input>-->
-                <!--&lt;!&ndash;Filter: <input type="text" v-model="search"/>&ndash;&gt;-->
-            <!--</div>-->
-            <!--<div class="col-md-auto">-->
-                <!--<button type="button" class="btn btn-secondary btn-sm" v-on:click="addDeleted()">Add {{ deletedresults.length }} Deleted Results back to Result List</button>-->
-            <!--</div>-->
-            <!--<div class="col-md-auto">-->
-                <!--<button type="button" class="btn btn-secondary btn-sm" v-b-modal.modal-2>Display {{ defectresults.length }} Flagged Defects</button>-->
+            </div>
+        </div>
+        <div class="row">
+            <div class="form-check form-check-inline"><input id="checkBoxFilterAll" type="checkbox" class="form-check-input":checked="true" v-model="selectAll"><label for="checkBoxFilterAll" class="form-check-label">All Mismatches  <span class="badge badge-light"> {{ results.length }}</span></label></div>
+            <div class="form-check form-check-inline"><input id="checkBoxFilterValue" type="checkbox" class="form-check-input" v-model="value"/><label for="checkBoxFilterValue" class="form-check-label">Value Mismatches  <span class="badge badge-light"> {{ valueresults.length }}</span></label></div>
+            <div class="form-check form-check-inline"><input id="checkBoxFilterAttribute" type="checkbox" class="form-check-input" v-model="attribute"/><label for="checkBoxFilterAttribute" class="form-check-label">Attribute Mismatches  <span class="badge badge-light"> {{ attributeresults.length }}</span></label></div>
+            <div class="form-check form-check-inline"><input id="checkBoxFilterSection" type="checkbox" class="form-check-input" v-model="section"/><label for="checkBoxFilterSection" class="form-check-label">Section Mismatches  <span class="badge badge-light"> {{ sectionresults.length }}</span></label></div>
+        </div>
+        <hr/>
+        <div class="row" style="padding-top:10px">
+            <div class="col">
+                <ul class="list-group">
+                    <result-list v-for="result in getFilteredResults":key="result.sourceid":output="result.output":sourceid="result.sourceid":targetid="result.targetid":type="result.resultType":class="{resultbackground: this.resultStyle}"></result-list>
+                </ul>
+            </div>
+        </div>
+    </div>
 
-                <!--<b-modal id="modal-2" title="Defects" ok-only>-->
-                    <!--<ol class="list-group">-->
-                        <!--<li type="button" class="list-group-item list-group-item-action" v-for="(result, index) in defectresults":key="index">{{result.output}}</li>-->
-                    <!--</ol>-->
-                <!--</b-modal>-->
-
-            <!--</div>-->
-        <!--</div>-->
-        <!--<div class="row">-->
-            <!--<div class="form-check form-check-inline"><input id="checkBoxFilterAll" type="checkbox" class="form-check-input":checked="true" v-model="selectAll"><label for="checkBoxFilterAll" class="form-check-label">All Mismatches  <span class="badge badge-light"> {{ results.length }}</span></label></div>-->
-            <!--<div class="form-check form-check-inline"><input id="checkBoxFilterValue" type="checkbox" class="form-check-input" v-model="value"/><label for="checkBoxFilterValue" class="form-check-label">Value Mismatches  <span class="badge badge-light"> {{ valueresults.length }}</span></label></div>-->
-            <!--<div class="form-check form-check-inline"><input id="checkBoxFilterAttribute" type="checkbox" class="form-check-input" v-model="attribute"/><label for="checkBoxFilterAttribute" class="form-check-label">Attribute Mismatches  <span class="badge badge-light"> {{ attributeresults.length }}</span></label></div>-->
-            <!--<div class="form-check form-check-inline"><input id="checkBoxFilterSection" type="checkbox" class="form-check-input" v-model="section"/><label for="checkBoxFilterSection" class="form-check-label">Section Mismatches  <span class="badge badge-light"> {{ sectionresults.length }}</span></label></div>-->
-        <!--</div>-->
-        <!--<hr/>-->
-        <!--<div class="row" style="padding-top:10px">-->
-            <!--<div class="col">-->
-            <!--<ul class="list-group">-->
-                <!--<result-list v-for="result in getFilteredResults":key="result.sourceid":output="result.output":sourceid="result.sourceid":targetid="result.targetid":type="result.resultType":class="{resultbackground: this.resultStyle}"></result-list>-->
-            <!--</ul>-->
-            <!--</div>-->
-        <!--</div>-->
-
-    <!--</div>-->
-    <!--</div>-->
 </div>
 
 
-<script src="appNew10.js"></script>
+<script src="app.js"></script>
 
 </body>
 </html>
