@@ -36,7 +36,7 @@ Vue.component('file-input', {
 });
 
 Vue.component('compare-button', {
-    template: '<button type="button" class="btn btn-success" v-on:click="compareDocuments()" :disabled="!enabledButton">Compare Documents</button>',
+    template: '<button type="button" class="btn btn-success btn-lg btn-block" v-on:click="compareDocuments()" :disabled="!enabledButton">Compare Documents</button>',
     computed: {
         enabledButton() {
             return this.$root.$data.sourceTreeData.name != "Please load the source document" && this.$root.$data.targetTreeData.name != "Please load the target document";
@@ -60,6 +60,42 @@ Vue.component('compare-button', {
                     }
                  })
                 .catch(error => console.log(error));
+        }
+    }
+
+});
+
+Vue.component('section-compare-button', {
+    template: '<button type="button" class="btn btn-success btn-lg btn-block" v-on:click="compareDocuments()" :disabled="!enabledButton"> Compare Sections </button>',
+    computed: {
+        enabledButton() {
+            return this.$root.$data.sourceSectionData.name != "Please select source section" && this.$root.$data.targetSectionData.name != "Please select target section";
+        }
+    },
+    methods: {
+        compareDocuments() {
+            axios({
+                method: 'post',
+                url: '/api/analysis/compareSection',
+                data: {
+                    source: app.sourceSectionData,
+                    target: app.targetSectionData
+                }
+            })
+            .then(response => {
+                app.results = response.data;
+                for (var i=0; i<app.results.length; i++) {
+                    if (app.results[i].resultType == "ATTRIBUTEMISMATCH") {
+                        app.attributeresults.push(app.results[i]);
+                    } else if (app.results[i].resultType == "VALUEMISMATCH") {
+                        app.valueresults.push(app.results[i]);
+                    } else if (app.results[i].resultType == "SECTIONMISMATCH") {
+                        app.sectionresults.push(app.results[i]);
+                    }
+
+                }
+             })
+            .catch(error => console.log(error));
         }
     }
 
@@ -175,6 +211,45 @@ Vue.component('tree-item', {
     }
 });
 
+Vue.component('tree-item-section-selection', {
+    template: '#section-selection',
+    props: {
+        item: Object,
+        source: Boolean
+    },
+      computed: {
+        isFolder: function () {
+          return (this.item.children &&
+            this.item.children.length)
+        },
+        isAttribute: function() {
+          return this.item.attribute
+        },
+        isOpen: function() {
+          return this.item.open
+        },
+        isError: function() {
+          return this.item.error
+        }
+      },
+      methods: {
+        toggle: function () {
+          if (this.isFolder) {
+    //        app.sourceSectionData = this.item
+            this.item.open = !this.item.open
+            this.item.res = !this.item.res
+          }
+        },
+        setSectionData: function(source) {
+            if(source) {
+                app.sourceSectionData = this.item;
+            } else {
+                app.targetSectionData = this.item;
+            }
+        }
+      }
+});
+
 var app = new Vue({
   el: '#app',
   data: {
@@ -192,7 +267,11 @@ var app = new Vue({
     sourceTreeData: {name: "Please load the source document", children: [], attribute: 0},
     targetTreeData: {name: "Please load the target document", children: [], attribute: 0},
     displayInstructions: true,
-    displayCompare: false
+    displayCompare: false,
+    automatic: true,
+    sectionModal: true,
+    sourceSectionData: {name: "Please select source section", children: [], attribute: 0},
+    targetSectionData: {name: "Please select target section", children: [], attribute: 0}
   },
   computed: {
         getResults: function() {
@@ -251,6 +330,16 @@ var app = new Vue({
     clickCompare: function() {
         this.displayInstructions = false;
         this.displayCompare = true;
+    },
+    setAutomatic: function() {
+        this.automatic = true;
+    },
+    setManual: function() {
+        this.automatic = false;
+    },
+    closeEveryNode: function() {
+        closeAllNodes(this.sourceTreeData);
+        closeAllNodes(this.targetTreeData);
     }
   }
 });
