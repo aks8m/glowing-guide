@@ -46,7 +46,6 @@ public class Controller {
 
     @PostMapping(value = "/compareSection")
     private String compareSection(@RequestBody String payload) {
-        System.out.println(payload);
         UnorderedCompareService compareService = new UnorderedCompareService();
         Gson gson = new Gson();
         JsonObject jObject = new JsonParser().parse(payload).getAsJsonObject();

@@ -11,7 +11,7 @@
     <title>C-CDA Comparison Tool</title>
 
     <!-- Required Stylesheets -->
-    <link rel="stylesheet" href="app.css"/>
+    <link rel="stylesheet" href="app1.css"/>
 
     <!-- Required scripts -->
     <script src="https://unpkg.com/vue"></script>
@@ -31,6 +31,7 @@
         <div v-on:click="toggle">
             <span v-bind:class="{ openelement : isOpen, reselement : isError }">{{item.name}} {{ item.value }}</span>
             <span v-if="isFolder">[{{isOpen ? '-' : '+'}}]</span>
+            </button>
         </div>
         <ul v-show="isOpen" v-if="isFolder">
             <tree-item class="item" v-for="child in item.children":key="child.id":item="child"></tree-item>
@@ -40,17 +41,17 @@
 
 <!-- item template -->
 <script type="text/x-template" id="section-selection">
-    <li>
+    <li class="list-group-item list-group-item-action" v-bind:class="{ 'resultbackground' : sectionSelected}">
         <div v-on:click="toggle" class="row">
             <div class="col">
-            <span v-bind:class="{ openelement : isOpen, reselement : isError }">{{item.name}} {{ item.value }}</span>
-            <span v-if="isFolder">[{{isOpen ? '-' : '+'}}]</span>
+                <span>{{item.name}} {{ item.value }}</span>
+                <span v-if="isFolder">[{{isOpen ? '-' : '+'}}]</span>
             </div>
             <div class="col-md-auto">
-            <span v-if="isFolder" v-on:click.stop="setSectionData(source)">[Select]</span>
+                <b-badge v-if="isFolder" class="badge-default float-right m-2" v-on:click.stop="setSectionData(source)">Select Section</b-badge>
             </div>
         </div>
-        <ul v-show="isOpen" v-if="isFolder">
+        <ul v-show="isOpen" v-if="isFolder" class="list-group">
             <tree-item-section-selection class="item" v-for="child in item.children":key="child.id":item="child":source="source"></tree-item-section-selection>
         </ul>
     </li>
@@ -135,7 +136,7 @@
                     <div class="row" style="padding-top:10px" v-if="!automatic">
                         <div class="col-md-2">
 
-                            <b-button id="show-btn" class="btn btn-secondary" @click="$bvModal.show('bv-modal-section-selection')">Select Section</b-button>
+                            <button type="button" id="show-btn" class="btn btn-outline-secondary btn-block" @click="$bvModal.show('bv-modal-section-selection')">Select Sections</button>
 
                             <b-modal id="bv-modal-section-selection" hide-footer size="xl">
                                 <template slot="modal-title">
@@ -143,16 +144,24 @@
                                 </template>
                                 <div class="row">
                                     <div class="col">
-                                        <p>Source: </p>
+                                        <p>Source:</p>
                                         <ul>
                                             <tree-item-section-selection class="item" :item="sourceTreeData":source="true"></tree-item-section-selection>
                                         </ul>
                                     </div>
                                     <div class="col">
-                                        <p>Target: </p>
+                                        <p>Target: {{ targetSectionData.name }}</p>
                                         <ul>
                                             <tree-item-section-selection class="item" :item="targetTreeData":source="false"></tree-item-section-selection>
                                         </ul>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col">
+                                        <p>Selected Section: {{ sourceSectionData.name }}</p>
+                                    </div>
+                                    <div class="col">
+                                        <p>Selected Section: {{ targetSectionData.name}}</p>
                                     </div>
                                 </div>
                                 <b-button class="mt-3" block @click="$bvModal.hide('bv-modal-section-selection'); closeEveryNode()">Close Me</b-button>
@@ -206,42 +215,50 @@
             </div>
             <div id="collapseResults" class="collapse" aria-labelledby="headingResults">
                 <div class="card-body">
-                    <div class="row text-left">
-                        <div class="col">
-                            <h4>Comparison Results:</h4>
-                        </div>
-                        <div id="main">
-                            <b-form-input type="text" v-model="search" placeholder="Filter Results..."></b-form-input>
-                            <!--Filter: <input type="text" v-model="search"/>-->
-                        </div>
-                        <div class="col-md-auto">
-                            <button type="button" class="btn btn-secondary btn-sm" v-on:click="addDeleted()">Add {{ deletedresults.length }} Deleted Results back to Result List</button>
-                        </div>
-                        <div class="col-md-auto">
-                            <button type="button" class="btn btn-secondary btn-sm" v-b-modal.modal-2>Display {{ defectresults.length }} Flagged Defects</button>
-
-                            <b-modal id="modal-2" title="Defects" ok-only>
-                                <ol class="list-group">
-                                    <li type="button" class="list-group-item list-group-item-action" v-for="(result, index) in defectresults":key="index">{{result.output}}</li>
-                                </ol>
-                            </b-modal>
-
-                        </div>
-                    </div>
                     <div class="row">
-                        <div class="form-check form-check-inline"><input id="checkBoxFilterAll" type="checkbox" class="form-check-input":checked="true" v-model="selectAll"><label for="checkBoxFilterAll" class="form-check-label">All Mismatches  <span class="badge badge-light"> {{ results.length }}</span></label></div>
-                        <div class="form-check form-check-inline"><input id="checkBoxFilterValue" type="checkbox" class="form-check-input" v-model="value"/><label for="checkBoxFilterValue" class="form-check-label">Value Mismatches  <span class="badge badge-light"> {{ valueresults.length }}</span></label></div>
-                        <div class="form-check form-check-inline"><input id="checkBoxFilterAttribute" type="checkbox" class="form-check-input" v-model="attribute"/><label for="checkBoxFilterAttribute" class="form-check-label">Attribute Mismatches  <span class="badge badge-light"> {{ attributeresults.length }}</span></label></div>
-                        <div class="form-check form-check-inline"><input id="checkBoxFilterSection" type="checkbox" class="form-check-input" v-model="section"/><label for="checkBoxFilterSection" class="form-check-label">Section Mismatches  <span class="badge badge-light"> {{ sectionresults.length }}</span></label></div>
-                    </div>
-                    <hr/>
-                    <div class="row" style="padding-top:10px">
-                        <div class="col">
+                        <div class="col col-md-2 right">
+                            <div class="row" style="padding-top:10px; padding-bottom:10px">
+                                <div id="main">
+                                    <b-form-input type="text" v-model="search" placeholder="Filter Results..."></b-form-input>
+                                </div>
+                            </div>
+
+                            <div class="form-check form-check"><input id="checkBoxFilterAll" type="checkbox" class="form-check-input":checked="true" v-model="selectAll"><label for="checkBoxFilterAll" class="form-check-label">All Mismatches  <span class="badge badge-light"> {{ results.length }}</span></label></div>
+                            <div class="form-check form-check"><input id="checkBoxFilterValue" type="checkbox" class="form-check-input" v-model="value"/><label for="checkBoxFilterValue" class="form-check-label">Value Mismatches  <span class="badge badge-light"> {{ valueresults.length }}</span></label></div>
+                            <div class="form-check form-check"><input id="checkBoxFilterAttribute" type="checkbox" class="form-check-input" v-model="attribute"/><label for="checkBoxFilterAttribute" class="form-check-label">Attribute Mismatches  <span class="badge badge-light"> {{ attributeresults.length }}</span></label></div>
+                            <div class="form-check form-check"><input id="checkBoxFilterSection" type="checkbox" class="form-check-input" v-model="section"/><label for="checkBoxFilterSection" class="form-check-label">Section Mismatches  <span class="badge badge-light"> {{ sectionresults.length }}</span></label></div>
+
+
+                        </div>
+                        <div class="col" style="padding-top:10px">
+                            <div class="row">
+                                <div class="col">
+                                    <h4>Results List:</h4>
+                                </div>
+                                <div class="col-md-auto">
+                                    <button type="button" class="btn btn-secondary btn-sm" v-on:click="addDeleted()">Add {{ deletedresults.length }} Deleted Results back to Result List</button>
+                                </div>
+                                <div class="col-md-auto">
+                                    <button type="button" class="btn btn-secondary btn-sm" v-b-modal.modal-2>Display {{ defectresults.length }} Flagged Defects</button>
+
+                                    <b-modal id="modal-2" title="Defects" ok-only>
+                                        <ol class="list-group">
+                                            <li type="button" class="list-group-item list-group-item-action" v-for="(result, index) in defectresults":key="index">{{result.output}}</li>
+                                        </ol>
+                                    </b-modal>
+
+                                </div>
+                            </div>
                             <ul class="list-group">
                                 <result-list v-for="result in getFilteredResults":key="result.sourceid":output="result.output":sourceid="result.sourceid":targetid="result.targetid":type="result.resultType":class="{resultbackground: this.resultStyle}"></result-list>
                             </ul>
                         </div>
+
                     </div>
+
+
+
+                </div>
                 </div>
             </div>
         </div>
@@ -250,7 +267,7 @@
 </div>
 
 
-<script src="app4.js"></script>
+<script src="app5.js"></script>
 
 </body>
 </html>

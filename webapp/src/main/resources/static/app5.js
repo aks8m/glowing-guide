@@ -230,12 +230,14 @@ Vue.component('tree-item-section-selection', {
         },
         isError: function() {
           return this.item.error
+        },
+        sectionSelected: function() {
+            return this.item.id == app.sourceSectionData.id || this.item.id == app.targetSectionData.id;
         }
       },
       methods: {
         toggle: function () {
           if (this.isFolder) {
-    //        app.sourceSectionData = this.item
             this.item.open = !this.item.open
             this.item.res = !this.item.res
           }
@@ -253,7 +255,6 @@ Vue.component('tree-item-section-selection', {
 var app = new Vue({
   el: '#app',
   data: {
-    message: 'Hello Vue.js!',
     value: true,
     section: true,
     attribute: true,
@@ -307,7 +308,7 @@ var app = new Vue({
                     this.attribute = false;
                 }
             }
-        }
+        },
   },
   methods: {
     addDeleted: function() {
