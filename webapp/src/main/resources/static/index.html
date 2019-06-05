@@ -11,7 +11,7 @@
     <title>C-CDA Comparison Tool</title>
 
     <!-- Required Stylesheets -->
-    <link rel="stylesheet" href="app1.css"/>
+    <link rel="stylesheet" href="app2.css"/>
 
     <!-- Required scripts -->
     <script src="https://unpkg.com/vue"></script>
@@ -136,35 +136,34 @@
                     <div class="row" style="padding-top:10px" v-if="!automatic">
                         <div class="col-md-2">
 
-                            <button type="button" id="show-btn" class="btn btn-outline-secondary btn-block" @click="$bvModal.show('bv-modal-section-selection')">Select Sections</button>
+                            <button type="button" id="show-btn" class="btn btn-outline-secondary btn-block" @click="$bvModal.show('bv-modal-section-selection'); closeEveryNode()">Select Sections</button>
 
-                            <b-modal id="bv-modal-section-selection" hide-footer size="xl">
-                                <template slot="modal-title">
-                                    Section Selection
-                                </template>
+                            <b-modal id="bv-modal-section-selection" hide-footer hide-header size="xl">
+                                <div class="row" style="padding-left:5px;">
+                                    <h3>Section Selection</h3>
+                                </div>
+                                <hr/>
                                 <div class="row">
-                                    <div class="col">
+                                    <div class="col right">
                                         <p>Source:</p>
                                         <ul>
                                             <tree-item-section-selection class="item" :item="sourceTreeData":source="true"></tree-item-section-selection>
                                         </ul>
+                                        <div class="col">
+                                            <p>Selected Section: {{ sourceSectionData.name }}</p>
+                                        </div>
                                     </div>
                                     <div class="col">
-                                        <p>Target: {{ targetSectionData.name }}</p>
+                                        <p>Target:</p>
                                         <ul>
                                             <tree-item-section-selection class="item" :item="targetTreeData":source="false"></tree-item-section-selection>
                                         </ul>
+                                        <div class="col">
+                                            <p>Selected Section: {{ targetSectionData.name}}</p>
+                                        </div>
                                     </div>
                                 </div>
-                                <div class="row">
-                                    <div class="col">
-                                        <p>Selected Section: {{ sourceSectionData.name }}</p>
-                                    </div>
-                                    <div class="col">
-                                        <p>Selected Section: {{ targetSectionData.name}}</p>
-                                    </div>
-                                </div>
-                                <b-button class="mt-3" block @click="$bvModal.hide('bv-modal-section-selection'); closeEveryNode()">Close Me</b-button>
+                                <b-button class="mt-3" block @click="$bvModal.hide('bv-modal-section-selection'); closeEveryNode()">Close</b-button>
                             </b-modal>
 
                         </div>
