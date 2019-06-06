@@ -207,8 +207,36 @@ Vue.component('tree-item', {
         this.item.open = !this.item.open
         this.item.res = !this.item.res
       }
+    },
+    isAChild: function(node) {
+        if (node.attribute == 0) {
+            return true;
+        } else {
+            return false;
+        }
+    },
+    isAnAtt: function(node) {
+        if (node.attribute == 1) {
+            return true;
+        } else {
+            return false;
+        }
+    },
+    tipMethod() {
+        if (this.item)
+        var ret = '<strong>Attributes:</strong><ul>';
+        var list = this.item.children.filter(this.isAnAtt);
+        if (list.length > 0) {
+            for (var i=0; i<list.length;i++) {
+                var add = "<li>" + list[i].name + " " + list[i].value + "</li>"
+                ret += add
+            }
+            return ret + "</ul>";
+        } else {
+            return null;
+        }
     }
-    }
+  }
 });
 
 Vue.component('tree-item-section-selection', {
