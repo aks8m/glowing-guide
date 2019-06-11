@@ -77,11 +77,11 @@ public class UnorderedCompareService {
 
                             this.resultList.addAll(compareNodeAttributes(sourceNode,targetNode));
 
-                            sourceQueue.addAll(getChilds(sourceNode));
-                            targetQueue.addAll(getChilds(targetNode));
+                            sourceQueue.addAll(sourceNode.getChildren());
+                            targetQueue.addAll(targetNode.getChildren());
                         }
                     } else {
-                        this.resultList.add(new Result("ATTRIBUTE MISMATCH: Source attribute " + sourceNode.getName() + " in " + sourceNode.getValue(), ResultType.ATTRIBUTEMISMATCH, sourceNode.getId(), targetNodes.stream().map(node -> node.getId()).collect(Collectors.toList())));
+                        this.resultList.add(new Result("SECTION MISMATCH: Source Node " + sourceNode.getName() + " had value or attribute errors", ResultType.SECTIONMATCHNOTFOUND, sourceNode.getId(), targetNodes.stream().map(node -> node.getId()).collect(Collectors.toList())));
                     }
 
                 } catch (Exception e) {
@@ -111,7 +111,7 @@ public class UnorderedCompareService {
             return retList;
         } else {
             for (NodePOJO sibling : targetSiblings) {
-                if (Objects.equals(sourceNode.getValue(),sibling.getValue()) && compareNodeValues(sourceNode,sibling).size() == 0 && compareNodeAttributes(sourceNode,sibling).size() ==0) {
+                if (compareNodeValues(sourceNode,sibling).size() == 0 && compareNodeAttributes(sourceNode,sibling).size() ==0) {
                     retList.add(sibling);
                     return retList;
                 }
@@ -133,10 +133,11 @@ public class UnorderedCompareService {
         return retList;
     }
 
+
     private List<Result> compareNodeAttributes(NodePOJO sourceNode, NodePOJO targetNode) {
         List<Result> retList = new ArrayList<>();
-        for (NodePOJO attribute : getAttributes(sourceNode)) {
-            List<NodePOJO> targetMatches = getTargetAttributeMatches(attribute.getName(), targetNode);
+        for (NodePOJO attribute : sourceNode.getAttributes()) {
+            List<NodePOJO> targetMatches = targetNode.getAttributes().stream().filter(att -> att.getName().equals(attribute.getName())).collect(Collectors.toList());
 
             boolean matched = false;
 
@@ -149,9 +150,9 @@ public class UnorderedCompareService {
 
             if (!matched) {
                 if (targetMatches.size() == 1) {
-                    retList.add(new Result("ATTRIBUTE MISMATCH: Source attribute " + attribute.getName() + " " + attribute.getValue() + " VS " + targetMatches.get(0).getValue(), ResultType.ATTRIBUTEMISMATCH, attribute.getId(), targetMatches.get(0).getId()));
+                    retList.add(new Result("ATTRIBUTE MISMATCH: Source attribute " + attribute.getName() + " " + attribute.getValue() + " VS " + targetMatches.get(0).getValue(), ResultType.ATTRIBUTEMISMATCH, attribute.getParent().getId(), targetMatches.get(0).getParent().getId()));
                 } else {
-                    retList.add(new Result("ATTRIBUTE MISMATCH: Source attribute " + attribute.getName() + " in " + sourceNode.getValue(), ResultType.ATTRIBUTEMISMATCH, attribute.getId()));
+                    retList.add(new Result("ATTRIBUTE MISMATCH: Source attribute " + attribute.getName() + " in " + sourceNode.getValue(), ResultType.ATTRIBUTEMISMATCH, attribute.getParent().getId()));
                 }
             }
 
@@ -160,23 +161,24 @@ public class UnorderedCompareService {
 
     }
 
-    private List<NodePOJO> getTargetAttributeMatches(String name, NodePOJO targetNode) {
-        List<NodePOJO> targetAttributeMatches = new ArrayList<>();
 
-        for (NodePOJO nodePOJO : getAttributes(targetNode)) {
-            if (nodePOJO.getName().equals(name)) {
-                targetAttributeMatches.add(nodePOJO);
-            }
-        }
 
-        return targetAttributeMatches;
-    }
+//    private List<NodePOJO> getTargetAttributeMatches(String name, NodePOJO targetNode) {
+//        List<NodePOJO> targetAttributeMatches = new ArrayList<>();
+//
+//        for (NodePOJO nodePOJO : getAttributes(targetNode)) {
+//            if (nodePOJO.getName().equals(name)) {
+//                targetAttributeMatches.add(nodePOJO);
+//            }
+//        }
+//
+//        return targetAttributeMatches;
+//    }
 
-    private List<NodePOJO> getAttributes(NodePOJO node) {
-        return node.getChildren().stream().filter(n -> n.getAttribute() == 1).collect(Collectors.toList());
-    }
-
-    private List<NodePOJO> getChilds(NodePOJO node) {
-        return node.getChildren().stream().filter(n -> n.getAttribute() == 0).collect(Collectors.toList());
-    }
+//    private List<NodePOJO> getAttributes(NodePOJO node) {
+//        return node.getChildren().stream().filter(n -> n.getAttribute() == 1).collect(Collectors.toList());
+//    }
+//    private List<NodePOJO> getChilds(NodePOJO node) {
+//        return node.getChildren().stream().filter(n -> n.getAttribute() == 0).collect(Collectors.toList());
+//    }
 }

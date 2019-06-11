@@ -35,17 +35,8 @@ public class Controller {
         return this.analysisService.getTargetJSON(new String(contents.getBytes()));
     }
 
-    @GetMapping(value = "/compare")
-    private String compareDocuments() {
-        UnorderedCompareService compareService = new UnorderedCompareService();
-        Gson gson = new Gson();
-        compareService.setSourceNode(this.analysisService.getSourceDocumentNode());
-        compareService.setTargetNode(this.analysisService.getTargetDocumentNode());
-        return gson.toJson(compareService.compare());
-    }
-
-    @PostMapping(value = "/compareSection")
-    private String compareSection(@RequestBody String payload) {
+    @PostMapping(value = "/compare")
+    private String compare(@RequestBody String payload) {
         UnorderedCompareService compareService = new UnorderedCompareService();
         Gson gson = new Gson();
         JsonObject jObject = new JsonParser().parse(payload).getAsJsonObject();

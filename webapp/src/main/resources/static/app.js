@@ -22,8 +22,10 @@ Vue.component('file-input', {
                   .then(response => {
                     if (vm.name == 'sourceTree') {
                         app.sourceTreeData = response.data;
+                        app.sourceSectionData = response.data;
                     } else {
                         app.targetTreeData = response.data;
+                        app.targetSectionData = response.data;
                     }
                     })
                   .catch(function () {
@@ -35,48 +37,37 @@ Vue.component('file-input', {
 
 });
 
-Vue.component('compare-button', {
-    template: '<button type="button" class="btn btn-success btn-lg btn-block" v-on:click="compareDocuments()" :disabled="!enabledButton">Compare Documents</button>',
-    computed: {
-        enabledButton() {
-            return this.$root.$data.sourceTreeData.name != "Please load the source document" && this.$root.$data.targetTreeData.name != "Please load the target document";
-        }
-    },
-    methods: {
-        compareDocuments() {
-            axios
-                .get('/api/analysis/compare')
-                .then(response => {
-                    app.results = response.data;
-                    for (var i=0; i<app.results.length; i++) {
-                        if (app.results[i].resultType == "ATTRIBUTEMISMATCH") {
-                            app.attributeresults.push(app.results[i]);
-                        } else if (app.results[i].resultType == "VALUEMISMATCH") {
-                            app.valueresults.push(app.results[i]);
-                        } else if (app.results[i].resultType == "SECTIONMISMATCH") {
-                            app.sectionresults.push(app.results[i]);
-                        }
-
-                    }
-                 })
-                .catch(error => console.log(error));
-        }
-    }
-
-});
-
 Vue.component('section-compare-button', {
-    template: '<button type="button" class="btn btn-success btn-lg btn-block" v-on:click="compareDocuments()" :disabled="!enabledButton"> Compare Sections </button>',
+    template: '<button type="button" class="btn btn-success btn-lg btn-block" v-on:click="compareDocuments(); clickInstructions()" :disabled="!enabledButton"> Compare </button>',
     computed: {
         enabledButton() {
-            return this.$root.$data.sourceSectionData.name != "Please select source section" && this.$root.$data.targetSectionData.name != "Please select target section";
+            return true;
         }
     },
     methods: {
         compareDocuments() {
+            this.reset();
+            closeAllNodes(app.sourceTreeData);
+            closeAllNodes(app.targetTreeData);
+
+            var objectSourceList = [];
+            getParentNodes(objectSourceList, app.sourceTreeData, app.sourceSectionData.id);
+            closeAllNodes(app.sourceTreeData);
+            openNodes(objectSourceList);
+            objectSourceList[objectSourceList.length-1].error=false;
+
+
+            var objectTargetList = [];
+            getParentNodes(objectTargetList, app.targetTreeData, app.targetSectionData.id);
+            closeAllNodes(app.targetTreeData);
+            openNodes(objectTargetList);
+            objectTargetList[objectTargetList.length-1].error=false;
+
+
+
             axios({
                 method: 'post',
-                url: '/api/analysis/compareSection',
+                url: '/api/analysis/compare',
                 data: {
                     source: app.sourceSectionData,
                     target: app.targetSectionData
@@ -89,13 +80,23 @@ Vue.component('section-compare-button', {
                         app.attributeresults.push(app.results[i]);
                     } else if (app.results[i].resultType == "VALUEMISMATCH") {
                         app.valueresults.push(app.results[i]);
-                    } else if (app.results[i].resultType == "SECTIONMISMATCH") {
+                    } else if (app.results[i].resultType == "SECTIONMATCHNOTFOUND") {
                         app.sectionresults.push(app.results[i]);
                     }
 
                 }
              })
             .catch(error => console.log(error));
+        },
+        clickInstructions() {
+            app.displayCompare = true;
+            app.displayInstructions = false;
+        },
+        reset() {
+            app.results = []
+            app.valueresults = []
+            app.sectionresults = []
+            app.attributeresults = []
         }
     }
 
@@ -141,7 +142,7 @@ Vue.component('result-list', {
 
         if (this.type == "VALUEMISMATCH") {
             arr = app.valueresults;
-        } else if (this.type == "SECTIONMISMATCH") {
+        } else if (this.type == "SECTIONMATCHNOTFOUND") {
             arr = app.sectionresults;
         } else if (this.type == "ATTRIBUTEMISMATCH") {
             arr = app.attributeresults;
@@ -184,21 +185,43 @@ Vue.component('result-list', {
 Vue.component('tree-item', {
   template: '#item-template',
   props: {
-    item: Object
+    item: Object,
+    name: String
   },
+//  data: function() {
+//    return {
+//        checked: false
+//    }
+//  },
   computed: {
     isFolder: function () {
       return (this.item.children &&
         this.item.children.length)
     },
     isAttribute: function() {
-      return this.item.attribute
+      return (this.item.attribute && this.item.attribute.length)
     },
     isOpen: function() {
       return this.item.open
     },
     isError: function() {
       return this.item.error
+    },
+    checked: {
+        get: function(value) {
+            if (this.name == "sourceTree") {
+                return app.sourceSectionData.id == this.item.id
+            } else {
+                return app.targetSectionData.id == this.item.id
+            }
+        },
+        set: function(value) {
+            if (this.name == "sourceTree"){
+                app.sourceSectionData = this.item
+            } else {
+                app.targetSectionData = this.item
+            }
+        }
     }
   },
   methods: {
@@ -211,46 +234,46 @@ Vue.component('tree-item', {
     }
 });
 
-Vue.component('tree-item-section-selection', {
-    template: '#section-selection',
-    props: {
-        item: Object,
-        source: Boolean
-    },
-      computed: {
-        isFolder: function () {
-          return (this.item.children &&
-            this.item.children.length)
-        },
-        isAttribute: function() {
-          return this.item.attribute
-        },
-        isOpen: function() {
-          return this.item.open
-        },
-        isError: function() {
-          return this.item.error
-        },
-        sectionSelected: function() {
-            return this.item.id == app.sourceSectionData.id || this.item.id == app.targetSectionData.id;
-        }
-      },
-      methods: {
-        toggle: function () {
-          if (this.isFolder) {
-            this.item.open = !this.item.open
-            this.item.res = !this.item.res
-          }
-        },
-        setSectionData: function(source) {
-            if(source) {
-                app.sourceSectionData = this.item;
-            } else {
-                app.targetSectionData = this.item;
-            }
-        }
-      }
-});
+//Vue.component('tree-item-section-selection', {
+//    template: '#section-selection',
+//    props: {
+//        item: Object,
+//        source: Boolean
+//    },
+//      computed: {
+//        isFolder: function () {
+//          return (this.item.children &&
+//            this.item.children.length)
+//        },
+//        isAttribute: function() {
+//          return this.item.attribute
+//        },
+//        isOpen: function() {
+//          return this.item.open
+//        },
+//        isError: function() {
+//          return this.item.error
+//        },
+//        sectionSelected: function() {
+//            return this.item.id == app.sourceSectionData.id || this.item.id == app.targetSectionData.id;
+//        }
+//      },
+//      methods: {
+//        toggle: function () {
+//          if (this.isFolder) {
+//            this.item.open = !this.item.open
+//            this.item.res = !this.item.res
+//          }
+//        },
+//        setSectionData: function(source) {
+//            if(source) {
+//                app.sourceSectionData = this.item;
+//            } else {
+//                app.targetSectionData = this.item;
+//            }
+//        }
+//      }
+//});
 
 var app = new Vue({
   el: '#app',
@@ -272,7 +295,7 @@ var app = new Vue({
     automatic: true,
     sectionModal: true,
     sourceSectionData: {name: "Please select source section", children: [], attribute: 0},
-    targetSectionData: {name: "Please select target section", children: [], attribute: 0}
+    targetSectionData: {name: "Please select target section", children: [], attribute: 0},
   },
   computed: {
         getResults: function() {
@@ -316,7 +339,7 @@ var app = new Vue({
             this.results.push(this.deletedresults[i]);
             if (this.deletedresults[i].resultType == "VALUEMISMATCH") {
                 this.valueresults.push(this.deletedresults[i]);
-            } else if (this.deletedresults[i].resultType == "SECTIONMISMATCH") {
+            } else if (this.deletedresults[i].resultType == "SECTIONMATCHNOTFOUND") {
                 this.sectionresults.push(this.deletedresults[i]);
             } else if (this.deletedresults[i].resultType == "ATTRIBUTEMISMATCH") {
                 this.attributeresults.push(this.deletedresults[i]);

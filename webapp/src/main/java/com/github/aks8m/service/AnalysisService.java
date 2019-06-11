@@ -22,16 +22,16 @@ public class AnalysisService {
     private JSONObject sourceDocumentJSON = null;
     private JSONObject targetDocumentJSON = null;
 
-    public void setSourceSectionString(String sourceSectionString) {
-        this.sourceSectionString = sourceSectionString;
-    }
-
-    public void setTargetSectionString(String targetSectionString) {
-        this.targetSectionString = targetSectionString;
-    }
-
-    private String sourceSectionString = null;
-    private String targetSectionString = null;
+//    public void setSourceSectionString(String sourceSectionString) {
+//        this.sourceSectionString = sourceSectionString;
+//    }
+//
+//    public void setTargetSectionString(String targetSectionString) {
+//        this.targetSectionString = targetSectionString;
+//    }
+//
+//    private String sourceSectionString = null;
+//    private String targetSectionString = null;
 
     public String getSourceJSON(String sourceString) throws IOException, SAXException, ParserConfigurationException {
         XMLParser parser = new XMLParser(sourceString);
@@ -47,25 +47,25 @@ public class AnalysisService {
         return this.targetDocumentString;
     }
 
-    public NodePOJO getSourceDocumentNode() {
-        if (this.sourceDocumentJSON != null) {
-            NodePOJO rootNode = this.gson.fromJson(this.sourceDocumentJSON.toString(), NodePOJO.class);
-            addParents(rootNode);
-            return rootNode;
-        } else {
-            return null;
-        }
-    }
-
-    public NodePOJO getTargetDocumentNode() {
-        if (this.targetDocumentJSON != null) {
-            NodePOJO rootNode = this.gson.fromJson(this.targetDocumentJSON.toString(), NodePOJO.class);
-            addParents(rootNode);
-            return rootNode;
-        } else {
-            return null;
-        }
-    }
+//    public NodePOJO getSourceDocumentNode() {
+//        if (this.sourceDocumentJSON != null) {
+//            NodePOJO rootNode = this.gson.fromJson(this.sourceDocumentJSON.toString(), NodePOJO.class);
+//            addParents(rootNode);
+//            return rootNode;
+//        } else {
+//            return null;
+//        }
+//    }
+//
+//    public NodePOJO getTargetDocumentNode() {
+//        if (this.targetDocumentJSON != null) {
+//            NodePOJO rootNode = this.gson.fromJson(this.targetDocumentJSON.toString(), NodePOJO.class);
+//            addParents(rootNode);
+//            return rootNode;
+//        } else {
+//            return null;
+//        }
+//    }
 
     public NodePOJO getSectonNode(String section) {
         NodePOJO rootNode = this.gson.fromJson(section, NodePOJO.class);
@@ -80,7 +80,11 @@ public class AnalysisService {
                 addParents(node);
             }
         }
-
+        if (rootNode.getAttributes() != null) {
+            for (NodePOJO node : rootNode.getAttributes()) {
+                node.setParent(rootNode);
+            }
+        }
     }
 
 }

@@ -19,14 +19,6 @@ public class NodePOJO {
         this.children = children;
     }
 
-    public int getAttribute() {
-        return attribute;
-    }
-
-    public void setAttribute(int attribute) {
-        this.attribute = attribute;
-    }
-
     public String getName() {
         return name;
     }
@@ -51,8 +43,17 @@ public class NodePOJO {
 
     public void setOpen(boolean open) { this.open = open; }
 
+    public List<NodePOJO> getAttributes() {
+        return attributes;
+    }
+
+    public void setAttributes(List<NodePOJO> attributes) {
+        this.attributes = attributes;
+    }
+
+
     private List<NodePOJO> children;
-    private int attribute;
+    private List<NodePOJO> attributes;
     private String name;
     private String value;
     private String id;
