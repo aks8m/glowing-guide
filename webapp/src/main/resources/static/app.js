@@ -6,7 +6,7 @@ Vue.component('file-input', {
     }
   },
   props: ['path', 'name'],
-  template: '<b-container class="text-left"><b-form-file v-model="file":state="Boolean(file)"placeholder="Select Document..." drop-placeholder="Drop Document here..." accept=".xml" @change="onFileChange"></b-form-file></b-container>',
+  template: '<b-container class="text-left"><b-form-file v-model="file":state="Boolean(file)"placeholder="Select Document..." drop-placeholder="Drop Document here..." accept=".xml" @change="onFileChange" style="overflow: hidden;"></b-form-file></b-container>',
   methods: {
       onFileChange(e) {
           var vm = this;
@@ -54,6 +54,7 @@ Vue.component('section-compare-button', {
             getParentNodes(objectSourceList, app.sourceTreeData, app.sourceSectionData.id);
             closeAllNodes(app.sourceTreeData);
             openNodes(objectSourceList);
+            objectSourceList[objectSourceList.length-1].open=false;
             objectSourceList[objectSourceList.length-1].error=false;
 
 
@@ -61,6 +62,7 @@ Vue.component('section-compare-button', {
             getParentNodes(objectTargetList, app.targetTreeData, app.targetSectionData.id);
             closeAllNodes(app.targetTreeData);
             openNodes(objectTargetList);
+            objectTargetList[objectTargetList.length-1].open=false;
             objectTargetList[objectTargetList.length-1].error=false;
 
 
@@ -186,7 +188,8 @@ Vue.component('tree-item', {
   template: '#item-template',
   props: {
     item: Object,
-    name: String
+    name: String,
+    depth: Number
   },
 //  data: function() {
 //    return {
@@ -222,6 +225,9 @@ Vue.component('tree-item', {
                 app.targetSectionData = this.item
             }
         }
+    },
+    indent() {
+        return "padding-left: " + ((this.depth * 20) + 15) + "px;"
     }
   },
   methods: {

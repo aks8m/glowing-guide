@@ -11,7 +11,7 @@
     <title>C-CDA Comparison Tool</title>
 
     <!-- Required Stylesheets -->
-    <link rel="stylesheet" href="app2.css"/>
+    <link rel="stylesheet" href="app.css"/>
 
     <!-- Required scripts -->
     <script src="https://unpkg.com/vue"></script>
@@ -27,24 +27,21 @@
 
 <!-- item template -->
 <script type="text/x-template" id="item-template">
-    <li>
+    <div v-bind:class="{ selectedsection : checked }" style="overflow: hidden;">
         <div class="form-check"><input type="checkbox" class="form-check-input" v-model="checked"></div>
 
-        <div v-on:click="toggle" style="padding-left:25px">
+        <div v-on:click="toggle" :style="indent">
             <span v-if="isFolder">{{isOpen ? '&#9661' : '&#9655'}}</span>
             <span v-else style="visibility: hidden;">&#9661</span>
-            <span v-bind:class="{ reselement : isError }">{{item.displayname}}</span>
-            </button>
+            <span v-bind:class="{ reselement : isError }" style="">{{item.displayname}}</span>
         </div>
-        <ul v-show="isOpen" v-if="isFolder" style="list-style: none;">
-            <tree-item class="item" v-for="child in item.children":key="child.id":item="child" :name="name"></tree-item>
-        </ul>
-    </li>
+        <tree-item class="item" v-for="child in item.children":key="child.id":item="child" :name="name" v-show="isOpen" v-if="isFolder" :depth="depth+1"></tree-item>
+    </div>
 </script>
 
 <div id="app">
 
-    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <nav class="navbar sticky-top navbar-expand-lg navbar-dark bg-dark">
         <a class="navbar-brand" href="#">C-CDA Comparison Tool</a>
         <div class="collapse navbar-collapse" id="navbarNav">
             <ul class="navbar-nav">
@@ -69,20 +66,53 @@
 
     <div v-if="displayInstructions">
         <h1>Welcome to the C-CDA Comparison tool!!</h1>
+        <hr style="border: 1px solid black"/>
         <p></p>
-        <strong>To get started select your source (EHX) and target (HS) documents.</strong>
+        <h4>To get started load your documents using the file browse buttons at the top:</h4>
+        <ol>
+            <li>Load the source (EHX) document using the file input on the left</li>
+            <li>Load the target (HS) document using the file input on the right</li>
+        </ol>
+        <hr/>
         <p></p>
+        <h4>After loading the documents you have two options to compare: </h4>
+        <ul>
+            <li><strong>Option 1 - Document Comparison:</strong> Compare the entire document
+                <ol>
+                    <li>Confirm that you have selected the appropriate source and target documents on the nav bar</li>
+                    <li>The green "Compare" button should now be enabled. Click this button to compare the documents.</li>
+                    <li>Click on the "Compare" tab next to the "Instructions" tab on the left side of the nav bar.</li>
+                </ol>
+            </li>
+            <li><strong>Option 2 - Section Comparison:</strong> Compare a specific section of each document
+                <ol>
+                    <li>Confirm that you have selected the appropriate source and target documents on the nav bar</li>
+                    <li>Click on the "Compare" tab next to the "Instructions" tab on the left side of the nav bar.</li>
+                    <li>Click on Document Displays to see the source and target documents</li>
+                    <li>Use the check marks to select the section the in source and target documents that you would like to compare. The selected section will have a background color of gray. This will default to the entire document.</li>
+                    <li>Once you have selected the appropriate sections, click the green "Compare" button on the nav bar</li>
+                </ol>
+            </li>
+        </ul>
 
-        <p>1. Load source document from your local file explorer, by clicking on "Select Document" or "Browse"</p>
-        <p>2. Load target document from your local file explorer, by clicking on "Select Document" or "Browse"</p>
-        <p>3. Once the documents have been loaded, the "Compare Documents" button should become enabled.
-        <p>4. Click the "Compare Documents" button to compare the source and target documents</p>
-        <p>5. Address each result, by removing the result with the "X" button or flagging it as a defect with the "!" button. </p>
+        <hr/>
+        <p/>
+        <h4>After comparing the documents, it is time to analyze the comparison results: </h4>
+        <ol>
+            <li>Click on Compare Results to see the list of comparison results</li>
+            <li>Address each result by clicking on it. When you click on the result, the appropriate sections of the source and target documents will open up. Analyze the results context within the source and target documents.</li>
+            <li>Classify each result as an acceptable difference, by removing it from the result list with the "X" button, or flagging it as a defect the "!" button.</li>
+        </ol>
+
+
         <p/>
         <strong>Results are categorized into 3 categories:</strong>
-        <p>1. Value Mistmatch: the value of the XML tags is mismatched</p>
-        <p>2. Section Mistmatch: no parent xml tag exists in the target document that has the same attribtues and values as the specified source tag</p>
-        <p>3. Attribute Mistmatch: the attribute of the XML tag is mismatched</p>
+        <ol>
+            <li>Value Mistmatch: the value of the XML tags is mismatched</li>
+            <li>Section Mistmatch: no parent xml tag exists in the target document that has the same attribtues and values as the specified source tag</li>
+            <li>Attribute Mistmatch: the attribute of the XML tag is mismatched</li>
+        </ol>
+        <hr/>
     </div>
 
     <div v-if="displayCompare">
@@ -95,20 +125,16 @@
                     </button>
                 </h5>
             </div>
-            <div id="collapseTree" class="collapse" aria-labelledby="headingTree">
+            <div id="collapseTree" class="collapse show" aria-labelledby="headingTree">
                 <div class="card-body">
                     <div class="row text-left">
                         <div class="col right">
                             <h4>Source:</h4>
-                            <ul style="list-style: none;">
-                                <tree-item class="item" :item="sourceTreeData" name="sourceTree"></tree-item>
-                            </ul>
+                            <tree-item class="item" :item="sourceTreeData" name="sourceTree" :depth="0"></tree-item>
                         </div>
-                        <div class="col">
+                        <div class="col" >
                             <h4>Target:</h4>
-                            <ul style="list-style: none;">
-                                <tree-item class="item" :item="targetTreeData" name="targetTree"></tree-item>
-                            </ul>
+                            <tree-item class="item" :item="targetTreeData" name="targetTree" :depth="0"></tree-item>
                         </div>
                     </div>
                 </div>
@@ -122,7 +148,7 @@
                     </button>
                 </h5>
             </div>
-            <div id="collapseResults" class="collapse" aria-labelledby="headingResults">
+            <div id="collapseResults" class="collapse show" aria-labelledby="headingResults">
                 <div class="card-body">
                     <div class="row">
                         <div class="col col-md-2 right">
@@ -159,7 +185,8 @@
                                 </div>
                             </div>
                             <ul class="list-group">
-                                <result-list v-for="result in getFilteredResults":key="result.sourceid":output="result.output":sourceid="result.sourceid":targetid="result.targetid":type="result.resultType":class="{resultbackground: this.resultStyle}"></result-list>
+                                <p v-if="getFilteredResults.length == 0">There were no mismatches reported</p>
+                                <result-list v-else v-for="result in getFilteredResults":key="result.sourceid":output="result.output":sourceid="result.sourceid":targetid="result.targetid":type="result.resultType":class="{resultbackground: this.resultStyle}"></result-list>
                             </ul>
                         </div>
 
