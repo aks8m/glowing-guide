@@ -51,13 +51,13 @@ public class NodePOJO {
         this.attributes = attributes;
     }
 
+    public boolean isMatched() {
+        return matched;
+    }
 
-    private List<NodePOJO> children;
-    private List<NodePOJO> attributes;
-    private String name;
-    private String value;
-    private String id;
-    private boolean open;
+    public void setMatched(boolean matched) {
+        this.matched = matched;
+    }
 
     public NodePOJO getParent() {
         return parent;
@@ -67,5 +67,12 @@ public class NodePOJO {
         this.parent = parent;
     }
 
+    private List<NodePOJO> children;
+    private List<NodePOJO> attributes;
+    private String name;
+    private String value;
+    private String id;
+    private boolean open;
+    private boolean matched;
     private NodePOJO parent;
 }

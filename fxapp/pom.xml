@@ -22,11 +22,6 @@
 
   <dependencies>
     <dependency>
-      <groupId>org.openehealth.ipf.modules</groupId>
-      <artifactId>ipf-modules-cda-mdht</artifactId>
-      <version>3.5.2</version>
-    </dependency>
-    <dependency>
       <groupId>org.apache.commons</groupId>
       <artifactId>commons-text</artifactId>
       <version>1.6</version>

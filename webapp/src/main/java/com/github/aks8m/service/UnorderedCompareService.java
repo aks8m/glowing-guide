@@ -73,9 +73,20 @@ public class UnorderedCompareService {
                         } else {
                             this.nodeMap.put(sourceNode, targetNode);
 
-                            this.resultList.addAll(compareNodeValues(sourceNode,targetNode));
+//                            this.resultList.addAll(compareNodeValues(sourceNode,targetNode));
+//
+//                            this.resultList.addAll(compareNodeAttributes(sourceNode,targetNode));
 
-                            this.resultList.addAll(compareNodeAttributes(sourceNode,targetNode));
+                            List<Result> addList = new ArrayList<>();
+                            addList.addAll(compareNodeValues(sourceNode,targetNode));
+                            addList.addAll(compareNodeAttributes(sourceNode,targetNode));
+
+                            if (addList.size() == 0) {
+                                sourceNode.setMatched(true);
+                                targetNode.setMatched(true);
+                            }
+
+                            this.resultList.addAll(addList);
 
                             sourceQueue.addAll(sourceNode.getChildren());
                             targetQueue.addAll(targetNode.getChildren());
@@ -111,7 +122,7 @@ public class UnorderedCompareService {
             return retList;
         } else {
             for (NodePOJO sibling : targetSiblings) {
-                if (compareNodeValues(sourceNode,sibling).size() == 0 && compareNodeAttributes(sourceNode,sibling).size() ==0) {
+                if (!sibling.isMatched() && compareNodeValues(sourceNode,sibling).size() == 0 && compareNodeAttributes(sourceNode,sibling).size() == 0) {
                     retList.add(sibling);
                     return retList;
                 }

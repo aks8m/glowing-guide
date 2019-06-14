@@ -38,7 +38,7 @@ Vue.component('file-input', {
 });
 
 Vue.component('section-compare-button', {
-    template: '<button type="button" class="btn btn-success btn-lg btn-block" v-on:click="compareDocuments(); clickInstructions()" :disabled="!enabledButton"> Compare </button>',
+    template: '<button type="button" class="btn btn-success btn-block" v-on:click="compareDocuments(); clickInstructions()" :disabled="!enabledButton"> Compare </button>',
     computed: {
         enabledButton() {
             return true;
