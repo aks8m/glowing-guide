@@ -62,7 +62,6 @@ public class XMLParser extends DefaultHandler {
             JSONObject attribute = new JSONObject();
             attribute.put("name", attributes.getQName(i));
             attribute.put("value", attributes.getValue(i));
-//            attribute.put("attribute", 1);
             attribute.put("id", UUID.randomUUID());
             attribute.put("open", false);
             attribute.put("error", false);
@@ -70,15 +69,16 @@ public class XMLParser extends DefaultHandler {
         }
         jsonObject.put("children", childrenArray);
         jsonObject.put("attributes", attributeArray);
-//        jsonObject.put("attribute", 0);
         jsonObject.put("id", UUID.randomUUID());
         jsonObject.put("open", false);
         jsonObject.put("error", false);
+        jsonObject.put("folder",false);
 
         if (rootObj == null) {
             rootObj = jsonObject;
         } else {
             ((JSONArray) currentObj.get("children")).put(jsonObject);
+            currentObj.put("folder",true);
             childToParentMap.put(jsonObject,currentObj);
         }
         currentObj = jsonObject;
@@ -95,15 +95,16 @@ public class XMLParser extends DefaultHandler {
     public void endElement(String uri, String localName,
                            String qName) throws SAXException {
         String attributeString = "";
-        JSONArray atts = currentObj.getJSONArray("attributes");
+        JSONArray atts = this.currentObj.getJSONArray("attributes");
+
         for (Object att : atts) {
             attributeString = attributeString + " " + ((JSONObject) att).get("name") + "=" + ((JSONObject) att).get("value") + " ";
         }
 
         try {
-            currentObj.put("displayname", "< " + currentObj.get("name") + attributeString + ">" + currentObj.get("value"));
+            this.currentObj.put("displayname", "< " + this.currentObj.get("name") + attributeString + ">" + currentObj.get("value"));
         } catch (Exception e) {
-            currentObj.put("displayname", "< " + currentObj.get("name") + attributeString + " >");
+            this.currentObj.put("displayname", "< " + this.currentObj.get("name") + attributeString + " >");
         }
         try {
             currentObj = childToParentMap.get(currentObj);

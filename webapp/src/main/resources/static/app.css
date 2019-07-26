@@ -26,3 +26,7 @@
 .selectedsection {
     background-color: lightgray;
 }
+
+.hidden {
+    visibility:hidden;
+}

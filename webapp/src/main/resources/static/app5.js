@@ -5,14 +5,28 @@ Vue.component('file-input', {
       file: null
     }
   },
+  computed: {
+    colorState: function() {
+        if (this.name == 'sourceTree') {
+            return this.$root.$data.sourceTreeData.name != "Please load the source document";
+        } else {
+            return this.$root.$data.targetTreeData.name != "Please load the target document";
+        }
+    }
+  },
   props: ['path', 'name'],
-  template: '<b-container class="text-left"><b-form-file v-model="file":state="Boolean(file)"placeholder="Select Document..." drop-placeholder="Drop Document here..." accept=".xml" @change="onFileChange" style="overflow: hidden;"></b-form-file></b-container>',
+  template: '<b-container class="text-left"><b-form-file v-model="file":state="this.colorState" placeholder="Select Document..." drop-placeholder="Drop Document here..." accept=".xml" @change="onFileChange" style="overflow: hidden;"></b-form-file></b-container>',
   methods: {
       onFileChange(e) {
           var vm = this;
           this.xml = e.target.files[0];
           var formData = new FormData();
           formData.append('file', this.xml);
+          if (vm.name == 'sourceTree') {
+            app.sourceSpinner = true;
+          } else {
+            app.targetSpinner = true;
+          }
           axios.post(this.path,
                     formData, {
                       headers: {
@@ -22,10 +36,12 @@ Vue.component('file-input', {
                   .then(response => {
                     if (vm.name == 'sourceTree') {
                         app.sourceTreeData = response.data;
-                        app.sourceSectionData = response.data;
+                        app.sourceSectionID = response.data.id;
+                        app.sourceSpinner = false;
                     } else {
                         app.targetTreeData = response.data;
-                        app.targetSectionData = response.data;
+                        app.targetSectionID = response.data.id;
+                        app.targetSpinner = false;
                     }
                     })
                   .catch(function () {
@@ -38,10 +54,10 @@ Vue.component('file-input', {
 });
 
 Vue.component('section-compare-button', {
-    template: '<button type="button" class="btn btn-success btn-block" v-on:click="compareDocuments(); clickInstructions()" :disabled="!enabledButton"> Compare </button>',
+    template: '<button type="button" class="btn btn-success btn-block" v-on:click="compareDocuments(); clickInstructions()" :disabled="!enabledButton"> Compare</button>',
     computed: {
-        enabledButton() {
-            return true;
+        enabledButton: function() {
+            return this.$root.$data.sourceTreeData.name != "Please load the source document" && this.$root.$data.targetTreeData.name != "Please load the target document";
         }
     },
     methods: {
@@ -51,7 +67,7 @@ Vue.component('section-compare-button', {
             closeAllNodes(app.targetTreeData);
 
             var objectSourceList = [];
-            getParentNodes(objectSourceList, app.sourceTreeData, app.sourceSectionData.id);
+            getParentNodes(objectSourceList, app.sourceTreeData, app.sourceSectionID);
             closeAllNodes(app.sourceTreeData);
             openNodes(objectSourceList);
             objectSourceList[objectSourceList.length-1].open=false;
@@ -59,22 +75,15 @@ Vue.component('section-compare-button', {
 
 
             var objectTargetList = [];
-            getParentNodes(objectTargetList, app.targetTreeData, app.targetSectionData.id);
+            getParentNodes(objectTargetList, app.targetTreeData, app.targetSectionID);
             closeAllNodes(app.targetTreeData);
             openNodes(objectTargetList);
             objectTargetList[objectTargetList.length-1].open=false;
             objectTargetList[objectTargetList.length-1].error=false;
 
 
-
-            axios({
-                method: 'post',
-                url: '/api/analysis/compare',
-                data: {
-                    source: app.sourceSectionData,
-                    target: app.targetSectionData
-                }
-            })
+            app.compareSpinner = true;
+            axios.get("/api/analysis/compare/" + app.sourceSectionID + "/" + app.targetSectionID)
             .then(response => {
                 app.results = response.data;
                 for (var i=0; i<app.results.length; i++) {
@@ -87,6 +96,7 @@ Vue.component('section-compare-button', {
                     }
 
                 }
+                app.compareSpinner = false;
              })
             .catch(error => console.log(error));
         },
@@ -115,21 +125,20 @@ Vue.component('result-list', {
   template: '<li type="button" class="list-group-item list-group-item-action" v-bind:class="{ resultbackground: this.resultStyle}" v-on:click="openTrees()">{{ output }}<b-badge class="badge-default float-right m-2" v-on:click.stop="addDefect()"><i class="fas fa-exclamation"></i></i></b-badge><b-badge class="badge-default float-right m-2" v-on:click.stop="removeResult()"><i class="fas fa-times"></i></b-badge></li>',
   methods: {
     openTrees() {
-        //go through source data recursively
-        var objectSourceList = [];
-        getParentNodes(objectSourceList, app.sourceTreeData, this.sourceid);
-        closeAllNodes(app.sourceTreeData);
-        openNodes(objectSourceList);
-
-        closeAllNodes(app.targetTreeData);
-        for (var i=0; i<this.targetid.length;i++) {
-            var objectTargetList = [];
-            getParentNodes(objectTargetList, app.targetTreeData, this.targetid[i]);
-            openNodes(objectTargetList);
-        }
-
-
-
+        axios.get("/api/analysis/openSourceResult/" + this.sourceid)
+                      .then(response => {
+                            app.sourceTreeData = response.data;
+                      })
+                      .catch(function () {
+                        console.log('FAILURE!!');
+              });
+        axios.get("/api/analysis/openTargetResult/" + this.targetid)
+                      .then(response => {
+                            app.targetTreeData = response.data;
+                      })
+                      .catch(function () {
+                        console.log('FAILURE!!');
+              });
     },
     removeResult() {
         for (var i=0; i<app.results.length; i++) {
@@ -191,15 +200,9 @@ Vue.component('tree-item', {
     name: String,
     depth: Number
   },
-//  data: function() {
-//    return {
-//        checked: false
-//    }
-//  },
   computed: {
     isFolder: function () {
-      return (this.item.children &&
-        this.item.children.length)
+      return this.item.folder
     },
     isAttribute: function() {
       return (this.item.attribute && this.item.attribute.length)
@@ -213,16 +216,16 @@ Vue.component('tree-item', {
     checked: {
         get: function(value) {
             if (this.name == "sourceTree") {
-                return app.sourceSectionData.id == this.item.id
+                return app.sourceSectionID == this.item.id
             } else {
-                return app.targetSectionData.id == this.item.id
+                return app.targetSectionID == this.item.id
             }
         },
         set: function(value) {
             if (this.name == "sourceTree"){
-                app.sourceSectionData = this.item
+                app.sourceSectionID = this.item.id
             } else {
-                app.targetSectionData = this.item
+                app.targetSectionID = this.item.id
             }
         }
     },
@@ -232,54 +235,46 @@ Vue.component('tree-item', {
   },
   methods: {
     toggle: function () {
-      if (this.isFolder) {
-        this.item.open = !this.item.open
-        this.item.res = !this.item.res
-      }
+
+        var idvar = this.item.id;
+        var path;
+        if (this.name == "sourceTree") {
+            if (this.isOpen) {
+                path = '/api/analysis/closeSourceNode/' + idvar;
+            } else {
+                path = '/api/analysis/openSourceNode/' + idvar;
+            }
+
+            axios.get(path)
+                      .then(response => {
+                            app.sourceTreeData = response.data;
+                      })
+                      .catch(function () {
+                        console.log('FAILURE!!');
+              });
+
+        } else {
+            if (this.isOpen) {
+                path = '/api/analysis/closeTargetNode/' + idvar;
+            } else {
+                path = '/api/analysis/openTargetNode/' + idvar;
+            }
+
+            axios.get(path)
+                      .then(response => {
+                            app.targetTreeData = response.data;
+                      })
+                      .catch(function () {
+                        console.log('FAILURE!!');
+              });
+        }
+
+
+
+
     }
     }
 });
-
-//Vue.component('tree-item-section-selection', {
-//    template: '#section-selection',
-//    props: {
-//        item: Object,
-//        source: Boolean
-//    },
-//      computed: {
-//        isFolder: function () {
-//          return (this.item.children &&
-//            this.item.children.length)
-//        },
-//        isAttribute: function() {
-//          return this.item.attribute
-//        },
-//        isOpen: function() {
-//          return this.item.open
-//        },
-//        isError: function() {
-//          return this.item.error
-//        },
-//        sectionSelected: function() {
-//            return this.item.id == app.sourceSectionData.id || this.item.id == app.targetSectionData.id;
-//        }
-//      },
-//      methods: {
-//        toggle: function () {
-//          if (this.isFolder) {
-//            this.item.open = !this.item.open
-//            this.item.res = !this.item.res
-//          }
-//        },
-//        setSectionData: function(source) {
-//            if(source) {
-//                app.sourceSectionData = this.item;
-//            } else {
-//                app.targetSectionData = this.item;
-//            }
-//        }
-//      }
-//});
 
 var app = new Vue({
   el: '#app',
@@ -287,6 +282,9 @@ var app = new Vue({
     value: true,
     section: true,
     attribute: true,
+    sourceSpinner: false,
+    targetSpinner: false,
+    compareSpinner: false,
     results: [],
     search: "",
     valueresults: [],
@@ -300,8 +298,8 @@ var app = new Vue({
     displayCompare: false,
     automatic: true,
     sectionModal: true,
-    sourceSectionData: {name: "Please select source section", children: [], attribute: 0},
-    targetSectionData: {name: "Please select target section", children: [], attribute: 0},
+    sourceSectionID: null,
+    targetSectionID: null,
   },
   computed: {
         getResults: function() {

@@ -148,23 +148,28 @@ public class UnorderedCompareService {
     private List<Result> compareNodeAttributes(NodePOJO sourceNode, NodePOJO targetNode) {
         List<Result> retList = new ArrayList<>();
         for (NodePOJO attribute : sourceNode.getAttributes()) {
-            List<NodePOJO> targetMatches = targetNode.getAttributes().stream().filter(att -> att.getName().equals(attribute.getName())).collect(Collectors.toList());
+            try {
+                List<NodePOJO> targetMatches = targetNode.getAttributes().stream().filter(att -> att.getName().equals(attribute.getName())).collect(Collectors.toList());
 
-            boolean matched = false;
+                boolean matched = false;
 
-            for (NodePOJO targetAttribute : targetMatches) {
-                if (attribute.getValue().equals(targetAttribute.getValue())) {
-                    matched = true;
-                    break;
+                for (NodePOJO targetAttribute : targetMatches) {
+                    if (attribute.getValue().equals(targetAttribute.getValue())) {
+                        matched = true;
+                        break;
+                    }
                 }
-            }
 
-            if (!matched) {
-                if (targetMatches.size() == 1) {
-                    retList.add(new Result("ATTRIBUTE MISMATCH: Source attribute " + attribute.getName() + " " + attribute.getValue() + " VS " + targetMatches.get(0).getValue(), ResultType.ATTRIBUTEMISMATCH, attribute.getParent().getId(), targetMatches.get(0).getParent().getId()));
-                } else {
-                    retList.add(new Result("ATTRIBUTE MISMATCH: Source attribute " + attribute.getName() + " in " + sourceNode.getValue(), ResultType.ATTRIBUTEMISMATCH, attribute.getParent().getId()));
+                if (!matched) {
+                    if (targetMatches.size() == 1) {
+                        retList.add(new Result("ATTRIBUTE MISMATCH: Source attribute " + attribute.getName() + " " + attribute.getValue() + " VS " + targetMatches.get(0).getValue(), ResultType.ATTRIBUTEMISMATCH, attribute.getParent().getId(), targetMatches.get(0).getParent().getId()));
+                    } else {
+                        retList.add(new Result("ATTRIBUTE MISMATCH: Source attribute " + attribute.getName() + " in " + sourceNode.getValue(), ResultType.ATTRIBUTEMISMATCH, attribute.getParent().getId()));
+                    }
                 }
+
+            } catch (Exception e) {
+                System.out.println(e.getStackTrace());
             }
 
         }

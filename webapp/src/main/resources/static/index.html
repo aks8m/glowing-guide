@@ -35,7 +35,8 @@
             <span v-else style="visibility: hidden;">&#9661</span>
             <span v-bind:class="{ reselement : isError }" style="">{{item.displayname}}</span>
         </div>
-        <tree-item class="item" v-for="child in item.children":key="child.id":item="child" :name="name" v-show="isOpen" v-if="isFolder" :depth="depth+1"></tree-item>
+        <!--<tree-item class="item" v-for="child in item.children":key="child.id":item="child" :name="name" v-show="isOpen" v-if="isFolder" :depth="depth+1"></tree-item>-->
+        <tree-item class="item" v-for="child in item.children":key="child.id":item="child" :name="name" :depth="depth+1"></tree-item>
     </div>
 </script>
 
@@ -51,8 +52,14 @@
                 <li class="nav-item right">
                     <a class="nav-link" href="#" v-on:click="clickCompare()">Compare</a>
                 </li>
+                <div class="nav-item" style="padding-left:10px;" v-bind:class="{ hidden : !sourceSpinner }">
+                    <b-spinner variant="primary"></b-spinner>
+                </div>
                 <div class="nav-item">
                     <file-input path='/api/analysis/readSource' name="sourceTree"></file-input>
+                </div>
+                <div class="nav-item" style="padding-left:10px;" v-bind:class="{ hidden : !targetSpinner }">
+                    <b-spinner variant="primary"></b-spinner>
                 </div>
                 <div class="nav-item">
                     <file-input path='/api/analysis/readTarget' name="targetTree"></file-input>
@@ -61,6 +68,7 @@
                     <section-compare-button></section-compare-button>
                 </div>
             </ul>
+
         </div>
     </nav>
 
@@ -184,7 +192,8 @@
 
                                 </div>
                             </div>
-                            <ul class="list-group">
+                            <b-spinner v-if="compareSpinner" variant="primary"></b-spinner>
+                            <ul v-else class="list-group">
                                 <p v-if="getFilteredResults.length == 0">There were no mismatches reported</p>
                                 <result-list v-else v-for="result in getFilteredResults":key="result.sourceid":output="result.output":sourceid="result.sourceid":targetid="result.targetid":type="result.resultType":class="{resultbackground: this.resultStyle}"></result-list>
                             </ul>
@@ -203,7 +212,7 @@
 </div>
 
 
-<script src="app.js"></script>
+<script src="app5.js"></script>
 
 </body>
 </html>
