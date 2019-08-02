@@ -11,7 +11,7 @@
     <title>C-CDA Comparison Tool</title>
 
     <!-- Required Stylesheets -->
-    <link rel="stylesheet" href="app.css"/>
+    <link rel="stylesheet" href="app1.css"/>
 
     <!-- Required scripts -->
     <script src="https://unpkg.com/vue"></script>
@@ -28,10 +28,10 @@
 <!-- item template -->
 <script type="text/x-template" id="item-template">
     <div v-bind:class="{ selectedsection : checked }" style="overflow: hidden;">
-        <div class="form-check"><input type="checkbox" class="form-check-input" v-model="checked"></div>
+        <div class="form-check"><input type="checkbox" class="form-check-input arrow" v-model="checked"></div>
 
         <div v-on:click="toggle" :style="indent">
-            <span v-if="isFolder">{{isOpen ? '&#9661' : '&#9655'}}</span>
+            <span class="arrow" v-if="isFolder">{{isOpen ? '&#9661' : '&#9655'}}</span>
             <span v-else style="visibility: hidden;">&#9661</span>
             <span v-bind:class="{ reselement : isError }" style="">{{item.displayname}}</span>
         </div>

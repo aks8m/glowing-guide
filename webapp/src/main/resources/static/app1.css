@@ -30,3 +30,7 @@
 .hidden {
     visibility:hidden;
 }
+
+.arrow:hover {
+    cursor: pointer;
+}
