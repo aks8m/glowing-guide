@@ -7,6 +7,11 @@ public class Result {
 
     private ResultType resultType;
     private String output;
+    private String sourceid;
+    private List<String> targetid = new ArrayList<>();
+
+    private boolean defect = false;
+    private boolean removed = false;
 
     public String getSourceid() {
         return sourceid;
@@ -23,9 +28,6 @@ public class Result {
     public void addTargetid(String targetid) {
         this.targetid.add(targetid);
     }
-
-    private String sourceid;
-    private List<String> targetid = new ArrayList<>();
 
     public Result(String output) {
         this.output = output;

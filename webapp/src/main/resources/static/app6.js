@@ -119,11 +119,37 @@ Vue.component('result-list', {
     return {
       resultStyle: false,
       removeStyle: false,
-      defect: false
+//      defect: false
     }
   },
   props: ['output', 'sourceid', 'targetid', 'type'],
-  template: '<li type="button" class="list-group-item list-group-item-action" v-bind:class="{ resultbackground: this.resultStyle, removebackground: this.removeStyle}" v-on:click="openTrees()">{{ output }}<b-badge class="badge-default float-right m-2" v-on:click.stop="addDefect()"><i class="fas fa-exclamation"></i></i></b-badge><b-badge class="badge-default float-right m-2" v-on:click.stop="removeResult()"><i class="fas fa-times"></i></b-badge></li>',
+  template: '<li type="button" class="list-group-item list-group-item-action" v-bind:class="{ resultbackground: this.defect, removebackground: this.removed}" v-on:click="openTrees()">{{ output }}<b-badge class="badge-default float-right m-2" v-on:click.stop="addDefect()"><i class="fas fa-exclamation"></i></i></b-badge><b-badge class="badge-default float-right m-2" v-on:click.stop="removeResult()"><i class="fas fa-times"></i></b-badge></li>',
+  computed: {
+    defect() {
+        for (var i=0; i<app.results.length; i++) {
+            if (this.sourceid == app.results[i].sourceid && this.targetid == app.results[i].targetid) {
+                if (app.results[i].defect) {
+                    return true;
+                } else {
+                    return false;
+                }
+            }
+        }
+        return false;
+    },
+    removed() {
+        for (var i=0; i<app.results.length; i++) {
+            if (this.sourceid == app.results[i].sourceid && this.targetid == app.results[i].targetid) {
+                if (app.results[i].removed) {
+                    return true;
+                } else {
+                    return false;
+                }
+            }
+        }
+        return false;
+    }
+  },
   methods: {
     openTrees() {
         axios.get("/api/analysis/openSourceResult/" + this.sourceid)
@@ -143,52 +169,23 @@ Vue.component('result-list', {
     },
     removeResult() {
         for (var i=0; i<app.results.length; i++) {
-            if (app.results[i].sourceid == this.sourceid && app.results[i].targetid == this.targetid) {
-                app.deletedresults.push(app.results[i]);
-                app.results.splice(i,1);
+            if (this.sourceid == app.results[i].sourceid && this.targetid == app.results[i].targetid) {
+                app.results[i].removed = !app.results[i].removed;
+                this.removeStyle = ! this.removeStyle;
                 break;
             }
-        }
 
-        var arr = [];
-
-        if (this.type == "VALUEMISMATCH") {
-            arr = app.valueresults;
-        } else if (this.type == "SECTIONMATCHNOTFOUND") {
-            arr = app.sectionresults;
-        } else if (this.type == "ATTRIBUTEMISMATCH") {
-            arr = app.attributeresults;
-        }
-
-        for (var j=0;j<arr.length;j++) {
-            if (arr[j].sourceid == this.sourceid && arr[j].targetid == this.targetid) {
-                arr.splice(j,1);
-                break;
-            }
-        }
-
-        for (var t=0; t<app.defectresults.length; t++) {
-            if (app.defectresults[t].sourceid == this.sourceid && app.defectresults[t].targetid == this.targetid) {
-                app.defectresults.splice(t,1);
-                break;
-            }
         }
     },
     addDefect() {
-        this.resultStyle = !this.resultStyle;
-        if (!this.defect) {
-            app.defectresults.push(this);
-            this.defect = true;
-        } else {
-            for (var j=0;j<app.defectresults.length;j++) {
-                if (app.defectresults[j].sourceid == this.sourceid && app.defectresults[j].targetid == this.targetid) {
-                    app.defectresults.splice(j,1);
-                    this.defect = false;
-                    break;
-                }
+        for (var i=0; i<app.results.length; i++) {
+            if (this.sourceid == app.results[i].sourceid && this.targetid == app.results[i].targetid) {
+                app.results[i].defect = !app.results[i].defect;
+                this.resultStyle = !this.resultType;
+                break;
             }
-        }
 
+        }
     }
   }
 
@@ -295,38 +292,51 @@ var app = new Vue({
     compareSpinner: false,
     results: [],
     search: "",
-    valueresults: [],
-    sectionresults: [],
-    attributeresults: [],
-    defectresults: [],
-    deletedresults: [],
+    valueresults: [], //
+    sectionresults: [], //
+    attributeresults: [], //
+    defectresults: [], //
+    deletedresults: [], //
     sourceTreeData: {name: "Please load the source document", children: [], attribute: 0},
     targetTreeData: {name: "Please load the target document", children: [], attribute: 0},
     displayInstructions: true,
     displayCompare: false,
-    automatic: true,
-    sectionModal: true,
+    automatic: true, //
+    sectionModal: true, //
     sourceSectionID: null,
     targetSectionID: null,
+    defects: true,
+    removed: true,
+    unclassified: true,
   },
   computed: {
         getResults: function() {
-            var retList = [];
-            if (this.value) {
-                retList = retList.concat(this.valueresults);
-            }
-            if (this.section) {
-                retList = retList.concat(this.sectionresults);
-            }
-            if (this.attribute) {
-                retList = retList.concat(this.attributeresults);
-            }
-            return retList;
+//            var retList = [];
+//            if (this.value) {
+//                retList = retList.concat(this.valueresults);
+//            }
+//            if (this.section) {
+//                retList = retList.concat(this.sectionresults);
+//            }
+//            if (this.attribute) {
+//                retList = retList.concat(this.attributeresults);
+//            }
+//            return retList;
+            return this.results.filter(function(res) {
+                return ((res.resultType == "ATTRIBUTEMISMATCH" && app.attribute) || (res.resultType == "VALUEMISMATCH" && app.value) || (res.resultType == "SECTIONMATCHNOTFOUND" && app.section));
+            })
         },
         getFilteredResults: function() {
-            var list = this.getResults;
             var self = this;
-            return list.filter(function(cust){return cust.output.toLowerCase().indexOf(self.search.toLowerCase())>=0;});
+            var list = this.getResults;
+            var list1 = list.filter(function(res) {
+                return (!res.removed || app.removed);})
+            var list2 = list1.filter(function(res) {
+                return (!res.defect || app.defects);})
+            var list3 = list2.filter(function(res) {
+                return (app.unclassified || (res.defect || res.removed));})
+            return list3.filter(function(cust){
+                return cust.output.toLowerCase().indexOf(self.search.toLowerCase())>=0;});
         },
         selectAll: {
             get: function(value) {
@@ -346,19 +356,19 @@ var app = new Vue({
         },
   },
   methods: {
-    addDeleted: function() {
-        for (var i=0; i<this.deletedresults.length; i++) {
-            this.results.push(this.deletedresults[i]);
-            if (this.deletedresults[i].resultType == "VALUEMISMATCH") {
-                this.valueresults.push(this.deletedresults[i]);
-            } else if (this.deletedresults[i].resultType == "SECTIONMATCHNOTFOUND") {
-                this.sectionresults.push(this.deletedresults[i]);
-            } else if (this.deletedresults[i].resultType == "ATTRIBUTEMISMATCH") {
-                this.attributeresults.push(this.deletedresults[i]);
-            }
-        }
-        this.deletedresults = []
-    },
+//    addDeleted: function() {
+//        for (var i=0; i<this.deletedresults.length; i++) {
+//            this.results.push(this.deletedresults[i]);
+//            if (this.deletedresults[i].resultType == "VALUEMISMATCH") {
+//                this.valueresults.push(this.deletedresults[i]);
+//            } else if (this.deletedresults[i].resultType == "SECTIONMATCHNOTFOUND") {
+//                this.sectionresults.push(this.deletedresults[i]);
+//            } else if (this.deletedresults[i].resultType == "ATTRIBUTEMISMATCH") {
+//                this.attributeresults.push(this.deletedresults[i]);
+//            }
+//        }
+//        this.deletedresults = []
+//    },
     clickInstructions: function() {
         this.displayInstructions = true;
         this.displayCompare = false;
@@ -367,9 +377,9 @@ var app = new Vue({
         this.displayInstructions = false;
         this.displayCompare = true;
     },
-    setAutomatic: function() {
-        this.automatic = true;
-    },
+//    setAutomatic: function() {
+//        this.automatic = true;
+//    },
     setManual: function() {
         this.automatic = false;
     },
