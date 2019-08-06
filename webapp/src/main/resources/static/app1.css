@@ -34,3 +34,11 @@
 .arrow:hover {
     cursor: pointer;
 }
+
+.removebackground {
+    background-color: rgba(211, 211, 211, 1);
+}
+
+.removebackground:hover {
+    background-color: rgba(211, 211, 211, 1);
+}

@@ -28,13 +28,14 @@
 <!-- item template -->
 <script type="text/x-template" id="item-template">
     <div v-bind:class="{ selectedsection : checked }" style="overflow: hidden;">
-        <div class="form-check"><input type="checkbox" class="form-check-input arrow" v-model="checked"></div>
+        <!--<div class="form-check"><input type="checkbox" class="form-check-input arrow" v-model="checked"></div>-->
 
-        <div v-on:click="toggle" :style="indent">
-            <span class="arrow" v-if="isFolder">{{isOpen ? '&#9661' : '&#9655'}}</span>
-            <span v-else style="visibility: hidden;">&#9661</span>
+        <!--<div v-on:click="toggle" :style="indent">-->
+            <span class="arrow" style="width: 12px; display: inline-block;" v-on:click="clickCheck">{{checked ? '&#10004' : '&#160&#45' }}</span>
+            <span class="arrow" v-on:click="toggle" v-if="isFolder" :style="indent">{{isOpen ? '&#9662' : '&#9656'}}</span>
+            <span v-else style="visibility: hidden;" :style="indent">&#9661</span>
             <span v-bind:class="{ reselement : isError }" style="">{{item.displayname}}</span>
-        </div>
+        <!--</div>-->
         <!--<tree-item class="item" v-for="child in item.children":key="child.id":item="child" :name="name" v-show="isOpen" v-if="isFolder" :depth="depth+1"></tree-item>-->
         <tree-item class="item" v-for="child in item.children":key="child.id":item="child" :name="name" :depth="depth+1"></tree-item>
     </div>

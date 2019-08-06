@@ -118,11 +118,12 @@ Vue.component('result-list', {
   data: function () {
     return {
       resultStyle: false,
+      removeStyle: false,
       defect: false
     }
   },
   props: ['output', 'sourceid', 'targetid', 'type'],
-  template: '<li type="button" class="list-group-item list-group-item-action" v-bind:class="{ resultbackground: this.resultStyle}" v-on:click="openTrees()">{{ output }}<b-badge class="badge-default float-right m-2" v-on:click.stop="addDefect()"><i class="fas fa-exclamation"></i></i></b-badge><b-badge class="badge-default float-right m-2" v-on:click.stop="removeResult()"><i class="fas fa-times"></i></b-badge></li>',
+  template: '<li type="button" class="list-group-item list-group-item-action" v-bind:class="{ resultbackground: this.resultStyle, removebackground: this.removeStyle}" v-on:click="openTrees()">{{ output }}<b-badge class="badge-default float-right m-2" v-on:click.stop="addDefect()"><i class="fas fa-exclamation"></i></i></b-badge><b-badge class="badge-default float-right m-2" v-on:click.stop="removeResult()"><i class="fas fa-times"></i></b-badge></li>',
   methods: {
     openTrees() {
         axios.get("/api/analysis/openSourceResult/" + this.sourceid)
@@ -213,21 +214,21 @@ Vue.component('tree-item', {
     isError: function() {
       return this.item.error
     },
-    checked: {
-        get: function(value) {
+    checked: function() {
+//        get: function(value) {
             if (this.name == "sourceTree") {
                 return app.sourceSectionID == this.item.id
             } else {
                 return app.targetSectionID == this.item.id
             }
-        },
-        set: function(value) {
+//        },
+//        set: function(value) {
             if (this.name == "sourceTree"){
                 app.sourceSectionID = this.item.id
             } else {
                 app.targetSectionID = this.item.id
             }
-        }
+//        }
     },
     indent() {
         return "padding-left: " + ((this.depth * 20) + 15) + "px;"
@@ -272,6 +273,13 @@ Vue.component('tree-item', {
 
 
 
+    },
+    clickCheck: function(value) {
+        if (this.name == "sourceTree"){
+            app.sourceSectionID = this.item.id
+        } else {
+            app.targetSectionID = this.item.id
+        }
     }
     }
 });
