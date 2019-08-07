@@ -166,7 +166,7 @@ public class UnorderedCompareService {
                     if (targetMatches.size() == 1) {
                         retList.add(new Result("ATTRIBUTE MISMATCH: Source attribute " + attribute.getName() + " " + attribute.getValue() + " VS " + targetMatches.get(0).getValue(), ResultType.ATTRIBUTEMISMATCH, attribute.getParent().getId(), targetMatches.get(0).getParent().getId(),this.resultCounter.getAndIncrement()));
                     } else {
-                        retList.add(new Result("ATTRIBUTE MISMATCH: Source attribute " + attribute.getName() + " in " + sourceNode.getValue(), ResultType.ATTRIBUTEMISMATCH, attribute.getParent().getId(), this.resultCounter.getAndIncrement()));
+                        retList.add(new Result("ATTRIBUTE MISMATCH: Source attribute " + attribute.getName() + " in " + sourceNode.getValue(), ResultType.ATTRIBUTEMISMATCH, attribute.getParent().getId(), this.nodeMap.get(attribute.getParent()).getId(), this.resultCounter.getAndIncrement()));
                     }
                 }
 

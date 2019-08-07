@@ -92,17 +92,26 @@ public class XMLParser extends DefaultHandler {
     }
 
     public void characters(char ch[], int start, int length) throws SAXException {
+        if (this.sb == null) return;
+
         String addString = new String(ch, start, length).replace("\n", "").replace("\t", "").trim();
-        if (!addString.equals("")) {
-            if (addString.contains("not list")) {
-                System.out.println("ugh");
-            }
-            currentObj.put("value", addString);
-        }
+        this.sb.append(addString);
+//        if (!addString.equals("")) {
+//            if (addString.contains("not list")) {
+//                System.out.println("ugh");
+//            }
+//            currentObj.put("value", addString);
+//        }
     }
 
     public void endElement(String uri, String localName,
                            String qName) throws SAXException {
+
+        if (this.sb != null && !this.sb.toString().equals("")) {
+            this.currentObj.put("value",this.sb);
+        }
+        this.sb = null;
+
         String attributeString = "";
         JSONArray atts = this.currentObj.getJSONArray("attributes");
 

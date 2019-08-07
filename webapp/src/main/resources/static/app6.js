@@ -171,7 +171,9 @@ Vue.component('result-list', {
         for (var i=0; i<app.results.length; i++) {
             if (this.sourceid == app.results[i].sourceid && this.targetid == app.results[i].targetid) {
                 app.results[i].removed = !app.results[i].removed;
+                app.results[i].defect = false;
                 this.removeStyle = ! this.removeStyle;
+                this.resultType = false;
                 break;
             }
 
@@ -181,7 +183,9 @@ Vue.component('result-list', {
         for (var i=0; i<app.results.length; i++) {
             if (this.sourceid == app.results[i].sourceid && this.targetid == app.results[i].targetid) {
                 app.results[i].defect = !app.results[i].defect;
+                app.results[i].removed = false;
                 this.resultStyle = !this.resultType;
+                this.removeStyle = false;
                 break;
             }
 
@@ -292,17 +296,17 @@ var app = new Vue({
     compareSpinner: false,
     results: [],
     search: "",
-    valueresults: [], //
-    sectionresults: [], //
-    attributeresults: [], //
-    defectresults: [], //
-    deletedresults: [], //
+//    valueresults: [], //
+//    sectionresults: [], //
+//    attributeresults: [], //
+//    defectresults: [], //
+//    deletedresults: [], //
     sourceTreeData: {name: "Please load the source document", children: [], attribute: 0},
     targetTreeData: {name: "Please load the target document", children: [], attribute: 0},
     displayInstructions: true,
     displayCompare: false,
-    automatic: true, //
-    sectionModal: true, //
+//    automatic: true, //
+//    sectionModal: true, //
     sourceSectionID: null,
     targetSectionID: null,
     defects: true,
@@ -353,7 +357,7 @@ var app = new Vue({
                     this.attribute = false;
                 }
             }
-        },
+        }
   },
   methods: {
 //    addDeleted: function() {
@@ -386,6 +390,42 @@ var app = new Vue({
     closeEveryNode: function() {
         closeAllNodes(this.sourceTreeData);
         closeAllNodes(this.targetTreeData);
+    },
+    resultcount: function(type) {
+        var count = 0
+        for (var i=0; i<app.results.length; i++) {
+            if (app.results[i].resultType == type) {
+                count++;
+            }
+        }
+        return count;
+    },
+    defectcount: function() {
+        var count = 0
+        for (var i=0; i<app.results.length; i++) {
+            if (app.results[i].defect) {
+                count++;
+            }
+        }
+        return count;
+    },
+    discardedcount: function() {
+        var count = 0
+        for (var i=0; i<app.results.length; i++) {
+            if (app.results[i].removed) {
+                count++;
+            }
+        }
+        return count;
+    },
+    unclassifiedcount: function() {
+        var count = 0
+        for (var i=0; i<app.results.length; i++) {
+            if (!app.results[i].removed && !app.results[i].defect) {
+                count++;
+            }
+        }
+        return count;
     }
   }
 });

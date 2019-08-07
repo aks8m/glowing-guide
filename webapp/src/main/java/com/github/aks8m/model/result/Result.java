@@ -46,7 +46,7 @@ public class Result {
 
     public Result(String output, ResultType resultType, int id) { this.output = output; this.resultType = resultType; this.id = id; }
 
-    public Result(String output, ResultType resultType, String sourceid, int id) { this.output = output; this.resultType = resultType; this.sourceid = sourceid; this.id = id; }
+//    public Result(String output, ResultType resultType, String sourceid, int id) { this.output = output; this.resultType = resultType; this.sourceid = sourceid; this.id = id; }
 
     public Result(String output, ResultType resultType, String sourceid, String targetid, int id) { this.output = output; this.resultType = resultType; this.sourceid = sourceid; this.targetid.add(targetid); this.id = id; }
 

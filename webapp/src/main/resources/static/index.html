@@ -63,7 +63,7 @@
                     <file-input path='/api/analysis/readTarget' name="targetTree"></file-input>
                 </div>
                 <div class="nav-item">
-                    <section-compare-button></section-compare-button>
+                    <section-compare-button v-if="displayCompare"></section-compare-button>
                 </div>
             </ul>
 
@@ -165,13 +165,13 @@
                             </div>
 
                             <div class="form-check form-check"><input id="checkBoxFilterAll" type="checkbox" class="form-check-input":checked="true" v-model="selectAll"><label for="checkBoxFilterAll" class="form-check-label">All Mismatches  <span class="badge badge-light"> {{ results.length }}</span></label></div>
-                            <div class="form-check form-check"><input id="checkBoxFilterValue" type="checkbox" class="form-check-input" v-model="value"/><label for="checkBoxFilterValue" class="form-check-label">Value Mismatches  <span class="badge badge-light"> {{ valueresults.length }}</span></label></div>
-                            <div class="form-check form-check"><input id="checkBoxFilterAttribute" type="checkbox" class="form-check-input" v-model="attribute"/><label for="checkBoxFilterAttribute" class="form-check-label">Attribute Mismatches  <span class="badge badge-light"> {{ attributeresults.length }}</span></label></div>
-                            <div class="form-check form-check"><input id="checkBoxFilterSection" type="checkbox" class="form-check-input" v-model="section"/><label for="checkBoxFilterSection" class="form-check-label">Section Mismatches  <span class="badge badge-light"> {{ sectionresults.length }}</span></label></div>
+                            <div class="form-check form-check"><input id="checkBoxFilterValue" type="checkbox" class="form-check-input" v-model="value"/><label for="checkBoxFilterValue" class="form-check-label">Value Mismatches  <span class="badge badge-light"> {{ resultcount("VALUEMISMATCH") }}</span></label></div>
+                            <div class="form-check form-check"><input id="checkBoxFilterAttribute" type="checkbox" class="form-check-input" v-model="attribute"/><label for="checkBoxFilterAttribute" class="form-check-label">Attribute Mismatches  <span class="badge badge-light"> {{ resultcount("ATTRIBUTEMISMATCH") }}</span></label></div>
+                            <div class="form-check form-check"><input id="checkBoxFilterSection" type="checkbox" class="form-check-input" v-model="section"/><label for="checkBoxFilterSection" class="form-check-label">Section Mismatches  <span class="badge badge-light"> {{ resultcount("SECTIONMATCHNOTFOUND") }}</span></label></div>
                             <hr/>
-                            <div class="form-check form-check"><input id="checkBoxDefect" type="checkbox" class="form-check-input" v-model="defects"/><label for="checkBoxDefect" class="form-check-label">Show Defects</label></div>
-                            <div class="form-check form-check"><input id="checkBoxRemoved" type="checkbox" class="form-check-input" v-model="removed"/><label for="checkBoxRemoved" class="form-check-label">Show Discarded Items</label></div>
-                            <div class="form-check form-check"><input id="checkBoxUnclassified" type="checkbox" class="form-check-input" v-model="unclassified"/><label for="checkBoxRemoved" class="form-check-label">Show Unclassified Items</label></div>
+                            <div class="form-check form-check"><input id="checkBoxDefect" type="checkbox" class="form-check-input" v-model="defects"/><label for="checkBoxDefect" class="form-check-label">Show Defects  <span class="badge badge-light"> {{ defectcount() }}</span></label></div>
+                            <div class="form-check form-check"><input id="checkBoxRemoved" type="checkbox" class="form-check-input" v-model="removed"/><label for="checkBoxRemoved" class="form-check-label">Show Discarded Items  <span class="badge badge-light"> {{ discardedcount() }}</span></label></div>
+                            <div class="form-check form-check"><input id="checkBoxUnclassified" type="checkbox" class="form-check-input" v-model="unclassified"/><label for="checkBoxRemoved" class="form-check-label">Show Unclassified Items  <span class="badge badge-light"> {{ unclassifiedcount() }}</span></label></div>
 
 
                         </div>
@@ -195,7 +195,7 @@
                                 <!--</div>-->
                             </div>
                             <b-spinner v-if="compareSpinner" variant="primary"></b-spinner>
-                            <ul v-else class="list-group" style="max-height: 500px; overflow: scroll;">
+                            <ul v-else class="list-group" style="max-height: 350px; overflow: scroll;">
                                 <p v-if="getFilteredResults.length == 0">There were no mismatches reported</p>
                                 <result-list v-else v-for="result in getFilteredResults":key="result.id":output="result.output":sourceid="result.sourceid":targetid="result.targetid":type="result.resultType"></result-list>
                             </ul>
