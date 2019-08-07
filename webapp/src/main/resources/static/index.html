@@ -180,24 +180,24 @@
                                 <div class="col">
                                     <h4>Results List:</h4>
                                 </div>
-                                <div class="col-md-auto">
-                                    <button type="button" class="btn btn-secondary btn-sm" v-on:click="addDeleted()">Add {{ deletedresults.length }} Deleted Results back to Result List</button>
-                                </div>
-                                <div class="col-md-auto">
-                                    <button type="button" class="btn btn-secondary btn-sm" v-b-modal.modal-2>Display {{ defectresults.length }} Flagged Defects</button>
+                                <!--<div class="col-md-auto">-->
+                                    <!--<button type="button" class="btn btn-secondary btn-sm" v-on:click="addDeleted()">Add {{ deletedresults.length }} Deleted Results back to Result List</button>-->
+                                <!--</div>-->
+                                <!--<div class="col-md-auto">-->
+                                    <!--<button type="button" class="btn btn-secondary btn-sm" v-b-modal.modal-2>Display {{ defectresults.length }} Flagged Defects</button>-->
 
-                                    <b-modal id="modal-2" title="Defects" ok-only>
-                                        <ol class="list-group">
-                                            <li type="button" class="list-group-item list-group-item-action" v-for="(result, index) in defectresults":key="index">{{result.output}}</li>
-                                        </ol>
-                                    </b-modal>
+                                    <!--<b-modal id="modal-2" title="Defects" ok-only>-->
+                                        <!--<ol class="list-group">-->
+                                            <!--<li type="button" class="list-group-item list-group-item-action" v-for="(result, index) in defectresults":key="index">{{result.output}}</li>-->
+                                        <!--</ol>-->
+                                    <!--</b-modal>-->
 
-                                </div>
+                                <!--</div>-->
                             </div>
                             <b-spinner v-if="compareSpinner" variant="primary"></b-spinner>
-                            <ul v-else class="list-group">
+                            <ul v-else class="list-group" style="max-height: 500px; overflow: scroll;">
                                 <p v-if="getFilteredResults.length == 0">There were no mismatches reported</p>
-                                <result-list v-else v-for="result in getFilteredResults":key="result.sourceid":output="result.output":sourceid="result.sourceid":targetid="result.targetid":type="result.resultType"></result-list>
+                                <result-list v-else v-for="result in getFilteredResults":key="result.id":output="result.output":sourceid="result.sourceid":targetid="result.targetid":type="result.resultType"></result-list>
                             </ul>
                         </div>
 

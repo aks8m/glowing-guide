@@ -11,6 +11,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * 2019-01-20
@@ -32,8 +33,10 @@ public class AnalysisService {
     private String sourceRootID = null;
     private String targetRootID = null;
 
+    public AtomicInteger counter = new AtomicInteger(0);
+
     public void loadSourceJSON(String sourceString) throws IOException, SAXException, ParserConfigurationException {
-        XMLParser parser = new XMLParser(sourceString);
+        XMLParser parser = new XMLParser(sourceString, this.counter);
         this.sourceDocumentJSON = parser.toJSONObject();
         this.sourceReturnJSON = new JSONObject(this.sourceDocumentJSON.toString());
         this.sourceRootID = this.sourceDocumentJSON.get("id").toString();
@@ -41,7 +44,7 @@ public class AnalysisService {
     }
 
     public void loadTargetJSON(String targetString) throws IOException, SAXException, ParserConfigurationException {
-        XMLParser parser = new XMLParser(targetString);
+        XMLParser parser = new XMLParser(targetString, this.counter);
         this.targetDocumentJSON = parser.toJSONObject();
         this.targetReturnJSON = new JSONObject(this.targetDocumentJSON.toString());
         this.targetRootID = this.targetDocumentJSON.get("id").toString();

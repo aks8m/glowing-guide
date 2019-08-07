@@ -17,6 +17,7 @@ import java.io.StringReader;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * 4/29/2019
@@ -29,10 +30,12 @@ public class XMLParser extends DefaultHandler {
     private JSONObject rootObj;
     private JSONArray currentChildrenArray;
     private Map<JSONObject, JSONObject> childToParentMap = new HashMap<>();
+    AtomicInteger counter = null;
+    private StringBuilder sb = null;
 
     XMLParser() {}
 
-    XMLParser(String xmlString) { this.xmlString = xmlString; }
+    XMLParser(String xmlString, AtomicInteger counter) { this.xmlString = xmlString; this.counter = counter;}
 
     public String getXmlString() {
         return xmlString;
@@ -62,14 +65,16 @@ public class XMLParser extends DefaultHandler {
             JSONObject attribute = new JSONObject();
             attribute.put("name", attributes.getQName(i));
             attribute.put("value", attributes.getValue(i));
-            attribute.put("id", UUID.randomUUID());
+//            attribute.put("id", UUID.randomUUID());
+            attribute.put("id", this.counter.getAndIncrement());
             attribute.put("open", false);
             attribute.put("error", false);
             attributeArray.put(attribute);
         }
         jsonObject.put("children", childrenArray);
         jsonObject.put("attributes", attributeArray);
-        jsonObject.put("id", UUID.randomUUID());
+//        jsonObject.put("id", UUID.randomUUID());
+        jsonObject.put("id", this.counter.getAndIncrement());
         jsonObject.put("open", false);
         jsonObject.put("error", false);
         jsonObject.put("folder",false);
@@ -82,12 +87,16 @@ public class XMLParser extends DefaultHandler {
             childToParentMap.put(jsonObject,currentObj);
         }
         currentObj = jsonObject;
+        this.sb = new StringBuilder();
 
     }
 
     public void characters(char ch[], int start, int length) throws SAXException {
         String addString = new String(ch, start, length).replace("\n", "").replace("\t", "").trim();
         if (!addString.equals("")) {
+            if (addString.contains("not list")) {
+                System.out.println("ugh");
+            }
             currentObj.put("value", addString);
         }
     }

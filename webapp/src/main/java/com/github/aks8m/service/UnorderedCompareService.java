@@ -7,6 +7,7 @@ import javafx.beans.property.SimpleBooleanProperty;
 import javafx.scene.control.TreeItem;
 
 import java.util.*;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
 /**
@@ -20,6 +21,7 @@ public class UnorderedCompareService {
     private NodePOJO targetNode;
     private List<Result> resultList = new ArrayList<>();
     HashMap<NodePOJO, NodePOJO> nodeMap = new HashMap<>();
+    private AtomicInteger resultCounter = new AtomicInteger(0);
 
     public void setSourceNode(NodePOJO sourceNode) {
         this.sourceNode = sourceNode;
@@ -33,7 +35,7 @@ public class UnorderedCompareService {
         if (this.sourceNode!= null && this.targetNode != null) {
             unorderedCompare();
         } else {
-            this.resultList.add(new Result("Source and Root Nodes were not initialized correctly", ResultType.SECTIONMATCHNOTFOUND));
+            this.resultList.add(new Result("Source and Root Nodes were not initialized correctly", ResultType.SECTIONMATCHNOTFOUND, this.resultCounter.getAndIncrement()));
         }
 
         return this.resultList;
@@ -50,7 +52,7 @@ public class UnorderedCompareService {
 
         while (!sourceQueue.isEmpty()) {
             if (targetQueue.isEmpty()) {
-                this.resultList.add(new Result("SECTION MISMATCH: Target document had no such element", ResultType.SECTIONMATCHNOTFOUND, sourceNode.getId(), this.nodeMap.get(sourceQueue.peek().getParent()).getId()));
+                this.resultList.add(new Result("SECTION MISMATCH: Target document had no such element", ResultType.SECTIONMATCHNOTFOUND, sourceNode.getId(), this.nodeMap.get(sourceQueue.peek().getParent()).getId(), this.resultCounter.getAndIncrement()));
             } else {
                 NodePOJO sourceNode = sourceQueue.remove();
                 NodePOJO targetNode = null;
@@ -59,17 +61,17 @@ public class UnorderedCompareService {
                     List<NodePOJO> targetNodes = getTargetNodes(sourceNode, targetQueue);
 
                     if (targetNodes.size() == 0) {
-                        this.resultList.add(new Result("SECTION MISMATCH: Target document had no such element", ResultType.SECTIONMATCHNOTFOUND, sourceNode.getId(), this.nodeMap.get(sourceNode.getParent()).getId()));
+                        this.resultList.add(new Result("SECTION MISMATCH: Target document had no such element", ResultType.SECTIONMATCHNOTFOUND, sourceNode.getId(), this.nodeMap.get(sourceNode.getParent()).getId(), this.resultCounter.getAndIncrement()));
                     } else if (targetNodes.size() == 1) {
                         try {
                             targetNode = targetNodes.get(0);
                             targetQueue.remove(targetNode);
                         } catch (Exception e) {
-                            this.resultList.add(new Result("SECTION MISMATCH: Target document had no such element", ResultType.SECTIONMATCHNOTFOUND, sourceNode.getId(), this.nodeMap.get(sourceNode.getParent()).getId()));
+                            this.resultList.add(new Result("SECTION MISMATCH: Target document had no such element", ResultType.SECTIONMATCHNOTFOUND, sourceNode.getId(), this.nodeMap.get(sourceNode.getParent()).getId(), this.resultCounter.getAndIncrement()));
                         }
 
                         if (targetNode == null) {
-                            this.resultList.add(new Result("SECTION MISMATCH: Target document had no such element", ResultType.SECTIONMATCHNOTFOUND, sourceNode.getId(), this.nodeMap.get(sourceNode.getParent()).getId()));
+                            this.resultList.add(new Result("SECTION MISMATCH: Target document had no such element", ResultType.SECTIONMATCHNOTFOUND, sourceNode.getId(), this.nodeMap.get(sourceNode.getParent()).getId(), this.resultCounter.getAndIncrement()));
                         } else {
                             this.nodeMap.put(sourceNode, targetNode);
 
@@ -92,7 +94,7 @@ public class UnorderedCompareService {
                             targetQueue.addAll(targetNode.getChildren());
                         }
                     } else {
-                        this.resultList.add(new Result("SECTION MISMATCH: Source Node " + sourceNode.getName() + " had value or attribute errors", ResultType.SECTIONMATCHNOTFOUND, sourceNode.getId(), targetNodes.stream().map(node -> node.getId()).collect(Collectors.toList())));
+                        this.resultList.add(new Result("SECTION MISMATCH: Source Node " + sourceNode.getName() + " had value or attribute errors", ResultType.SECTIONMATCHNOTFOUND, sourceNode.getId(), targetNodes.stream().map(node -> node.getId()).collect(Collectors.toList()), this.resultCounter.getAndIncrement()));
                     }
 
                 } catch (Exception e) {
@@ -138,7 +140,7 @@ public class UnorderedCompareService {
         List<Result> retList = new ArrayList<>();
         if (sourceNode.getValue() != null) {
             if (!sourceNode.getValue().equals(targetNode.getValue())) {
-                retList.add(new Result("VALUE MISMATCH: " + sourceNode.getName() + " Source Value: " + sourceNode.getValue() + " VS Target Value: " + targetNode.getValue(), ResultType.VALUEMISMATCH, sourceNode.getId(), targetNode.getId()));
+                retList.add(new Result("VALUE MISMATCH: " + sourceNode.getName() + " Source Value: " + sourceNode.getValue() + " VS Target Value: " + targetNode.getValue(), ResultType.VALUEMISMATCH, sourceNode.getId(), targetNode.getId(), this.resultCounter.getAndIncrement()));
             }
         }
         return retList;
@@ -162,9 +164,9 @@ public class UnorderedCompareService {
 
                 if (!matched) {
                     if (targetMatches.size() == 1) {
-                        retList.add(new Result("ATTRIBUTE MISMATCH: Source attribute " + attribute.getName() + " " + attribute.getValue() + " VS " + targetMatches.get(0).getValue(), ResultType.ATTRIBUTEMISMATCH, attribute.getParent().getId(), targetMatches.get(0).getParent().getId()));
+                        retList.add(new Result("ATTRIBUTE MISMATCH: Source attribute " + attribute.getName() + " " + attribute.getValue() + " VS " + targetMatches.get(0).getValue(), ResultType.ATTRIBUTEMISMATCH, attribute.getParent().getId(), targetMatches.get(0).getParent().getId(),this.resultCounter.getAndIncrement()));
                     } else {
-                        retList.add(new Result("ATTRIBUTE MISMATCH: Source attribute " + attribute.getName() + " in " + sourceNode.getValue(), ResultType.ATTRIBUTEMISMATCH, attribute.getParent().getId()));
+                        retList.add(new Result("ATTRIBUTE MISMATCH: Source attribute " + attribute.getName() + " in " + sourceNode.getValue(), ResultType.ATTRIBUTEMISMATCH, attribute.getParent().getId(), this.resultCounter.getAndIncrement()));
                     }
                 }
 

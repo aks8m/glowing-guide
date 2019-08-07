@@ -10,6 +10,16 @@ public class Result {
     private String sourceid;
     private List<String> targetid = new ArrayList<>();
 
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    private int id;
+
     private boolean defect = false;
     private boolean removed = false;
 
@@ -34,13 +44,13 @@ public class Result {
         this.resultType = ResultType.SECTIONMATCHNOTFOUND;
     }
 
-    public Result(String output, ResultType resultType) { this.output = output; this.resultType = resultType; }
+    public Result(String output, ResultType resultType, int id) { this.output = output; this.resultType = resultType; this.id = id; }
 
-    public Result(String output, ResultType resultType, String sourceid) { this.output = output; this.resultType = resultType; this.sourceid = sourceid; }
+    public Result(String output, ResultType resultType, String sourceid, int id) { this.output = output; this.resultType = resultType; this.sourceid = sourceid; this.id = id; }
 
-    public Result(String output, ResultType resultType, String sourceid, String targetid) { this.output = output; this.resultType = resultType; this.sourceid = sourceid; this.targetid.add(targetid); }
+    public Result(String output, ResultType resultType, String sourceid, String targetid, int id) { this.output = output; this.resultType = resultType; this.sourceid = sourceid; this.targetid.add(targetid); this.id = id; }
 
-    public Result(String output, ResultType resultType, String sourceid, List<String> targetid) { this.output = output; this.resultType = resultType; this.sourceid = sourceid; this.targetid = targetid; }
+    public Result(String output, ResultType resultType, String sourceid, List<String> targetid, int id) { this.output = output; this.resultType = resultType; this.sourceid = sourceid; this.targetid = targetid; this.id = id; }
 
     public Result() { }
 
