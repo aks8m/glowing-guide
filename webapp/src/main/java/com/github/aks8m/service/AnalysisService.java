@@ -21,9 +21,6 @@ public class AnalysisService {
 
     Gson gson = new Gson();
 
-    private String sourceDocumentString = null;
-    private String targetDocumentString = null;
-
     private JSONObject sourceDocumentJSON = null;
     private JSONObject targetDocumentJSON = null;
 
@@ -40,7 +37,6 @@ public class AnalysisService {
         this.sourceDocumentJSON = parser.toJSONObject();
         this.sourceReturnJSON = new JSONObject(this.sourceDocumentJSON.toString());
         this.sourceRootID = this.sourceDocumentJSON.get("id").toString();
-//        this.sourceDocumentString = sourceDocumentJSON.toString(4);
     }
 
     public void loadTargetJSON(String targetString) throws IOException, SAXException, ParserConfigurationException {
@@ -48,15 +44,8 @@ public class AnalysisService {
         this.targetDocumentJSON = parser.toJSONObject();
         this.targetReturnJSON = new JSONObject(this.targetDocumentJSON.toString());
         this.targetRootID = this.targetDocumentJSON.get("id").toString();
-//        this.targetDocumentString = targetDocumentJSON.toString(4);
     }
 
-
-//    public NodePOJO getSectionNode(String section) {
-//        NodePOJO rootNode = this.gson.fromJson(section, NodePOJO.class);
-//        addParents(rootNode);
-//        return rootNode;
-//    }
 
     public NodePOJO getSourceNodePOJO(String id) {
         JSONObject node = findJSONNode(this.sourceDocumentJSON, id);

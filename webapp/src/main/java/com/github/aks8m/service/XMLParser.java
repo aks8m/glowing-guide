@@ -65,7 +65,6 @@ public class XMLParser extends DefaultHandler {
             JSONObject attribute = new JSONObject();
             attribute.put("name", attributes.getQName(i));
             attribute.put("value", attributes.getValue(i));
-//            attribute.put("id", UUID.randomUUID());
             attribute.put("id", this.counter.getAndIncrement());
             attribute.put("open", false);
             attribute.put("error", false);
@@ -73,7 +72,6 @@ public class XMLParser extends DefaultHandler {
         }
         jsonObject.put("children", childrenArray);
         jsonObject.put("attributes", attributeArray);
-//        jsonObject.put("id", UUID.randomUUID());
         jsonObject.put("id", this.counter.getAndIncrement());
         jsonObject.put("open", false);
         jsonObject.put("error", false);
@@ -94,14 +92,8 @@ public class XMLParser extends DefaultHandler {
     public void characters(char ch[], int start, int length) throws SAXException {
         if (this.sb == null) return;
 
-        String addString = new String(ch, start, length).replace("\n", "").replace("\t", "").trim();
+        String addString = new String(ch, start, length).replace("\n", "").replace("\t", "");
         this.sb.append(addString);
-//        if (!addString.equals("")) {
-//            if (addString.contains("not list")) {
-//                System.out.println("ugh");
-//            }
-//            currentObj.put("value", addString);
-//        }
     }
 
     public void endElement(String uri, String localName,

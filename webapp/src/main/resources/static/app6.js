@@ -117,13 +117,13 @@ Vue.component('section-compare-button', {
 Vue.component('result-list', {
   data: function () {
     return {
-      resultStyle: false,
-      removeStyle: false,
-//      defect: false
+//      resultStyle: false,
+//      removeStyle: false,
+////      defect: false
     }
   },
   props: ['output', 'sourceid', 'targetid', 'type'],
-  template: '<li type="button" class="list-group-item list-group-item-action" v-bind:class="{ resultbackground: this.defect, removebackground: this.removed}" v-on:click="openTrees()">{{ output }}<b-badge class="badge-default float-right m-2" v-on:click.stop="addDefect()"><i class="fas fa-exclamation"></i></i></b-badge><b-badge class="badge-default float-right m-2" v-on:click.stop="removeResult()"><i class="fas fa-times"></i></b-badge></li>',
+  template: '<li type="button" class="list-group-item list-group-item-action" v-bind:class="{ resultbackground: this.defect, removebackground: this.removed}" v-on:click="openTrees()">{{ output }}<b-badge class="badge-default float-right m-2" v-on:click.stop="addDefect()"><i class="fas fa-exclamation"></i></b-badge><b-badge class="badge-default float-right m-2" v-on:click.stop="removeResult()"><i class="fas fa-times"></i></b-badge></li>',
   computed: {
     defect() {
         for (var i=0; i<app.results.length; i++) {
@@ -172,8 +172,8 @@ Vue.component('result-list', {
             if (this.sourceid == app.results[i].sourceid && this.targetid == app.results[i].targetid) {
                 app.results[i].removed = !app.results[i].removed;
                 app.results[i].defect = false;
-                this.removeStyle = ! this.removeStyle;
-                this.resultType = false;
+//                this.removeStyle = ! this.removeStyle;
+//                this.resultType = false;
                 break;
             }
 
@@ -184,8 +184,8 @@ Vue.component('result-list', {
             if (this.sourceid == app.results[i].sourceid && this.targetid == app.results[i].targetid) {
                 app.results[i].defect = !app.results[i].defect;
                 app.results[i].removed = false;
-                this.resultStyle = !this.resultType;
-                this.removeStyle = false;
+//                this.resultStyle = !this.resultType;
+//                this.removeStyle = false;
                 break;
             }
 

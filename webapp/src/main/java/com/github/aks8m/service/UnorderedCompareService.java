@@ -52,7 +52,7 @@ public class UnorderedCompareService {
 
         while (!sourceQueue.isEmpty()) {
             if (targetQueue.isEmpty()) {
-                this.resultList.add(new Result("SECTION MISMATCH: Target document had no such element", ResultType.SECTIONMATCHNOTFOUND, sourceNode.getId(), this.nodeMap.get(sourceQueue.peek().getParent()).getId(), this.resultCounter.getAndIncrement()));
+                this.resultList.add(new Result("SECTION MISMATCH: Target document had no " + sourceQueue.peek().getName() + " element", ResultType.SECTIONMATCHNOTFOUND, sourceNode.getId(), this.nodeMap.get(sourceQueue.peek().getParent()).getId(), this.resultCounter.getAndIncrement()));
             } else {
                 NodePOJO sourceNode = sourceQueue.remove();
                 NodePOJO targetNode = null;
@@ -61,17 +61,17 @@ public class UnorderedCompareService {
                     List<NodePOJO> targetNodes = getTargetNodes(sourceNode, targetQueue);
 
                     if (targetNodes.size() == 0) {
-                        this.resultList.add(new Result("SECTION MISMATCH: Target document had no such element", ResultType.SECTIONMATCHNOTFOUND, sourceNode.getId(), this.nodeMap.get(sourceNode.getParent()).getId(), this.resultCounter.getAndIncrement()));
+                        this.resultList.add(new Result("SECTION MISMATCH: Target document had no matching " + sourceNode.getName() + " element", ResultType.SECTIONMATCHNOTFOUND, sourceNode.getId(), this.nodeMap.get(sourceNode.getParent()).getId(), this.resultCounter.getAndIncrement()));
                     } else if (targetNodes.size() == 1) {
                         try {
                             targetNode = targetNodes.get(0);
                             targetQueue.remove(targetNode);
                         } catch (Exception e) {
-                            this.resultList.add(new Result("SECTION MISMATCH: Target document had no such element", ResultType.SECTIONMATCHNOTFOUND, sourceNode.getId(), this.nodeMap.get(sourceNode.getParent()).getId(), this.resultCounter.getAndIncrement()));
+                            this.resultList.add(new Result("SECTION MISMATCH: Target document had no matching " + sourceNode.getName() + " element", ResultType.SECTIONMATCHNOTFOUND, sourceNode.getId(), this.nodeMap.get(sourceNode.getParent()).getId(), this.resultCounter.getAndIncrement()));
                         }
 
                         if (targetNode == null) {
-                            this.resultList.add(new Result("SECTION MISMATCH: Target document had no such element", ResultType.SECTIONMATCHNOTFOUND, sourceNode.getId(), this.nodeMap.get(sourceNode.getParent()).getId(), this.resultCounter.getAndIncrement()));
+                            this.resultList.add(new Result("SECTION MISMATCH: Target document had no matching " + sourceNode.getName() + " element", ResultType.SECTIONMATCHNOTFOUND, sourceNode.getId(), this.nodeMap.get(sourceNode.getParent()).getId(), this.resultCounter.getAndIncrement()));
                         } else {
                             this.nodeMap.put(sourceNode, targetNode);
 
@@ -163,10 +163,12 @@ public class UnorderedCompareService {
                 }
 
                 if (!matched) {
-                    if (targetMatches.size() == 1) {
-                        retList.add(new Result("ATTRIBUTE MISMATCH: Source attribute " + attribute.getName() + " " + attribute.getValue() + " VS " + targetMatches.get(0).getValue(), ResultType.ATTRIBUTEMISMATCH, attribute.getParent().getId(), targetMatches.get(0).getParent().getId(),this.resultCounter.getAndIncrement()));
+                    if (targetMatches.size() == 0) {
+                        retList.add(new Result("ATTRIBUTE MISMATCH: Attribute " + attribute.getName() + ": " + attribute.getValue() + " is not present in target document", ResultType.ATTRIBUTEMISMATCH, attribute.getParent().getId(), this.nodeMap.get(attribute.getParent()).getId(), this.resultCounter.getAndIncrement()));
+                    } else if (targetMatches.size() == 1) {
+                        retList.add(new Result("ATTRIBUTE MISMATCH: Attribute " + attribute.getName() + ": " + attribute.getValue() + " VS " + targetMatches.get(0).getValue(), ResultType.ATTRIBUTEMISMATCH, attribute.getParent().getId(), targetMatches.get(0).getParent().getId(),this.resultCounter.getAndIncrement()));
                     } else {
-                        retList.add(new Result("ATTRIBUTE MISMATCH: Source attribute " + attribute.getName() + " in " + sourceNode.getValue(), ResultType.ATTRIBUTEMISMATCH, attribute.getParent().getId(), this.nodeMap.get(attribute.getParent()).getId(), this.resultCounter.getAndIncrement()));
+                        retList.add(new Result("ATTRIBUTE MISMATCH: Attribute " + attribute.getName() + ": " + attribute.getValue() + " had no exact match", ResultType.ATTRIBUTEMISMATCH, attribute.getParent().getId(), this.nodeMap.get(attribute.getParent()).getId(), this.resultCounter.getAndIncrement()));
                     }
                 }
 
@@ -179,24 +181,4 @@ public class UnorderedCompareService {
 
     }
 
-
-
-//    private List<NodePOJO> getTargetAttributeMatches(String name, NodePOJO targetNode) {
-//        List<NodePOJO> targetAttributeMatches = new ArrayList<>();
-//
-//        for (NodePOJO nodePOJO : getAttributes(targetNode)) {
-//            if (nodePOJO.getName().equals(name)) {
-//                targetAttributeMatches.add(nodePOJO);
-//            }
-//        }
-//
-//        return targetAttributeMatches;
-//    }
-
-//    private List<NodePOJO> getAttributes(NodePOJO node) {
-//        return node.getChildren().stream().filter(n -> n.getAttribute() == 1).collect(Collectors.toList());
-//    }
-//    private List<NodePOJO> getChilds(NodePOJO node) {
-//        return node.getChildren().stream().filter(n -> n.getAttribute() == 0).collect(Collectors.toList());
-//    }
 }
