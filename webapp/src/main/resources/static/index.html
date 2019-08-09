@@ -11,7 +11,7 @@
     <title>C-CDA Comparison Tool</title>
 
     <!-- Required Stylesheets -->
-    <link rel="stylesheet" href="app4.css"/>
+    <link rel="stylesheet" href="app5.css"/>
 
     <!-- Required scripts -->
     <script src="https://unpkg.com/vue"></script>
@@ -29,8 +29,7 @@
 <!-- item template -->
 <script type="text/x-template" id="item-template">
     <div v-bind:class="{ resolvedsection : isResolved, selectedsection : checked }" style="overflow: hidden;">
-
-        <span class="arrow" style="width: 12px; display: inline-block;" v-on:click="clickCheck">{{checked ? '&#10004' : '&#160&#45' }}</span>
+        <span class="arrow" style="width: 12px; display: inline-block;" v-on:click="clickCheck">{{checked ? '&#128269' : '&#160&#45' }}</span>
         <span class="arrow" v-on:click="toggle" v-if="isFolder" :style="indent">{{isOpen ? '&#9662' : '&#9656'}}</span>
         <span v-else style="visibility: hidden;" :style="indent">&#9661</span>
         <span v-bind:class="{ reselement : isError, resolvedsection : isResolved }" v-on:dblclick="resolveSection">{{item.displayname}}</span>
@@ -145,6 +144,7 @@
                 </div>
             </div>
         </div>
+        <!--<a name="scroll"></a>-->
         <div class="card">
             <div class="card-header" id="headingResults">
                 <h5 class="mb-0">
@@ -188,7 +188,6 @@
                         </div>
 
                     </div>
-
 
 
                 </div>

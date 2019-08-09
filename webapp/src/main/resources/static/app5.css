@@ -16,8 +16,7 @@
 }
 
 .resolvedsection {
-    color:green;
-    font-weight: bold;
+    text-decoration: line-through;
 }
 
 .resultbackground {
