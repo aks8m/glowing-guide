@@ -241,5 +241,27 @@ public class AnalysisService {
         }
     }
 
+    public String resolveSourceSection(String id) {
+        genericResolve(this.sourceDocumentJSON, id);
+        genericResolve(this.sourceReturnJSON, id);
+        return this.sourceReturnJSON.toString(4);
+    }
+
+    public String resolveTargetSection(String id) {
+        genericResolve(this.targetDocumentJSON, id);
+        genericResolve(this.targetReturnJSON, id);
+        return this.targetReturnJSON.toString(4);
+    }
+
+    private void genericResolve(JSONObject document, String id) {
+        if (document.get("id").toString().equals(id)) {
+            boolean cur = (boolean) document.get("resolved");
+            document.put("resolved", !cur);
+        } else {
+            for (Object jsonObject : (JSONArray) document.get("children")) {
+                genericResolve((JSONObject) jsonObject, id);
+            }
+        }
+    }
 
 }

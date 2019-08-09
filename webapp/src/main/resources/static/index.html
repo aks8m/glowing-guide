@@ -11,7 +11,7 @@
     <title>C-CDA Comparison Tool</title>
 
     <!-- Required Stylesheets -->
-    <link rel="stylesheet" href="app1.css"/>
+    <link rel="stylesheet" href="app4.css"/>
 
     <!-- Required scripts -->
     <script src="https://unpkg.com/vue"></script>
@@ -28,12 +28,12 @@
 
 <!-- item template -->
 <script type="text/x-template" id="item-template">
-    <div v-bind:class="{ selectedsection : checked }" style="overflow: hidden;">
+    <div v-bind:class="{ resolvedsection : isResolved, selectedsection : checked }" style="overflow: hidden;">
 
         <span class="arrow" style="width: 12px; display: inline-block;" v-on:click="clickCheck">{{checked ? '&#10004' : '&#160&#45' }}</span>
         <span class="arrow" v-on:click="toggle" v-if="isFolder" :style="indent">{{isOpen ? '&#9662' : '&#9656'}}</span>
         <span v-else style="visibility: hidden;" :style="indent">&#9661</span>
-        <span v-bind:class="{ reselement : isError }" style="">{{item.displayname}}</span>
+        <span v-bind:class="{ reselement : isError, resolvedsection : isResolved }" v-on:dblclick="resolveSection">{{item.displayname}}</span>
         <tree-item class="item" v-for="child in item.children":key="child.id":item="child" :name="name" :depth="depth+1"></tree-item>
     </div>
 </script>
@@ -74,6 +74,10 @@
         <h1>Welcome to the C-CDA Comparison tool!!</h1>
         <hr style="border: 1px solid black"/>
         <p></p>
+        <p>Below you will find the abridged documentation. You can find the full documentation <a href="./C-CDAComparisonTool_Documentation.docx" target="_blank">here</a>.</p>
+        <p></p>
+        <hr style="border: 1px solid black"/>
+        <p></p>
         <h4>To get started load your documents using the file browse buttons at the top:</h4>
         <ol>
             <li>Load the source (EHX) document using the file input on the left</li>
@@ -81,43 +85,38 @@
         </ol>
         <hr/>
         <p></p>
-        <h4>After loading the documents you have two options to compare: </h4>
-        <ul>
-            <li><strong>Option 1 - Document Comparison:</strong> Compare the entire document
-                <ol>
-                    <li>Confirm that you have selected the appropriate source and target documents on the nav bar</li>
-                    <li>The green "Compare" button should now be enabled. Click this button to compare the documents.</li>
-                    <li>Click on the "Compare" tab next to the "Instructions" tab on the left side of the nav bar.</li>
-                </ol>
-            </li>
-            <li><strong>Option 2 - Section Comparison:</strong> Compare a specific section of each document
-                <ol>
-                    <li>Confirm that you have selected the appropriate source and target documents on the nav bar</li>
-                    <li>Click on the "Compare" tab next to the "Instructions" tab on the left side of the nav bar.</li>
-                    <li>Click on Document Displays to see the source and target documents</li>
-                    <li>Use the check marks to select the section the in source and target documents that you would like to compare. The selected section will have a background color of gray. This will default to the entire document.</li>
-                    <li>Once you have selected the appropriate sections, click the green "Compare" button on the nav bar</li>
-                </ol>
-            </li>
-        </ul>
+        <h4>After loading the documents you can begin comparing the document sections </h4>
+        <ol>
+            <li>Select the appropriate section by first expanding the document to the desired location. </li>
+            <li>Next, click on the "-" to the left of the text. Once you click, the "-" should change to a green check mark. Additionally, the
+                section that has been selected will have a gray background. </li>
+            <li>Once you have selected the approrpirate sections in the source and target document, click the "Compare"
+                button on the right side of the Nav Bar.</li>
+        </ol>
 
         <hr/>
         <p/>
-        <h4>After comparing the documents, it is time to analyze the comparison results: </h4>
+        <h4>After comparing two sections, it is time to analyze the comparison results: </h4>
         <ol>
-            <li>Click on Compare Results to see the list of comparison results</li>
-            <li>Address each result by clicking on it. When you click on the result, the appropriate sections of the source and target documents will open up. Analyze the results context within the source and target documents.</li>
-            <li>Classify each result as an acceptable difference, by removing it from the result list with the "X" button, or flagging it as a defect the "!" button.</li>
+            <li>Address each result by clicking on it. When you click on the result, the appropriate sections of the
+                source and target documents will open up. Analyze the results context within the source and target documents.</li>
+            <li>Classify each result as an acceptable difference, by clicking the "X" button, or flagging it as a defect the "!" button.</li>
         </ol>
 
 
         <p/>
         <strong>Results are categorized into 3 categories:</strong>
         <ol>
-            <li>Value Mistmatch: the value of the XML tags is mismatched</li>
-            <li>Section Mistmatch: no parent xml tag exists in the target document that has the same attribtues and values as the specified source tag</li>
-            <li>Attribute Mistmatch: the attribute of the XML tag is mismatched</li>
+            <li>Value Mismatch: the value of the XML tags has an error</li>
+            <li>Section Mismatch: no xml tag exists in the target document at the specified level
+                that has the same attributes and values as the specified source tag</li>
+            <li>Attribute Mismatch: the xml tag attribute types do not match or the attribute of the XML tag has an error</li>
         </ol>
+
+
+        <p><i>Note:</i> The mismatch types and result classification types can be filtered from the result list,
+            using the check boxes on the left of the "Compare Results" section </p>
+
         <hr/>
     </div>
 
@@ -164,14 +163,14 @@
                                 </div>
                             </div>
 
-                            <div class="form-check form-check"><input id="checkBoxFilterAll" type="checkbox" class="form-check-input":checked="true" v-model="selectAll"><label for="checkBoxFilterAll" class="form-check-label">All Mismatches  <span class="badge badge-light"> {{ results.length }}</span></label></div>
-                            <div class="form-check form-check"><input id="checkBoxFilterValue" type="checkbox" class="form-check-input" v-model="value"/><label for="checkBoxFilterValue" class="form-check-label">Value Mismatches  <span class="badge badge-light"> {{ resultcount("VALUEMISMATCH") }}</span></label></div>
-                            <div class="form-check form-check"><input id="checkBoxFilterAttribute" type="checkbox" class="form-check-input" v-model="attribute"/><label for="checkBoxFilterAttribute" class="form-check-label">Attribute Mismatches  <span class="badge badge-light"> {{ resultcount("ATTRIBUTEMISMATCH") }}</span></label></div>
-                            <div class="form-check form-check"><input id="checkBoxFilterSection" type="checkbox" class="form-check-input" v-model="section"/><label for="checkBoxFilterSection" class="form-check-label">Section Mismatches  <span class="badge badge-light"> {{ resultcount("SECTIONMATCHNOTFOUND") }}</span></label></div>
+                            <div class="form-check form-check"><input id="checkBoxFilterAll" type="checkbox" class="form-check-input arrow":checked="true" v-model="selectAll"><label for="checkBoxFilterAll" class="form-check-label">All Mismatches  <span class="badge badge-light"> {{ results.length }}</span></label></div>
+                            <div class="form-check form-check"><input id="checkBoxFilterValue" type="checkbox" class="form-check-input arrow" v-model="value"/><label for="checkBoxFilterValue" class="form-check-label">Value Mismatches  <span class="badge badge-light"> {{ resultcount("VALUEMISMATCH") }}</span></label></div>
+                            <div class="form-check form-check"><input id="checkBoxFilterAttribute" type="checkbox" class="form-check-input arrow" v-model="attribute"/><label for="checkBoxFilterAttribute" class="form-check-label">Attribute Mismatches  <span class="badge badge-light"> {{ resultcount("ATTRIBUTEMISMATCH") }}</span></label></div>
+                            <div class="form-check form-check"><input id="checkBoxFilterSection" type="checkbox" class="form-check-input arrow" v-model="section"/><label for="checkBoxFilterSection" class="form-check-label">Section Mismatches  <span class="badge badge-light"> {{ resultcount("SECTIONMATCHNOTFOUND") }}</span></label></div>
                             <hr/>
-                            <div class="form-check form-check"><input id="checkBoxDefect" type="checkbox" class="form-check-input" v-model="defects"/><label for="checkBoxDefect" class="form-check-label">Show Defects  <span class="badge badge-light"> {{ defectcount() }}</span></label></div>
-                            <div class="form-check form-check"><input id="checkBoxRemoved" type="checkbox" class="form-check-input" v-model="removed"/><label for="checkBoxRemoved" class="form-check-label">Show Discarded Items  <span class="badge badge-light"> {{ discardedcount() }}</span></label></div>
-                            <div class="form-check form-check"><input id="checkBoxUnclassified" type="checkbox" class="form-check-input" v-model="unclassified"/><label for="checkBoxRemoved" class="form-check-label">Show Unclassified Items  <span class="badge badge-light"> {{ unclassifiedcount() }}</span></label></div>
+                            <div class="form-check form-check"><input id="checkBoxDefect" type="checkbox" class="form-check-input arrow" v-model="defects"/><label for="checkBoxDefect" class="form-check-label">Show Defects  <span class="badge badge-light"> {{ defectcount() }}</span></label></div>
+                            <div class="form-check form-check"><input id="checkBoxRemoved" type="checkbox" class="form-check-input arrow" v-model="removed"/><label for="checkBoxRemoved" class="form-check-label">Show Discarded Items  <span class="badge badge-light"> {{ discardedcount() }}</span></label></div>
+                            <div class="form-check form-check"><input id="checkBoxUnclassified" type="checkbox" class="form-check-input arrow" v-model="unclassified"/><label for="checkBoxRemoved" class="form-check-label">Show Unclassified Items  <span class="badge badge-light"> {{ unclassifiedcount() }}</span></label></div>
 
 
                         </div>
@@ -201,7 +200,7 @@
 </div>
 
 
-<script src="app6.js"></script>
+<script src="app8.js"></script>
 
 </body>
 </html>

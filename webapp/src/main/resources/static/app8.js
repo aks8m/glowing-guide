@@ -233,6 +233,9 @@ Vue.component('tree-item', {
     },
     indent() {
         return "padding-left: " + ((this.depth * 20) + 15) + "px;"
+    },
+    isResolved: function() {
+        return this.item.resolved
     }
   },
   methods: {
@@ -281,6 +284,29 @@ Vue.component('tree-item', {
         } else {
             app.targetSectionID = this.item.id
         }
+    },
+    resolveSection: function() {
+
+        this.item.error = false;
+
+        if (this.name == "sourceTree") {
+            axios.get('/api/analysis/resolveSourceSection/' + this.item.id)
+                .then(response => {
+                    app.sourceTreeData = response.data;
+                })
+                .catch(function () {
+                    console.log("FAILURE!!");
+                });
+        } else {
+            axios.get('/api/analysis/resolveTargetSection/' + this.item.id)
+                .then(response => {
+                    app.targetTreeData = response.data;
+                })
+                .catch(function () {
+                    console.log("FAILURE!!");
+                });
+        }
+
     }
     }
 });

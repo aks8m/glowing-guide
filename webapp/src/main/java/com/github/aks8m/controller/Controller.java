@@ -60,11 +60,20 @@ public class Controller {
         return this.analysisService.openSourceResult(id);
     }
 
+    @GetMapping(value = "/resolveSourceSection/{id}")
+    private String resolveSourceSection(@PathVariable String id) {
+        return this.analysisService.resolveSourceSection(id);
+    }
+
+    @GetMapping(value = "/resolveTargetSection/{id}")
+    private String resolveTargetSection(@PathVariable String id) {
+        return this.analysisService.resolveTargetSection(id);
+    }
+
     @GetMapping(value = "/openTargetResult/{id}")
     private String openTargetResult(@PathVariable String id) {
         return this.analysisService.openTargetResult(id);
     }
-
 
     @GetMapping(value = "/compare/{sourceID}/{targetID}")
     private String compare(@PathVariable String sourceID, @PathVariable String targetID) {

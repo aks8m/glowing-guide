@@ -66,8 +66,8 @@ public class XMLParser extends DefaultHandler {
             attribute.put("name", attributes.getQName(i));
             attribute.put("value", attributes.getValue(i));
             attribute.put("id", this.counter.getAndIncrement());
-            attribute.put("open", false);
-            attribute.put("error", false);
+//            attribute.put("open", false);
+//            attribute.put("error", false);
             attributeArray.put(attribute);
         }
         jsonObject.put("children", childrenArray);
@@ -76,6 +76,7 @@ public class XMLParser extends DefaultHandler {
         jsonObject.put("open", false);
         jsonObject.put("error", false);
         jsonObject.put("folder",false);
+        jsonObject.put("resolved", false);
 
         if (rootObj == null) {
             rootObj = jsonObject;
